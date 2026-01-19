@@ -50,13 +50,19 @@ export class EToroApiService {
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
     const requestId = generateUUID();
-    const headers = {
-      'Content-Type': 'application/json',
+    const headers: Record<string, string> = {
       'x-request-id': requestId,
       'x-api-key': this.apiKey,
       'x-user-key': this.userKey,
-      ...options.headers,
     };
+
+    // Only add Content-Type for non-GET requests
+    if (options.method && options.method !== 'GET') {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    // Merge with any additional headers
+    Object.assign(headers, options.headers || {});
 
     const url = `${ETORO_API_BASE_URL}${endpoint}`;
     console.log(`[API Request] ${url}`);
