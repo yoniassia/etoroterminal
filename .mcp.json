@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "etoro-api-docs": {
+      "url": "https://etoro-6fc30280.mintlify.app/mcp"
+    },
+    "etoro-svc-int": {
+      "type": "http",
+      "url": "http://int-etoro-services-mcp.dev.local/"
+    }
+  }
+}
