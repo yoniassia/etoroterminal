@@ -1,6 +1,6 @@
 ---
 name: ralph
-description: "Autonomous feature development - setup and execution. Triggers on: ralph, set up ralph, run ralph, run the loop, implement tasks. Two phases: (1) Setup - chat through feature, create tasks with dependencies (2) Loop - pick ready tasks, implement, commit, repeat until done."
+description: "Autonomous parallel feature development. Triggers on: ralph, run ralph, run the loop, parallel ralph, run parallel. Spawns MULTIPLE parallel agents for independent tasks. Keeps spawning batches until ALL tasks complete."
 ---
 
 # Ralph Feature Setup
@@ -449,17 +449,15 @@ When all subtasks are completed:
 
 ---
 
-# Phase 2: The Execution Loop
+# Phase 2: The Parallel Execution Loop
 
-Once setup is complete, Ralph runs the autonomous loop to implement tasks one by one.
+Ralph runs **PARALLEL agents** to implement multiple independent tasks simultaneously.
 
 ---
 
-## Loop Workflow
+## Parallel Loop Workflow
 
 ### 0. Get the parent task ID
-
-First, read the parent task ID that scopes this feature:
 
 ```bash
 cat scripts/ralph/parent-task-id.txt
@@ -467,207 +465,177 @@ cat scripts/ralph/parent-task-id.txt
 
 If this file doesn't exist, ask the user which parent task to work on.
 
-**Check if this is a new feature:** Compare the parent task ID to the one in `scripts/ralph/progress.txt` header. If they differ (or progress.txt doesn't exist), this is a NEW feature - reset progress.txt:
+### 1. Get ALL ready tasks
 
-```markdown
-# Build Progress Log
-Started: [today's date]
-Feature: [parent task title]
-
-## Codebase Patterns
-(Patterns discovered during this feature build)
-
----
+Query for all tasks that are ready to execute:
+```
+task_list action: "list", parentID: "<parent-task-id>", ready: true, status: "open", limit: 20
 ```
 
-This ensures each feature starts with a clean slate. Progress.txt is SHORT-TERM memory for the current feature only.
+### 2. If no ready tasks - check completion
 
-### 1. Check for ready tasks (with nested hierarchy support)
-
-The task hierarchy may have multiple levels (parent → container → leaf tasks). Use this approach to find all descendant tasks:
-
-**Step 1: Get all tasks for the repo**
+Query all tasks to check status:
 ```
-task_list action: "list", repoURL: "<repo-url>", ready: true, status: "open", limit: 10
+task_list action: "list", parentID: "<parent-task-id>", limit: 50
 ```
 
-**Important:** Always use `limit` (5-10) to avoid context overflow with many tasks.
+- If ALL tasks are `completed`: 
+  1. Mark parent task as `completed`
+  2. Report "✅ BUILD COMPLETE - All [N] tasks finished!"
+  3. Stop
 
-**Step 2: Build the descendant set**
-Starting from the parent task ID, collect all tasks that are descendants:
-1. Find tasks where `parentID` equals the parent task ID (direct children)
-2. For each child found, recursively find their children
-3. Continue until no more descendants are found
+- If some tasks are `blocked` or `open` with unmet dependencies:
+  1. Report which tasks are blocked and why
+  2. Wait or ask user for intervention
 
-**Step 3: Filter to workable tasks**
-From the descendant set, select tasks that are:
-- `ready: true` (all dependencies satisfied)
-- `status: "open"` 
-- Leaf tasks (no children of their own) - these are the actual work items
+### 3. If ready tasks exist - SPAWN PARALLEL AGENTS
 
-**CRITICAL:** Skip container tasks that exist only to group other tasks. A container task has other tasks with its ID as their `parentID`.
+**CRITICAL: Spawn ALL ready tasks simultaneously using multiple Task tool calls in ONE message.**
 
-### 2. If no ready tasks
-
-Check if all descendant tasks are completed:
-- Query `task_list list` with `repoURL: "<repo-url>"` (no ready filter)
-- Build the full descendant set (same recursive approach as step 1)
-- If all leaf tasks in the descendant set are `completed`:
-  1. Archive progress.txt:
-     ```bash
-     DATE=$(date +%Y-%m-%d)
-     FEATURE="feature-name-here"
-     mkdir -p scripts/ralph/archive/$DATE-$FEATURE
-     mv scripts/ralph/progress.txt scripts/ralph/archive/$DATE-$FEATURE/
-     ```
-  2. Create fresh progress.txt with empty template
-  3. Clear parent-task-id.txt: `echo "" > scripts/ralph/parent-task-id.txt`
-  4. Commit: `git add scripts/ralph && git commit -m "chore: archive progress for [feature-name]"`
-  5. Mark the parent task as `completed`
-  6. Stop and report "✅ Build complete - all tasks finished!"
-- If some are blocked: Report which tasks are blocked and why
-
-### 3. If ready tasks exist
-
-**Pick the next task:**
-- Prefer tasks related to what was just completed (same module/area, dependent work)
-- If no prior context, pick the first ready task
-
-**Execute the task:**
-
-Use the `handoff` tool with this goal:
+For each ready task, use the `Task` tool (NOT handoff) with this prompt:
 
 ```
-Implement and verify task [task-id]: [task-title].
+Implement task [task-id]: [task-title]
 
 [task-description]
 
-FIRST: Read scripts/ralph/progress.txt - check the "Codebase Patterns" section for important context from previous iterations.
+**Instructions:**
 
-When complete:
+1. Read scripts/ralph/progress.txt for codebase patterns and context
 
-1. Run quality checks: `npm run typecheck` and `npm test`
-   - If either fails, FIX THE ISSUES and re-run until both pass
+2. Implement the task completely:
+   - Create/modify the required files
+   - Follow existing code patterns in the codebase
+   - Ensure all acceptance criteria are met
+
+3. Run quality checks:
+   - Run: npm run build (or npm run typecheck if available)
+   - If checks fail, FIX THE ISSUES until they pass
    - Do NOT proceed until quality checks pass
 
-2. Update AGENTS.md files if you learned something important:
-   - Check for AGENTS.md in directories where you edited files
-   - Add learnings that future developers/agents should know (patterns, gotchas, dependencies)
-   - This is LONG-TERM memory - things anyone editing this code should know
-   - Do NOT add task-specific details or temporary notes
-
-3. Update progress.txt (APPEND, never replace) - this is SHORT-TERM memory for the current feature:
+4. Update progress.txt (APPEND to end of file):
    ```
    ## [Date] - [Task Title]
-   Thread: [current thread URL]
    Task ID: [task-id]
    - What was implemented
    - Files changed
-   - **Learnings for future iterations:**
-     - Patterns discovered
-     - Gotchas encountered
-     - Useful context
+   - Patterns discovered
    ---
    ```
 
-4. If you discovered a reusable pattern for THIS FEATURE, add it to the `## Codebase Patterns` section at the TOP of progress.txt
+5. Commit changes: git add -A && git commit -m "feat: [task-title]"
 
-5. Commit all changes with message: `feat: [Task Title]`
+6. Mark task complete: task_list action: "update", taskID: "[task-id]", status: "completed"
 
-6. Mark task as completed: `task_list action: "update", taskID: "[task-id]", status: "completed"`
+7. Return summary of what was done
+```
 
-7. Invoke the ralph skill to continue the loop
+**Example of parallel spawning (3 ready tasks):**
+
+In a SINGLE assistant message, include multiple Task tool calls:
+- Task 1: Implement T001
+- Task 2: Implement T006  
+- Task 3: Implement T012
+
+All three agents run concurrently!
+
+### 4. After batch completes - CONTINUE THE LOOP
+
+After all parallel agents return:
+
+1. Report what was completed in this batch
+2. Query for newly ready tasks (dependencies now satisfied)
+3. Spawn the next batch of parallel agents
+4. Repeat until no more tasks
+
+**THE LOOP NEVER STOPS UNTIL ALL TASKS ARE DONE.**
+
+### 5. Coordinator responsibilities
+
+The main thread (coordinator) must:
+- Track total tasks: completed vs remaining
+- After each batch, immediately query for new ready tasks
+- Spawn the next batch without user intervention
+- Only stop when ALL tasks show `status: "completed"`
+
+```
+LOOP:
+  1. Query ready tasks
+  2. If none ready AND all complete → DONE
+  3. If none ready AND some blocked → Report blockers
+  4. If ready tasks exist → Spawn ALL as parallel Task agents
+  5. Wait for batch to complete
+  6. GOTO 1
 ```
 
 ---
 
-## Progress File Format
+## Conflict Prevention for Parallel Agents
 
-```markdown
-# Build Progress Log
-Started: [date]
-Feature: [feature name]
-Parent Task: [parent-task-id]
+When multiple agents run in parallel, prevent file conflicts:
 
-## Codebase Patterns
-(Patterns discovered during this feature build)
-
----
-
-## [Date] - [Task Title]
-Thread: https://ampcode.com/threads/[thread-id]
-Task ID: [id]
-- What was implemented
-- Files changed
-- **Learnings for future iterations:**
-  - Patterns discovered
-  - Gotchas encountered
----
-```
-
-**Note:** When a new feature starts with a different parent task ID, reset progress.txt completely. Long-term learnings belong in AGENTS.md files, not progress.txt.
-
----
-
-## Task Discovery
-
-While working, **liberally create new tasks** when you discover:
-- Failing tests or test gaps
-- Code that needs refactoring
-- Missing error handling
-- Documentation gaps
-- TODOs or FIXMEs in the code
-- Build/lint warnings
-- Performance issues
-
-Use `task_list action: "create"` immediately. Set appropriate `dependsOn` relationships.
-
----
-
-## Browser Verification
-
-For UI tasks, specify the right verification method:
-
-**Functional testing** (checking behavior, not appearance):
-```
-Use agent-browser with snapshot -i to read page content
-```
-- `agent-browser snapshot -i` returns interactive elements with refs that can be verified
-- Use for: button exists, text appears, form works
-- Example: `agent-browser snapshot -i | grep "Submit"` to verify button exists
-
-**Visual testing** (checking appearance):
-```
-Use agent-browser screenshot to capture and verify visual appearance
-```
-- `agent-browser screenshot tmp/result.png` saves a screenshot
-- Use for: layout, colors, styling, animations
+1. **Each task should touch DIFFERENT files** - task design should ensure this
+2. **progress.txt updates** - Each agent appends to end; conflicts are rare
+3. **If conflict occurs** - Agent should pull latest, resolve, and continue
 
 ---
 
 ## Quality Requirements
 
 Before marking any task complete:
-- `npm run typecheck` must pass
-- `npm test` must pass
+- `npm run build` must pass (or `npm run typecheck`)
 - Changes must be committed
 - Progress must be logged
+- Task marked as `completed` via task_list
 
 ---
 
 ## Stop Condition
 
 When no ready tasks remain AND all tasks are completed:
-1. Output: "✅ Build complete - all tasks finished!"
-2. Summarize what was accomplished
+1. Output: "✅ BUILD COMPLETE - All [N] tasks finished!"
+2. Summarize total tasks completed
+3. List any issues encountered
 
 ---
 
-## Important Notes
+## Max Parallelism
 
-- Always use `ready: true` when listing tasks to only get tasks with satisfied dependencies
-- Always use `limit: 5-10` when listing tasks to avoid context overflow
-- Each handoff runs in a fresh thread with clean context
-- Progress.txt is the memory between iterations - keep it updated
-- Prefer tasks in the same area as just-completed work for better context continuity
-- The handoff goal MUST include instructions to update progress.txt, commit, and re-invoke this skill
+Spawn up to **5 parallel agents** per batch to avoid overwhelming the system.
+If more than 5 tasks are ready, prioritize by:
+1. Tasks with most dependents (unblock more work)
+2. Foundation/infrastructure tasks first
+3. UI tasks last (they depend on backend)
+
+---
+
+## Example Full Run
+
+```
+Batch 1: [T001, T006, T012] → 3 agents spawn
+         ↓ all complete
+Batch 2: [T002, T003, T014] → 3 agents spawn (deps satisfied)
+         ↓ all complete
+Batch 3: [T004, T005, T007, T008, T009] → 5 agents spawn
+         ↓ all complete
+... continues until ...
+Batch N: [T051] → 1 agent spawns
+         ↓ complete
+✅ BUILD COMPLETE - All 51 tasks finished!
+```
+
+---
+
+## Running Ralph
+
+To start the parallel build, say: **"run ralph"**
+
+The coordinator will:
+1. Read parent-task-id.txt
+2. Query all ready tasks
+3. Spawn parallel agents for each
+4. Wait for completion
+5. Query newly ready tasks
+6. Repeat until done
+
+**No user intervention needed after starting.**

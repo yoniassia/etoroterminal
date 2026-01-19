@@ -1,0 +1,18 @@
+# Build Progress Log
+Started: 2026-01-19
+Feature: eToro Terminal (US) - Bloomberg-like Pro Trader UX
+Parent Task: 1
+
+## Codebase Patterns
+- React + TypeScript with Vite
+- Components in src/components/
+- Services in src/services/
+- API base: https://public-api.etoro.com
+
+---
+
+## 2026-01-19 - T006: Key manager with encrypted storage
+Task ID: T006
+- Created secure key manager service
+- Files: src/services/keyManager.ts, src/services/crypto.ts
+---
