@@ -83,11 +83,14 @@ export class EToroApiService {
     const fetchOptions: RequestInit = {
       method: options.method || 'GET',
       headers,
-      mode: 'cors',
       ...options,
     };
 
-    console.log('[Fetch Options]', fetchOptions);
+    console.log('[Fetch Options]', {
+      method: fetchOptions.method,
+      url,
+      headersCount: Object.keys(headers).length,
+    });
 
     const response = await fetch(url, fetchOptions);
 
@@ -107,15 +110,9 @@ export class EToroApiService {
 
   async getPortfolio(): Promise<PortfolioData> {
     try {
-      // Try demo account first (most common for API testing)
-      let data;
-      try {
-        console.log('Trying demo account endpoint: /api/v1/trading/info/demo/portfolio');
-        data = await this.makeRequest('/api/v1/trading/info/demo/portfolio');
-      } catch (error) {
-        console.log('Demo account failed, trying real account: /api/v1/trading/info/portfolio');
-        data = await this.makeRequest('/api/v1/trading/info/portfolio');
-      }
+      // Use DEMO account endpoint with public demo API keys
+      console.log('Fetching demo account portfolio: /api/v1/trading/info/demo/portfolio');
+      const data = await this.makeRequest('/api/v1/trading/info/demo/portfolio');
 
       console.log('Full portfolio response:', JSON.stringify(data, null, 2));
 
