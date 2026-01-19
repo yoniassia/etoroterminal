@@ -1,10 +1,33 @@
 const ETORO_API_BASE_URL = 'https://public-api.etoro.com';
 
-interface PortfolioData {
+export interface Position {
+  positionId: number;
+  instrumentId: number;
+  isBuy: boolean;
+  amount: number;
+  leverage: number;
+  units: number;
+  openRate: number;
+  openDateTime: string;
+  takeProfitRate?: number;
+  stopLossRate?: number;
+}
+
+export interface PortfolioData {
   totalValue: number;
   equity: number;
   credit: number;
+  bonusCredit: number;
   profit: number;
+  positions: Position[];
+}
+
+export interface UserInfo {
+  username: string;
+  customerId: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
 
 // Generate a UUID v4
@@ -101,7 +124,9 @@ export class EToroApiService {
         totalValue,
         equity: positionsValue,
         credit,
+        bonusCredit,
         profit: 0, // Would need PnL endpoint for actual profit
+        positions: clientPortfolio.positions || [],
       };
     } catch (error) {
       console.error('Error fetching portfolio:', error);
@@ -109,11 +134,20 @@ export class EToroApiService {
     }
   }
 
-  async getAccountInfo() {
+  async getUserInfo(): Promise<UserInfo> {
     try {
-      return await this.makeRequest('/api/v1/user-info/people');
+      const data = await this.makeRequest('/api/v1/user-info/people');
+      console.log('User info response:', data);
+
+      return {
+        username: data.username || data.userName || 'Unknown',
+        customerId: data.customerId || data.cid || data.id || '',
+        firstName: data.firstName || data.first_name,
+        lastName: data.lastName || data.last_name,
+        email: data.email,
+      };
     } catch (error) {
-      console.error('Error fetching account info:', error);
+      console.error('Error fetching user info:', error);
       throw error;
     }
   }
