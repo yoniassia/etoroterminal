@@ -44,6 +44,12 @@ export class EToroApiService {
   private apiKey: string;
 
   constructor(userKey: string, apiKey: string) {
+    console.log('[EToroApiService] Initializing with keys:', {
+      'userKey length': userKey?.length || 0,
+      'userKey preview': userKey?.substring(0, 50) || 'MISSING',
+      'apiKey length': apiKey?.length || 0,
+      'apiKey preview': apiKey?.substring(0, 30) || 'MISSING',
+    });
     this.userKey = userKey;
     this.apiKey = apiKey;
   }
@@ -65,19 +71,28 @@ export class EToroApiService {
     Object.assign(headers, options.headers || {});
 
     const url = `${ETORO_API_BASE_URL}${endpoint}`;
-    console.log(`[API Request] ${url}`);
-    console.log('[API Headers]', {
-      'x-request-id': requestId,
-      'x-api-key': this.apiKey.substring(0, 20) + '...',
-      'x-user-key': this.userKey.substring(0, 50) + '...'
+    console.log(`[API Request] ${options.method || 'GET'} ${url}`);
+    console.log('[Full API Headers]', headers);
+    console.log('[API Keys]', {
+      'x-api-key length': this.apiKey.length,
+      'x-api-key first 30': this.apiKey.substring(0, 30),
+      'x-user-key length': this.userKey.length,
+      'x-user-key first 80': this.userKey.substring(0, 80),
     });
 
-    const response = await fetch(url, {
-      ...options,
+    const fetchOptions: RequestInit = {
+      method: options.method || 'GET',
       headers,
-    });
+      mode: 'cors',
+      ...options,
+    };
+
+    console.log('[Fetch Options]', fetchOptions);
+
+    const response = await fetch(url, fetchOptions);
 
     console.log(`[API Response] Status: ${response.status} ${response.statusText}`);
+    console.log('[Response Headers]', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -92,14 +107,14 @@ export class EToroApiService {
 
   async getPortfolio(): Promise<PortfolioData> {
     try {
-      // Try real account first, then demo if it fails
+      // Try demo account first (most common for API testing)
       let data;
       try {
-        console.log('Trying real account endpoint: /api/v1/trading/info/portfolio');
-        data = await this.makeRequest('/api/v1/trading/info/portfolio');
-      } catch (error) {
-        console.log('Real account failed, trying demo account: /api/v1/trading/info/demo/portfolio');
+        console.log('Trying demo account endpoint: /api/v1/trading/info/demo/portfolio');
         data = await this.makeRequest('/api/v1/trading/info/demo/portfolio');
+      } catch (error) {
+        console.log('Demo account failed, trying real account: /api/v1/trading/info/portfolio');
+        data = await this.makeRequest('/api/v1/trading/info/portfolio');
       }
 
       console.log('Full portfolio response:', JSON.stringify(data, null, 2));
