@@ -1,4 +1,4 @@
-const ETORO_API_BASE_URL = 'https://api.etoro.com';
+const ETORO_API_BASE_URL = 'https://public-api.etoro.com';
 
 interface PortfolioData {
   totalValue: number;
@@ -66,29 +66,42 @@ export class EToroApiService {
       // Try real account first, then demo if it fails
       let data;
       try {
-        console.log('Trying real account endpoint...');
-        data = await this.makeRequest('/api/v1/portfolio/real');
+        console.log('Trying real account endpoint: /api/v1/trading/info/portfolio');
+        data = await this.makeRequest('/api/v1/trading/info/portfolio');
       } catch (error) {
-        console.log('Real account failed, trying demo account...');
-        data = await this.makeRequest('/api/v1/portfolio/demo');
+        console.log('Real account failed, trying demo account: /api/v1/trading/info/demo/portfolio');
+        data = await this.makeRequest('/api/v1/trading/info/demo/portfolio');
       }
 
       console.log('Full portfolio response:', JSON.stringify(data, null, 2));
 
-      // Extract total value from the response - check multiple possible locations
-      const totalValue = data.totalValue ||
-                        data.TotalValue ||
-                        data.accountInfo?.totalValue ||
-                        data.AccountInfo?.TotalValue ||
-                        data.account?.totalValue ||
-                        data.balance?.totalValue ||
-                        0;
+      // Extract data from the actual API response structure
+      const clientPortfolio = data.clientPortfolio || data;
+      const credit = clientPortfolio.credit || 0;
+      const bonusCredit = clientPortfolio.bonusCredit || 0;
+
+      // Calculate total value from positions
+      let positionsValue = 0;
+      if (clientPortfolio.positions && Array.isArray(clientPortfolio.positions)) {
+        positionsValue = clientPortfolio.positions.reduce((total: number, position: any) => {
+          return total + (position.amount || 0);
+        }, 0);
+      }
+
+      const totalValue = credit + bonusCredit + positionsValue;
+
+      console.log('Calculated values:', {
+        credit,
+        bonusCredit,
+        positionsValue,
+        totalValue
+      });
 
       return {
         totalValue,
-        equity: data.equity || data.Equity || data.accountInfo?.equity || data.AccountInfo?.Equity || 0,
-        credit: data.credit || data.Credit || data.accountInfo?.credit || data.AccountInfo?.Credit || 0,
-        profit: data.profit || data.Profit || data.accountInfo?.profit || data.AccountInfo?.Profit || 0,
+        equity: positionsValue,
+        credit,
+        profit: 0, // Would need PnL endpoint for actual profit
       };
     } catch (error) {
       console.error('Error fetching portfolio:', error);
