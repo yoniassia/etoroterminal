@@ -1,17 +1,19 @@
 import { useState } from 'react';
 
 interface LoginProps {
-  onLogin: (publicKey: string, userKey: string) => void;
+  onLogin: (publicKey: string, userKey: string) => Promise<void>;
+  error: string | null;
+  loading: boolean;
 }
 
-export default function Login({ onLogin }: LoginProps) {
+export default function Login({ onLogin, error, loading }: LoginProps) {
   const [publicKey, setPublicKey] = useState(import.meta.env.VITE_ETORO_PUBLIC_KEY || '');
   const [userKey, setUserKey] = useState(import.meta.env.VITE_ETORO_USER_KEY || '');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (publicKey && userKey) {
-      onLogin(publicKey, userKey);
+    if (publicKey && userKey && !loading) {
+      await onLogin(publicKey, userKey);
     }
   };
 
@@ -48,9 +50,21 @@ export default function Login({ onLogin }: LoginProps) {
           />
         </div>
 
-        <button type="submit" className="terminal-button">
-          [ LOGIN ]
+        <button type="submit" className="terminal-button" disabled={loading}>
+          {loading ? '[ CONNECTING TO eTORO API... ]' : '[ LOGIN ]'}
         </button>
+
+        {error && (
+          <div className="error-message" style={{ marginTop: '15px' }}>
+            ✗ ERROR: {error}
+          </div>
+        )}
+
+        {loading && (
+          <div className="loading" style={{ marginTop: '15px' }}>
+            ▓▓▓ VALIDATING API KEYS ▓▓▓
+          </div>
+        )}
       </form>
     </div>
   );

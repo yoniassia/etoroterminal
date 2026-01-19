@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { etoroApi, PortfolioData, UserInfo, Position } from '../services/etoroApi';
+import { EToroApiService, PortfolioData, UserInfo, Position } from '../services/etoroApi';
 
 interface PortfolioProps {
-  username: string;
+  apiService: EToroApiService;
   onLogout: () => void;
 }
 
-export default function Portfolio({ username, onLogout }: PortfolioProps) {
+export default function Portfolio({ apiService, onLogout }: PortfolioProps) {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(false);
@@ -19,17 +19,37 @@ export default function Portfolio({ username, onLogout }: PortfolioProps) {
     try {
       console.log('Fetching portfolio and user data...');
 
-      // Fetch both portfolio and user info in parallel
-      const [portfolio, user] = await Promise.all([
-        etoroApi.getPortfolio(),
-        etoroApi.getUserInfo(),
-      ]);
+      // Fetch portfolio and user info separately to handle partial failures
+      let portfolio: PortfolioData | null = null;
+      let user: UserInfo | null = null;
+      const errors: string[] = [];
 
-      console.log('Portfolio data received:', portfolio);
-      console.log('User info received:', user);
+      // Try to get portfolio
+      try {
+        portfolio = await apiService.getPortfolio();
+        console.log('✅ Portfolio data received:', portfolio);
+        setPortfolioData(portfolio);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Failed to fetch portfolio';
+        console.error('❌ Portfolio fetch error:', err);
+        errors.push(`Portfolio: ${msg}`);
+      }
 
-      setPortfolioData(portfolio);
-      setUserInfo(user);
+      // Try to get user info
+      try {
+        user = await apiService.getUserInfo();
+        console.log('✅ User info received:', user);
+        setUserInfo(user);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Failed to fetch user info';
+        console.error('❌ User info fetch error:', err);
+        errors.push(`User Info: ${msg}`);
+      }
+
+      // Show errors if any, but still display whatever data we got
+      if (errors.length > 0) {
+        setError(errors.join(' | '));
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch data';
       console.error('Fetch error:', err);
@@ -50,7 +70,7 @@ export default function Portfolio({ username, onLogout }: PortfolioProps) {
       <div className="portfolio-container">
         <div className="portfolio-header">
           <div>
-            <span style={{ color: '#00cc00' }}>&gt; USER:</span> {userInfo?.username || username}
+            <span style={{ color: '#00cc00' }}>&gt; USER:</span> {userInfo?.username || 'Demo Account'}
             {userInfo?.customerId && (
               <span style={{ color: '#008800', fontSize: '12px', marginLeft: '10px' }}>
                 (ID: {userInfo.customerId})
