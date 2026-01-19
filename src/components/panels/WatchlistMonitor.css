@@ -1,0 +1,265 @@
+.watchlist-monitor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  background-color: #0a0a0a;
+}
+
+.watchlist-monitor__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #333;
+  background-color: #111;
+}
+
+.watchlist-monitor__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.watchlist-monitor__add-btn {
+  background: none;
+  border: none;
+  color: #00cc00;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: all 0.15s;
+}
+
+.watchlist-monitor__add-btn:hover {
+  color: #00ff00;
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.watchlist-monitor__add-btn--large {
+  margin-top: 16px;
+  font-size: 12px;
+  padding: 8px 16px;
+  border: 1px solid #333;
+}
+
+.watchlist-monitor__add-btn--large:hover {
+  border-color: #00cc00;
+}
+
+.watchlist-monitor__title {
+  color: #00cc00;
+  font-size: 12px;
+}
+
+.watchlist-monitor__stats {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #888;
+}
+
+.watchlist-monitor__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #00cc00;
+}
+
+.watchlist-monitor__error {
+  padding: 12px;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  margin: 12px;
+}
+
+.watchlist-monitor__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.watchlist-monitor__table-header {
+  display: grid;
+  grid-template-columns: 100px 80px 100px 80px 80px 100px;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.watchlist-monitor__table-header span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watchlist-monitor__table-header span:nth-child(2),
+.watchlist-monitor__table-header span:nth-child(3),
+.watchlist-monitor__table-header span:nth-child(4),
+.watchlist-monitor__table-header span:nth-child(5),
+.watchlist-monitor__table-header span:nth-child(6) {
+  text-align: right;
+}
+
+.watchlist-monitor__viewport {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.watchlist-monitor__scroll-content {
+  position: relative;
+}
+
+.watchlist-monitor__rows-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.watchlist-monitor__row {
+  display: grid;
+  grid-template-columns: 100px 80px 100px 80px 80px 100px;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-size: 12px;
+  height: 32px;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.watchlist-monitor__row:hover {
+  background-color: #1a1a1a;
+}
+
+.watchlist-monitor__row--selected {
+  background-color: #002200;
+  border-color: #00cc00;
+}
+
+.watchlist-monitor__row--stale {
+  opacity: 0.6;
+}
+
+.watchlist-monitor__cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watchlist-monitor__cell--symbol {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.watchlist-monitor__cell--price {
+  text-align: right;
+  color: #ccc;
+}
+
+.watchlist-monitor__cell--change {
+  text-align: right;
+}
+
+.watchlist-monitor__cell--change.positive {
+  color: #00ff00;
+}
+
+.watchlist-monitor__cell--change.negative {
+  color: #ff4444;
+}
+
+.watchlist-monitor__cell--change.neutral {
+  color: #888;
+}
+
+.watchlist-monitor__cell--bid {
+  text-align: right;
+  color: #44aaff;
+}
+
+.watchlist-monitor__cell--ask {
+  text-align: right;
+  color: #ff8844;
+}
+
+.watchlist-monitor__cell--volume {
+  text-align: right;
+  color: #888;
+}
+
+.watchlist-monitor__flash {
+  animation: quote-flash 0.3s ease-out;
+}
+
+@keyframes quote-flash {
+  0% {
+    background-color: rgba(0, 255, 0, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.watchlist-monitor__flash--down {
+  animation: quote-flash-down 0.3s ease-out;
+}
+
+@keyframes quote-flash-down {
+  0% {
+    background-color: rgba(255, 68, 68, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.watchlist-monitor__row--removing {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.watchlist-monitor__remove-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: all 0.15s;
+  width: 24px;
+  text-align: center;
+}
+
+.watchlist-monitor__remove-btn:hover {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.watchlist-monitor__remove-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.watchlist-monitor__row:has(.watchlist-monitor__remove-btn) {
+  grid-template-columns: 100px 80px 100px 80px 80px 100px 30px;
+}
+
+.watchlist-monitor__table-header:has(span:nth-child(7)) {
+  grid-template-columns: 100px 80px 100px 80px 80px 100px 30px;
+}

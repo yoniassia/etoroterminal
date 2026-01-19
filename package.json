@@ -2,10 +2,35 @@
   "name": "etoro-terminal",
   "version": "1.0.0",
   "description": "eToro Portfolio Terminal",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron:compile": "tsc -p electron/tsconfig.json",
+    "electron:dev": "npm run electron:compile && cross-env NODE_ENV=development electron .",
+    "electron:build": "npm run build && npm run electron:compile && electron-builder",
+    "electron:pack": "npm run build && npm run electron:compile && electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.etoro.terminal",
+    "productName": "eToro Terminal",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -15,6 +40,9 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.11"
   }

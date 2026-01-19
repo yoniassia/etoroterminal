@@ -32,6 +32,16 @@ export const ENDPOINTS = {
   INSTRUMENTS_SEARCH: '/api/v1/instruments/search',
   INSTRUMENT_DETAILS: (instrumentId: number) => `/api/v1/instruments/${instrumentId}`,
 
+  // Curated Lists
+  CURATED_LISTS: '/api/v1/curated-lists',
+
+  // Recommendations
+  RECOMMENDATIONS: '/api/v1/recommendations',
+
+  // Traders (Copy Trading)
+  TRADERS_SEARCH: '/api/v1/traders/search',
+  TRADER_PROFILE: (userId: string) => `/api/v1/traders/${userId}`,
+
   // Watchlists
   WATCHLISTS: '/api/v1/watchlists',
   WATCHLIST: (watchlistId: string) => `/api/v1/watchlists/${watchlistId}`,
@@ -48,6 +58,11 @@ export const ENDPOINTS = {
   TRADING_DEMO_CLOSE: '/api/v1/trading/demo/close',
   TRADING_DEMO_MODIFY: '/api/v1/trading/demo/modify',
   TRADING_DEMO_ORDERS: '/api/v1/trading/demo/orders',
+
+  // Feeds
+  FEED_USER: (userId: string) => `/api/v1/feeds/user/${userId}`,
+  FEED_INSTRUMENT: (instrumentId: number) => `/api/v1/feeds/instrument/${instrumentId}`,
+  FEED_CREATE_POST: '/api/v1/feeds/posts',
 } as const;
 
 // ============================================================================

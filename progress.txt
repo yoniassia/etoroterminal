@@ -1,0 +1,676 @@
+T024: Trading mode gating Demo/Real - COMPLETED
+- Created src/contexts/TradingModeContext.tsx with TradingMode enum (DEMO, REAL)
+- Created src/components/TradingModeIndicator.tsx with visual indicators
+- setTradingMode(mode) updates context
+- Real mode shows warning banner
+- Demo mode shows demo indicator
+- isRealMode() helper for gating actions
+- Mode persists in sessionStorage
+- npm run build passes
+
+T014: WebSocket client connect/reconnect - COMPLETED
+- Created src/services/wsClient.ts with WSClient class
+- connect() establishes WebSocket connection
+- disconnect() cleanly closes connection
+- Automatic reconnection on unexpected disconnect
+- Exponential backoff: 1s, 2s, 4s, 8s... max 30s
+- Connection states: connecting, connected, disconnected, reconnecting
+- Lifecycle events logged with timestamps
+- subscribe/unsubscribe for topics (quotes, positions, orders, portfolio)
+- Type-safe message handlers for QuoteUpdate, PositionUpdate, OrderUpdate
+- npm run build passes
+
+T003: REST adapter scaffold - COMPLETED
+- Created src/api/restAdapter.ts with RestAdapter class
+- makeRequest(endpoint, options) handles GET/POST/PUT/DELETE
+- Automatic x-request-id header injection (UUID v4)
+- Request/response logging via interceptors (secrets sanitized)
+- Typed error handling with RestError (code, status, requestId, isRetryable)
+- Retry logic with exponential backoff for transient failures (429, 5xx)
+- Configurable timeout, maxRetries, retryDelay
+- Factory function createRestAdapter() and singleton getDefaultAdapter()
+- npm run build passes
+
+T013: Panel linking and active symbol context - COMPLETED
+- Created src/components/Workspace/ActiveSymbolContext.tsx with React context
+- setActiveSymbol(symbol) updates context for all groups or specific group
+- Created src/components/Workspace/usePanelLink.ts hook for panel linking
+- Panels can be linked to groups A, B, or C
+- Panels can be pinned (don't follow active symbol)
+- Linked panels receive symbol updates via currentSymbol
+- Updated Panel.tsx with linkGroup, isPinned, and handler props
+- Link group colors: A=green, B=cyan, C=magenta
+- npm run build passes
+
+T008: Diagnostics log store - COMPLETED
+- Created src/services/diagnosticsStore.ts with ring buffer (max 500 entries)
+- logRequest(req) adds REST request log with method, url, headers, body
+- logResponse(res) adds REST response log with status, url, headers, body, durationMs
+- logWSEvent(event) adds WebSocket lifecycle events (connect, disconnect, message, error, reconnect, subscribe, unsubscribe)
+- getLogs(type?) returns all logs or filtered by type (request, response, ws_event)
+- exportBundle() returns sanitized JSON with metadata (exportedAt, version, entryCount, logs)
+- Automatic sanitization of sensitive headers (x-api-key, x-user-key, authorization, cookie)
+- Automatic sanitization of sensitive fields (password, token, secret, apiKey, userKey)
+- Oldest entries evicted when buffer exceeds 500 entries
+- npm run build passes
+  
+[Mon 01/19/2026 21:43:48.44] T005: Created watchlistsAdapter.ts with CRUD operations - getWatchlists, createWatchlist, deleteWatchlist, addToWatchlist, removeFromWatchlist 
+  
+[Mon 01/19/2026 21:44:05.92] T004: Created curatedListsAdapter.ts - getCuratedLists() returns typed CuratedList[] via REST adapter 
+  
+T007: Connection health monitor - COMPLETED  
+- Created src/services/connectionHealth.ts with ConnectionHealthMonitor class  
+- startMonitoring() begins periodic health checks with configurable interval  
+- stopMonitoring() cleanly stops monitoring  
+- getStatus() returns: healthy, degraded, or offline  
+- getMetrics() returns: latency, lastSuccess, errorCount, consecutiveErrors, totalChecks, successRate  
+- Ping USER_INFO endpoint to check connectivity  
+- Status change callbacks via onStatusChange()  
+- Configurable thresholds for degraded/offline detection  
+- npm run build passes 
+  
+T010: Command bar UI - COMPLETED  
+- Created src/components/CommandBar/CommandBar.tsx - main input component  
+- Created src/components/CommandBar/CommandBar.css - terminal dark theme styling  
+- Created src/components/CommandBar/Autocomplete.tsx - dropdown suggestions  
+- Created src/components/CommandBar/index.ts - exports  
+- Bloomberg-style command bar with green text on dark background  
+- Symbol resolution with autocomplete via symbolResolver.searchSymbols()  
+- Function codes: QT, WL, TRD, ORD, PF, PI, CH, AL  
+- Arrow keys navigate suggestions, Enter selects, Escape closes  
+- Debounced search (150ms) for performance  
+- npm run build passes 
+
+T016: Quotes store with staleness - COMPLETED
+- Created src/stores/quotesStore.ts with QuotesStore class
+- updateQuote(instrumentId, quote) stores/updates quote data
+- getQuote(instrumentId) returns latest StoredQuote
+- isStale(instrumentId) returns true if no update in 10 seconds
+- subscribe(instrumentId, callback) for real-time updates with unsubscribe function
+- Tracks bid, ask, lastPrice, change, changePercent, timestamp, receivedAt
+- getStaleInstruments() returns all stale instrument IDs
+- npm run build passes
+
+T015: WS subscription manager - COMPLETED
+- Created src/services/wsSubscriptionManager.ts with WSSubscriptionManager class
+- subscribe(topics) adds subscriptions (single or array), skips duplicates
+- unsubscribe(topics) removes subscriptions (single or array)
+- getActiveSubscriptions() returns array of current subscriptions
+- hasSubscription(topic) checks if topic is subscribed
+- Batch subscribe/unsubscribe with configurable delay (default 50ms)
+- No duplicate subscriptions - already subscribed topics are skipped
+- Auto-resubscribe on reconnect via state change handler
+- clearAllSubscriptions() removes all subscriptions
+- dispose() cleans up resources
+- Factory function createSubscriptionManager(wsClient, options)
+- npm run build passes
+
+T009: REST service singleton - COMPLETED
+- Created src/services/apiService.ts with ApiService class
+- Singleton pattern via getApiService() function
+- Combines RestAdapter with keyManager for automatic key injection
+- Injects x-api-key and x-user-key from keyManager.getKeys()
+- Throws ApiServiceError if no keys configured
+- isReady() checks if keys are available
+- configure() allows custom RestAdapterConfig (baseUrl, timeout, retries, etc.)
+- reset() clears adapter when keys change
+- Exposes get/post/put/delete methods with full typing
+- npm run build passes
+
+T011: Command parser - COMPLETED
+- Created src/components/CommandBar/commandParser.ts
+- parseCommand("AAPL") → { symbol: "AAPL", func: null }
+- parseCommand("AAPL QT") → { symbol: "AAPL", func: "QT" }
+- parseCommand("WL") → { symbol: null, func: "WL" }
+- Validates function codes against known list (QT, WL, TRD, ORD, PF, PI, CH, AL)
+- isValidFunctionCode() and getValidFunctionCodes() helpers exported
+- npm run build passes
+
+T028: WS private auth handshake - COMPLETED
+- Enhanced src/services/wsClient.ts with auth handshake
+- Added AuthState type: unauthenticated, authenticating, authenticated, failed
+- authenticate() sends auth message with apiKey/userKey credentials
+- isAuthenticated getter and authenticationState getter for state tracking
+- onAuthStateChange callback for auth state changes with error message
+- Private topics (positions, orders, portfolio) queued until authenticated
+- handleAuthResponse() processes auth success/failure from server
+- Auth failure sets state to 'failed' with error message and clears pending subscriptions
+- subscribePendingPrivateTopics() sends queued private subscriptions after auth success
+- Keys never logged (only auth message sent status)
+- npm run build passes
+
+T025: Trade ticket UI TRD - COMPLETED
+- Created src/components/panels/TradeTicket.tsx with trade ticket panel
+- Created src/components/panels/TradeTicket.css with terminal dark theme styling
+- Input toggle for amount ($) OR units
+- Leverage dropdown (1x, 2x, 5x, 10x, 20x)
+- Optional stop-loss and take-profit inputs
+- Buy (green) / Sell (red) buttons with hover effects
+- Disabled with warning if no API keys configured
+- Real mode shows warning banner and requires confirmation dialog
+- Keyboard shortcuts: Ctrl+B (Buy), Ctrl+S (Sell), Esc (Cancel)
+- Uses TradingModeContext for mode gating
+- Uses keyManager.hasKeys() for API key detection
+- npm run build passes
+
+T029: Private topic subscription and event routing - COMPLETED
+- Created src/services/privateTopicRouter.ts with PrivateTopicRouter class
+- subscribeToPrivateTopics() subscribes to positions, orders, portfolio after auth
+- Auto-subscribes when authenticated (configurable via autoSubscribe option)
+- Routes position updates to position handlers via onPositionUpdate(handler)
+- Routes order updates to order handlers via onOrderUpdate(handler)
+- Routes portfolio updates via onPortfolioUpdate(handler)
+- onFill(handler) callback for executed orders (fills)
+- subscribeToPosition(positionId) and subscribeToOrder(orderId) for specific items
+- Uses WSSubscriptionManager if provided, otherwise direct wsClient calls
+- dispose() cleans up all handlers and subscriptions
+- Factory function createPrivateTopicRouter(wsClient, subscriptionManager, options)
+- npm run build passes
+
+T018: Watchlists list panel - COMPLETED
+- Created src/components/panels/WatchlistsPanel.tsx
+- Created src/components/panels/WatchlistsPanel.css
+- Lists all user watchlists with name and item count
+- Star icon (★/☆) to set default watchlist with yellow highlight
+- Click watchlist item to trigger onSelectWatchlist callback
+- Loading state with "▓▓▓ LOADING WATCHLISTS ▓▓▓" message
+- Error state with retry button
+- Empty state when no watchlists found
+- Terminal dark theme (green text, dark background)
+- Uses getWatchlistsAdapter() from watchlistsAdapter.ts
+- Implements PanelContentProps for workspace integration
+- npm run build passes
+
+T022: Curated lists browser panel - COMPLETED
+- Created src/components/panels/CuratedListsPanel.tsx
+- Created src/components/panels/CuratedListsPanel.css
+- Displays curated lists from getDefaultCuratedListsAdapter()
+- Shows list name, description, category, and item count
+- Click to expand/collapse list contents with [+]/[-] toggle
+- Expanded view shows instruments with symbol, displayName, weight
+- onInstrumentSelect callback for instrument selection
+- Loading state with "▓▓▓ LOADING CURATED LISTS ▓▓▓" message
+- Error state with retry button
+- Empty state when no lists available
+- Terminal dark theme (green text, dark background)
+- npm run build passes
+
+T017: Quote panel QT - COMPLETED
+- Created src/components/panels/QuotePanel.tsx
+- Created src/components/panels/QuotePanel.css
+- Shows bid, ask, last, spread, change (real-time from WebSocket)
+- Uses usePanelLink hook for panel linking (follows active symbol or pinned)
+- Subscribes to quote updates via WS_TOPICS.QUOTES_INSTRUMENT(instrumentId)
+- Integrates with quotesStore for quote data and subscriptions
+- Stale indicator when no updates for 10s (pulsing orange dot + "STALE" text)
+- Uses symbolResolver for symbol-to-instrumentId mapping
+- Bid displayed in blue, Ask in orange, Last in green
+- Change shows positive/negative coloring
+- Terminal dark theme consistent with other panels
+- npm run build passes
+
+T027: Portfolio position close adapter - COMPLETED
+- Created src/api/adapters/positionAdapter.ts with PositionAdapter class
+- closePosition(positionId) closes full position
+- closePositionPartial(positionId, units) closes partial position (units > 0 required)
+- Uses demo or real endpoint based on isDemo flag (TRADING_CLOSE vs TRADING_DEMO_CLOSE)
+- Returns ClosePositionResult with positionId, closedRate, closedAt, profit, isPartialClose, closedUnits
+- Factory function createPositionAdapter(restAdapter, isDemo)
+- Singleton pattern via getPositionAdapter(isDemo) for demo and real adapters
+- npm run build passes
+
+T026: Trading REST adapter - COMPLETED
+- Created src/api/adapters/tradingAdapter.ts with TradingAdapter class
+- openPositionByAmount(instrumentId, amount, isBuy, leverage, sl?, tp?) opens market order by amount
+- openPositionByUnits(instrumentId, units, isBuy, leverage, sl?, tp?) opens market order by units
+- Uses demo or real endpoint based on isDemo flag (setDemoMode/isDemoMode)
+- Returns OrderResult with orderId, positionId, status, executedRate, executedAt, message
+- Factory function createTradingAdapter(restAdapter?, isDemo?)
+- Singleton pattern via getTradingAdapter()/setTradingAdapter()
+- npm run build passes
+
+T019: Watchlist monitor table with virtualization - COMPLETED
+- Created src/components/panels/WatchlistMonitor.tsx with virtualized table
+- Created src/components/panels/WatchlistMonitor.css with terminal dark theme
+- Custom virtualization: only visible rows rendered (ROW_HEIGHT=32px, OVERSCAN=5)
+- Columns: Symbol, Last, Change, Bid, Ask, Volume
+- Real-time quote updates via quotesStore subscriptions
+- Subscribe/unsubscribe as rows scroll in/out of view via wsSubscribe/wsUnsubscribe props
+- Click row to select symbol via onSelectSymbol callback
+- Flash animation on price changes (green for up, red for down)
+- Stale indicator when quote is stale (opacity reduced)
+- Selected row highlighted with green border
+- Stats display: visible rows count and subscribed count
+- Smooth scroll at 200+ items with ResizeObserver for viewport height
+- npm run build passes
+
+T020: Watchlist CRUD (create/delete/set default) - COMPLETED
+- Enhanced src/components/panels/WatchlistsPanel.tsx with CRUD operations
+- "[ + NEW ]" button opens create dialog with name input
+- Delete button (✕) appears on hover for each watchlist
+- Delete confirmation modal with danger styling
+- Set default persists to localStorage (defaultWatchlistId)
+- Optimistic UI: delete removes from list immediately, reverts on API failure
+- Create dialog: Enter submits, Escape cancels
+- Loading states for create/delete operations
+- Dialog styling matches terminal theme (green for create, red for delete)
+- npm run build passes
+
+T023: Recommendations panel - COMPLETED
+- Created src/api/adapters/recommendationsAdapter.ts with RecommendationsAdapter class
+- getRecommendations() fetches from /api/v1/recommendations endpoint
+- Added Recommendation and RecommendationsResponse types to etoro-api.types.ts
+- Created src/components/panels/RecommendationsPanel.tsx
+- Created src/components/panels/RecommendationsPanel.css
+- Shows instrument name, symbol, current price (streaming via quotesStore)
+- Displays recommendation type (buy/sell/hold/strong_buy/strong_sell) with color coding
+- Streaming quotes: subscribes to quotesStore for real-time price updates
+- Stale indicator when quote is stale (dimmed price)
+- "Add to watchlist" button per item (adds to default watchlist)
+- Button states: + WATCHLIST → ... → ✓ ADDED (disabled after added)
+- Loading state with "▓▓▓ LOADING RECOMMENDATIONS ▓▓▓"
+- Error state with retry button
+- Empty state when no recommendations available
+- Terminal dark theme consistent with other panels
+- npm run build passes
+
+T038: Alerts engine (local evaluator) - COMPLETED
+- Created src/services/alertsEngine.ts with AlertsEngine class
+- createAlert(instrumentId, type, condition) registers alert, returns alertId
+- deleteAlert(alertId) removes alert, returns success boolean
+- getAlerts() lists all registered alerts
+- Alert types: price_above, price_below, staleness
+- Evaluates price alerts on each quote update via quotesStore subscription
+- Evaluates staleness alerts via periodic interval (1s default)
+- onAlert(callback) fires callback when alert triggers
+- 5 minute cooldown (default) to prevent spam/de-duplication
+- enableAlert/disableAlert for temporary muting
+- getAlertsByInstrument(instrumentId) for filtered queries
+- Factory function createAlertsEngine(config) and singleton getDefaultAlertsEngine()
+- Automatic cleanup of subscriptions when alerts deleted
+- npm run build passes
+
+T036: Chart panel CH - COMPLETED
+- Created src/components/panels/ChartPanel.tsx with line chart
+- Created src/components/panels/ChartPanel.css with terminal dark theme
+- Canvas-based line chart rendering with auto-resize via ResizeObserver
+- Collects tick data from quotesStore real-time updates
+- Timeframe selector: 1m, 5m, 15m with candle aggregation
+- Aggregates ticks into OHLC candles based on selected timeframe
+- Uses usePanelLink hook for panel linking (follows active symbol or pinned)
+- Displays current price and change with color coding (green/red)
+- Shows tick count and candle count in footer
+- Subscribes to WS_TOPICS.QUOTES_INSTRUMENT(instrumentId)
+- Max 500 ticks stored in buffer
+- Grid lines and price scale labels on chart
+- Current price point highlighted with green dot
+- npm run build passes
+
+T030: Blotter panel (ORD) - COMPLETED
+- Created src/stores/ordersStore.ts with OrdersStore class
+- addOrder(order) adds order, updateOrder(orderId, update) updates order status
+- getAllOrders() returns orders sorted by createdAt descending
+- getOrdersByStatus(status) and getOrdersByInstrument(instrumentId) for filtering
+- subscribeToOrder(orderId, callback) for single order updates
+- subscribeToChanges(callback) for global order list updates
+- Created src/components/panels/BlotterPanel.tsx with order blotter
+- Created src/components/panels/BlotterPanel.css with terminal dark theme
+- Lists orders with: time, symbol, side, amount, status columns
+- Color coded status: pending=yellow, filled=green, cancelled=gray, rejected=red
+- Click row shows detail drawer with full order data (orderId, symbol, side, type, leverage, SL/TP, etc.)
+- Filter dropdown for status (All, Pending, Filled, Cancelled, Rejected) with counts
+- Real-time updates via ordersStore.subscribeToChanges()
+- Drawer updates in real-time when order status changes
+- npm run build passes
+
+T032: Portfolio panel PF - COMPLETED
+- Created src/stores/portfolioStore.ts with PortfolioStore class
+- getState() returns current portfolio state (portfolio, loading, error, lastUpdated)
+- getPositions() returns array of positions
+- getPosition(positionId) returns single position
+- subscribe(callback) for reactive updates with unsubscribe function
+- fetchPortfolio() fetches from etoroApi.getPortfolio()
+- closePosition(positionId) closes position (optimistic UI update)
+- Created src/components/panels/PortfolioPanel.tsx
+- Created src/components/panels/PortfolioPanel.css with terminal dark theme
+- Lists positions with: instrument, side (BUY/SELL), amount, leverage, open rate, P&L
+- P&L colored: green for positive, red for negative
+- Click row shows detail drawer with full position data
+- Drawer shows: instrumentId, instrument name, side, amount, units, leverage, open rate, current rate, opened date, SL/TP, P&L
+- Close button per position (in row and drawer)
+- Refresh button to reload portfolio
+- Summary bar shows total value and credit
+- Loading, error, and empty states
+- npm run build passes
+  
+T021: Watchlist items management (add/remove) - COMPLETED  
+- Enhanced src/components/panels/WatchlistMonitor.tsx with add/remove functionality  
+- Created src/components/panels/AddToWatchlistDialog.tsx  
+- Created src/components/panels/AddToWatchlistDialog.css  
+- Remove button (X) on each row, disables during removal  
+- "[ + ADD ]" button in header opens dialog  
+- Dialog has symbol search with autocomplete from INSTRUMENTS_SEARCH endpoint  
+- Debounced search (300ms) with loading indicator  
+- Keyboard navigation: Arrow keys, Enter to select, Escape to cancel  
+- Already added instruments filtered from search results  
+- Props: watchlistId, onAddItem, onRemoveItem for parent handling  
+- Grid layout adjusts for remove button column  
+- npm run build passes 
+
+T031: Local pending order optimistic record - COMPLETED
+- Enhanced src/stores/ordersStore.ts with optimistic order support
+- addOptimisticOrder(params) creates temporary order with isOptimistic=true, returns tempOrderId
+- reconcileOptimisticOrder(tempOrderId, realOrderId, update) replaces temp with real order
+- 30 second timeout marks optimistic orders as "unknown" if no WS update
+- updateOrder() clears timeout and sets isOptimistic=false on reconciliation
+- Enhanced src/api/adapters/tradingAdapter.ts to integrate with ordersStore
+- openPositionByAmount/openPositionByUnits accept optional instrumentInfo for optimistic orders
+- Optimistic order created before API call, reconciled after response
+- API errors mark optimistic order as rejected
+- Enhanced src/components/panels/BlotterPanel.tsx with optimistic row styling
+- Optimistic rows have pulsing animation (yellow background)
+- Unknown status rows have orange pulsing animation
+- Blinking indicator dot next to symbol for optimistic orders
+- CSS: .blotter-panel__row--optimistic, .blotter-panel__row--unknown with keyframe animations
+- npm run build passes
+
+T037: Session cache for chart history - COMPLETED
+- Enhanced src/components/panels/ChartPanel.tsx with session caching
+- Persists chart tick data in sessionStorage per instrument
+- Restores cached ticks on page reload for same instrument
+- Max 1000 ticks per instrument cached (MAX_CACHED_TICKS)
+- Auto-clears after 24 hours (CACHE_EXPIRY_MS)
+- Manual [CLR] button in footer to clear cached data
+- Cache key format: chart_ticks_{instrumentId}
+- Updated ChartPanel.css with clear button styling
+- npm run build passes
+
+T039: Alerts panel (AL) - COMPLETED
+- Created src/components/panels/AlertsPanel.tsx
+- Created src/components/panels/AlertsPanel.css with terminal dark theme
+- Form to create alerts: instrument search, type (price_above/price_below/staleness), value
+- Instrument search with autocomplete from INSTRUMENTS_SEARCH endpoint
+- List of active alerts with symbol, type, threshold value
+- Enable/disable toggle button per alert (● enabled, ○ disabled)
+- Delete button (✕) per alert to remove
+- Triggered alerts log with timestamp, symbol, type, and value
+- Clear button to wipe triggered log
+- Visual toast notification when alert fires (slides in from top)
+- Toast auto-dismisses after 5s or click to dismiss
+- Integrates with getDefaultAlertsEngine() from alertsEngine.ts
+- npm run build passes
+
+T034: Close partial flow from portfolio - COMPLETED
+- Enhanced src/components/panels/PortfolioPanel.tsx with partial close UI
+- "PARTIAL CLOSE" button in position details drawer
+- Units input with validation (must be > 0 and <= position units)
+- Max units display showing available position units
+- Estimated P&L calculation displayed as units entered
+- Error display for validation failures
+- Uses getPositionAdapter(isDemoMode()) from positionAdapter.ts
+- Real mode shows confirmation dialog before executing
+- Confirmation dialog shows position ID, instrument, units to close, estimated P&L
+- Success view shows closed units, closed rate, and realized P&L
+- Position updates via portfolioStore.fetchPortfolio() after close
+- Enhanced src/components/panels/PortfolioPanel.css with partial close styling
+- Terminal dark theme: yellow accent for partial close button
+- Confirmation dialog styled with red/danger theme
+- npm run build passes
+
+T033: Close full flow from portfolio - COMPLETED
+- Enhanced src/components/panels/PortfolioPanel.tsx with full close flow
+- Close button triggers close flow via initiateClose() function
+- Real mode shows confirmation dialog: "Close position for $X?"
+- Demo mode closes directly without confirmation
+- Uses getPositionAdapter(isDemoMode()) from positionAdapter.ts
+- Creates blotter row via ordersStore.addOrder() on successful close
+- Close order records: orderId, instrumentId, symbol, side (opposite), amount, executedRate, executedAt
+- Success dialog shows realized P&L with green styling
+- Error dialog shows failure message with red styling
+- Portfolio refreshes after close via portfolioStore.fetchPortfolio()
+- Enhanced src/components/panels/PortfolioPanel.css with result dialog styling
+- Result dialog: green header for success, red header for error
+- npm run build passes
+
+T043: Feeds panel shell + feature flag - COMPLETED
+- Created src/config/featureFlags.ts with FEEDS_ENABLED flag (default: false)
+- Created src/components/panels/FeedsPanel.tsx with feature flag gating
+- Created src/components/panels/FeedsPanel.css with terminal dark theme
+- Checks featureFlags.FEEDS_ENABLED to determine display
+- If disabled: shows "Feeds feature is not yet enabled" with disabled icon
+- If enabled: shows "Coming soon" placeholder with diamond icon
+- Exported FeedsPanel as default and named export
+- Terminal dark theme consistent with other panels
+- npm run build passes
+
+T047: Diagnostics drawer - COMPLETED
+- Created src/components/DiagnosticsDrawer.tsx with slide-out drawer
+- Created src/components/DiagnosticsDrawer.css with terminal dark theme
+- Enhanced src/services/diagnosticsStore.ts with logError() and getErrors()
+- Slide-out drawer from right side with overlay backdrop
+- 4 tabs: REST, WebSocket, Subscriptions, Errors (with counts)
+- REST tab: request/response log with method, URL, status, timing
+- WebSocket tab: connection events (connect, disconnect, error, message, subscribe, unsubscribe)
+- Subscriptions tab: active topic list with count from WSSubscriptionManager
+- Errors tab: recent errors with message, source, stack trace, context
+- Expandable log items showing headers, body, payload, stack trace
+- EXPORT button exports diagnostics bundle as JSON file
+- CLEAR button clears all logs
+- Auto-refresh every 1 second when drawer is open
+- Color coding: success (green), client error (yellow), server error (red)
+- npm run build passes
+
+T041: Trader profile panel PIP - COMPLETED
+- Created src/components/panels/TraderProfilePanel.tsx
+- Created src/components/panels/TraderProfilePanel.css with terminal dark theme
+- Shows trader username, displayName, avatar (placeholder if none)
+- Popular Investor badge (★ PI) displayed if isPopularInvestor
+- Key metrics grid: Gain %, Max Drawdown, Risk score (1-10), Copiers count
+- Additional metrics: Win ratio, Profitable months (if available)
+- Canvas-based performance chart (30-day line chart)
+- Portfolio holdings table: Symbol, Name, Allocation %, P&L
+- Copy trader button: enabled if canCopy, disabled otherwise
+- Color-coded values: green for positive, red for negative
+- Risk score color: green (1-3), yellow (4-6), red (7-10)
+- Loading, error, and empty states
+- Refresh button to reload profile
+- npm run build passes
+  
+T035: Portfolio reconcile strategy - COMPLETED  
+- Enhanced src/stores/portfolioStore.ts with reconcile logic  
+- Added autoRefreshEnabled and autoRefreshInterval to PortfolioState  
+- setAutoRefresh(enabled) toggles auto-refresh (off by default)  
+- setAutoRefreshInterval(interval) sets interval: 30s, 1m, or 5m  
+- isStale() returns true if no refresh in 5+ minutes  
+- Enhanced src/components/panels/PortfolioPanel.tsx with UI controls  
+- Manual refresh button triggers fetchPortfolio()  
+- Auto-refresh checkbox toggle with interval dropdown  
+- Last refresh timestamp displayed (e.g., "30s ago", "2m ago")  
+- Stale indicator (yellow warning) if no refresh in 5+ minutes  
+- Enhanced PortfolioPanel.css with refresh controls styling  
+- npm run build passes 
+  
+T040: Trader search panel PI - COMPLETED  
+- Created src/api/adapters/tradersAdapter.ts with TradersAdapter class  
+- Added TRADERS_SEARCH and TRADER_PROFILE endpoints to endpoints.ts  
+- Trader type with userId, username, gainPercent, copiers, riskScore  
+- searchTraders(params) with filters, pagination, sorting  
+- Created src/components/panels/TraderSearchPanel.tsx  
+- Created src/components/panels/TraderSearchPanel.css with terminal dark theme  
+- Username search input with Enter-to-search  
+- Filters: min gain %%, min copiers, max risk score (1-7 dropdown)  
+- Results table: username, gain %%, copiers, risk  
+- Sortable columns with click-to-sort (asc/desc toggle, sort indicator)  
+- Click row triggers onTraderSelect(userId, username) for profile nav  
+- Pagination: first, prev, page info, next, last buttons  
+- Gain color-coded: green positive, red negative  
+- Risk badge color-coded: green (1-2), yellow (3-4), red (5-7)  
+- Loading, error, empty, and initial states  
+- npm run build passes 
+  
+T044: API contract lock for Feeds - COMPLETED  
+- Added feed endpoints to src/api/contracts/endpoints.ts  
+- FEED_USER(userId) for /api/v1/feeds/user/{userId}  
+- FEED_INSTRUMENT(instrumentId) for /api/v1/feeds/instrument/{instrumentId}  
+- FEED_CREATE_POST for /api/v1/feeds/posts  
+- Added feed types to src/api/contracts/etoro-api.types.ts  
+- FeedAuthor: userId, username, displayName, avatarUrl, isVerified, isPopularInvestor  
+- FeedPost: postId, author, content, instrumentId, instrumentSymbol, likes, comments, isLiked, createdAt, updatedAt  
+- CreatePostRequest: content, instrumentId (optional)  
+- CreatePostResponse: post (FeedPost)  
+- FeedResponse: posts array, nextCursor, hasMore  
+- npm run build passes
+
+T048: Export support bundle (sanitized) - COMPLETED
+- Enhanced src/services/diagnosticsStore.ts with comprehensive bundle export
+- exportBundle(settings) includes REST logs, WS logs, errors, settings, app version
+- AppSettings includes: tradingMode, featureFlags, userAgent, screenResolution, timezone
+- All logs sanitized on export via sanitizeObject() (tokens, secrets, keys redacted)
+- Enhanced src/components/DiagnosticsDrawer.tsx to pass settings to exportBundle
+- Imports useTradingMode for current trading mode and featureFlags
+- Filename format: etoro-terminal-bundle-{timestamp}.json
+- Export button downloads JSON file with all diagnostic data
+- Sensitive headers (x-api-key, x-user-key, authorization, cookie) redacted as [REDACTED]
+- Sensitive fields (password, token, secret, apiKey, userKey, key) redacted as [REDACTED]
+- npm run build passes
+
+T050: Performance smoke tests - COMPLETED
+- Created src/utils/performanceTest.ts with performance test utilities
+- simulateLargeWatchlist(count) generates mock Quote[] for testing
+- populateQuotesStore(count) fills quotes store with N symbols (default 200)
+- simulateRapidQuoteUpdates(options) runs rapid update simulation at configurable rate
+  - symbolCount, updatesPerSecond, durationSeconds, onUpdate callback
+  - Returns PerformanceMetrics: duration, updateCount, updatesPerSecond, avg/max/min update times
+- measureRenderCycles(durationMs) measures FPS and dropped frames via requestAnimationFrame
+  - Returns RenderCycleMetrics: frameCount, fps, avgFrameTimeMs, droppedFrames
+- runFullPerformanceTest() runs complete test suite with console output
+- getMemoryUsage() returns heap size in MB (Chrome only)
+- Created docs/PERFORMANCE.md with baseline documentation
+  - Target frame rate: 60 FPS (acceptable 45+, critical <30)
+  - Memory limits: <100MB for 200 symbols, <200MB warning, >300MB critical
+  - Quote update targets: 12,000+ updates/sec for 200 symbols @ 60Hz
+  - Render cycle targets: <16.67ms avg frame time
+  - Test scenarios, optimization guidelines, and monitoring recommendations
+- Browser console access via window.performanceTest
+- npm run build passes
+
+T042: Compare tray - COMPLETED
+- Created src/stores/compareStore.ts with CompareStore class
+- Stores up to 5 traders for side-by-side comparison
+- addTrader(trader), removeTrader(userId), clearAll() for managing list
+- addFromTrader(trader, maxDrawdown) helper for Trader objects
+- isInCompare(userId), isFull(), getCount() state queries
+- subscribe(callback) for reactive updates with unsubscribe
+- Created src/components/CompareTray.tsx with bottom tray drawer
+- Created src/components/CompareTray.css with terminal dark theme
+- Collapsible tray: preview mode shows trader names, expanded shows metrics grid
+- Side-by-side comparison: Gain %, Drawdown, Risk (1-7), Copiers aligned in columns
+- Remove button (✕) per trader in tray
+- Clear All button removes all traders
+- Click header to toggle expand/collapse
+- Added "Add to Compare" button to TraderProfilePanel
+- Button toggles between add/remove states (blue/yellow)
+- Disabled when compare is full (5 traders)
+- Added compare column (+) to TraderSearchPanel table
+- Quick add/remove via button in each search result row
+- Updated TraderProfilePanel.css with compare button styling
+- Updated TraderSearchPanel.css with compare button styling
+- Integrated CompareTray into Workspace.tsx
+- npm run build passes
+  
+T049: Accessibility + keyboard audit - COMPLETED  
+- Created src/utils/accessibility.ts with focus management utilities  
+- FocusTrap class for modal/dialog focus trapping  
+- useFocusTrap hook for React integration  
+- focusUtils: focusFirst, focusLast, announce (screen reader)  
+- keyboardNav: handleListNavigation, handleGridNavigation helpers  
+- ariaHelpers: generateId, buttonProps, dialogProps, alertDialogProps  
+- shortcutsRegistry: register/unregister keyboard shortcuts  
+- Created docs/KEYBOARD-SHORTCUTS.md with comprehensive documentation  
+- Global shortcuts: /, Escape, ?  
+- Trade ticket: Ctrl+B/S, Escape  
+- Command bar: Arrow keys, Enter, Tab, Escape  
+- Dialog navigation: Tab, Shift+Tab, Escape, Enter  
+- Updated PortfolioPanel with aria labels and keyboard navigation  
+- role="region", aria-label, role="list", role="listitem"  
+- tabIndex, onKeyDown for Enter/Space activation  
+- Confirmation dialogs: role="alertdialog", aria-modal, aria-labelledby  
+- Updated BlotterPanel with table accessibility  
+- role="table", role="row", role="cell"  
+- Keyboard navigation on order rows  
+- Updated AlertsPanel with form and list accessibility  
+- role="form", aria-autocomplete, role="listbox", role="option"  
+- aria-expanded, aria-pressed for toggle buttons  
+- role="alert" for errors, role="log" for triggered alerts  
+- Updated WatchlistsPanel with list and dialog accessibility  
+- role="dialog", aria-modal for create/delete dialogs  
+- Star button changed from span to button with aria-pressed  
+- Updated AddToWatchlistDialog with combobox accessibility  
+- aria-autocomplete, aria-controls, aria-activedescendant  
+- role="listbox", role="option", aria-selected  
+- Updated TradeTicket with form and action accessibility  
+- aria-keyshortcuts on Buy/Sell buttons  
+- role="alertdialog" on confirmation dialog  
+- Updated CommandBar with combobox accessibility  
+- role="combobox", aria-expanded, aria-controls  
+- Function codes changed from span to button  
+- Updated Autocomplete with listbox accessibility  
+- role="listbox", role="option", aria-selected  
+- All panels: aria-labels on buttons, form labels linked with htmlFor/id  
+- npm run build passes 
+  
+T046: Post composer for Feeds panel - COMPLETED  
+- Created src/api/adapters/feedsAdapter.ts with FeedsAdapter class  
+- createPost(content, instrumentId?) creates new feed post  
+- getUserFeed(userId, cursor?) and getInstrumentFeed(instrumentId, cursor?) for fetching feeds  
+- Factory function createFeedsAdapter() and singleton getFeedsAdapter()  
+- Enhanced src/components/panels/FeedsPanel.tsx with post composer  
+- Textarea for post content with placeholder text  
+- Character count display with max 500 characters  
+- Character count turns red when over limit  
+- Optional instrument selector dropdown (AAPL, GOOGL, TSLA, MSFT, AMZN, BTC, ETH)  
+- Submit button posts to API via getFeedsAdapter().createPost()  
+- Success adds new post to posts list at top  
+- Error shows error message below composer  
+- Ctrl+Enter keyboard shortcut to submit  
+- Posts display: author, timestamp, content, instrument tag, likes/comments  
+- Enhanced FeedsPanel.css with composer and posts styling  
+- npm run build passes 
+
+T045: Implement feed list + pagination + filters - COMPLETED
+- Created src/api/adapters/feedsAdapter.ts with FeedsAdapter class
+- getUserFeed(userId, params) fetches user feed with cursor pagination
+- getInstrumentFeed(instrumentId, params) fetches instrument feed with cursor pagination
+- FeedParams: cursor, limit for pagination control
+- Factory function createFeedsAdapter() and singleton getFeedsAdapter()
+- Enhanced src/components/panels/FeedsPanel.tsx with full feed list
+- Two tabs: "MY FEED" and "INSTRUMENT" for feed type switching
+- Scroll-based pagination: loads more posts when scrolling near bottom
+- Uses FeedState to track posts, cursor, hasMore, loading, error
+- FeedPostItem component displays: author, verified badge, PI badge, timestamp, content
+- Instrument tag shown on posts with instrumentSymbol
+- Post stats: likes and comments count
+- Loading spinner during fetch
+- Error state with retry button
+- Empty state when no posts
+- "End of feed" indicator when no more posts
+- Enhanced FeedsPanel.css with tabs, posts, loading, error, empty states
+- Custom scrollbar styling
+- All behind FEEDS_ENABLED feature flag
+- npm run build passes
+  
+T051: Optional Electron packaging - COMPLETED  
+- Created electron/main.ts - Electron main process  
+- Created electron/preload.ts - preload script with contextBridge  
+- Created electron/electron.d.ts - TypeScript types for window.electronAPI  
+- Created electron/tsconfig.json - separate TypeScript config for Electron  
+- Added electron, electron-builder, cross-env devDependencies  
+- npm run electron:dev starts Electron with Vite dev server  
+- npm run electron:build creates production build with electron-builder  
+- npm run electron:pack creates unpacked build for testing  
+- Secure storage via Electron safeStorage API (encrypt/decrypt)  
+- Keys not stored in plaintext - uses OS credential storage  
+- contextIsolation: true, nodeIntegration: false, sandbox: true  
+- Updated vite.config.ts with base: './' for Electron file:// protocol  
+- Updated .gitignore with dist-electron/ and release/  
+- Web build still works: npm run build passes 

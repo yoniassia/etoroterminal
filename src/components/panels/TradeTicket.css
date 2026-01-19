@@ -1,0 +1,300 @@
+.trade-ticket {
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  color: #00ff00;
+  min-width: 320px;
+  outline: none;
+}
+
+.trade-ticket:focus {
+  border-color: #00cc00;
+}
+
+.trade-ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.trade-ticket-title {
+  color: #00cc00;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.trade-ticket-symbol {
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.trade-ticket-warning {
+  background-color: #332200;
+  color: #ffaa00;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid #664400;
+}
+
+.trade-ticket-real-warning {
+  background-color: #331111;
+  color: #ff4444;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid #662222;
+  font-weight: bold;
+}
+
+.trade-ticket-body {
+  padding: 12px;
+}
+
+.trade-ticket-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.trade-ticket-label {
+  flex: 0 0 100px;
+  color: #888;
+  font-size: 12px;
+  text-align: right;
+}
+
+.trade-ticket-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.toggle-btn {
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  color: #888;
+  padding: 6px 12px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover:not(:disabled) {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.toggle-btn.active {
+  background-color: #002200;
+  border-color: #00cc00;
+  color: #00ff00;
+}
+
+.toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trade-ticket-input {
+  flex: 1;
+  background-color: #111;
+  border: 1px solid #444;
+  color: #00ff00;
+  padding: 8px 10px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  border-radius: 2px;
+}
+
+.trade-ticket-input:focus {
+  outline: none;
+  border-color: #00cc00;
+  box-shadow: 0 0 4px rgba(0, 204, 0, 0.3);
+}
+
+.trade-ticket-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trade-ticket-input::placeholder {
+  color: #555;
+}
+
+.trade-ticket-select {
+  flex: 1;
+  background-color: #111;
+  border: 1px solid #444;
+  color: #00ff00;
+  padding: 8px 10px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.trade-ticket-select:focus {
+  outline: none;
+  border-color: #00cc00;
+}
+
+.trade-ticket-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trade-ticket-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #333;
+}
+
+.trade-btn {
+  flex: 1;
+  padding: 12px 20px;
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buy-btn {
+  background-color: #002200;
+  border-color: #00cc00;
+  color: #00ff00;
+}
+
+.buy-btn:hover:not(:disabled) {
+  background-color: #003300;
+  box-shadow: 0 0 8px rgba(0, 204, 0, 0.4);
+}
+
+.buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sell-btn {
+  background-color: #220000;
+  border-color: #cc0000;
+  color: #ff4444;
+}
+
+.sell-btn:hover:not(:disabled) {
+  background-color: #330000;
+  box-shadow: 0 0 8px rgba(204, 0, 0, 0.4);
+}
+
+.sell-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.trade-ticket-shortcuts {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.shortcut-hint {
+  color: #555;
+  font-size: 10px;
+}
+
+.trade-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.trade-confirmation-dialog {
+  background-color: #1a1a1a;
+  border: 2px solid #ff4444;
+  border-radius: 8px;
+  min-width: 350px;
+  max-width: 450px;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+}
+
+.confirmation-header {
+  background-color: #331111;
+  color: #ff4444;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 14px;
+  border-bottom: 1px solid #662222;
+  text-align: center;
+}
+
+.confirmation-body {
+  padding: 16px;
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.confirmation-body p {
+  margin: 6px 0;
+}
+
+.confirmation-body strong {
+  color: #fff;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px 16px;
+  justify-content: center;
+}
+
+.confirm-btn {
+  background-color: #cc0000;
+  border: 1px solid #ff4444;
+  color: #fff;
+  padding: 10px 24px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.confirm-btn:hover {
+  background-color: #dd0000;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+}
+
+.cancel-btn {
+  background-color: #333;
+  border: 1px solid #666;
+  color: #ccc;
+  padding: 10px 24px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background-color: #444;
+  border-color: #888;
+}

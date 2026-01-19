@@ -182,6 +182,56 @@ export interface ModifyPositionResponse {
 }
 
 // ============================================================================
+// Curated List Types
+// ============================================================================
+
+export interface CuratedListItem {
+  instrumentId: number;
+  symbol: string;
+  displayName: string;
+  weight?: number;
+}
+
+export interface CuratedList {
+  listId: string;
+  name: string;
+  description?: string;
+  category?: string;
+  items: CuratedListItem[];
+  itemCount: number;
+  imageUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CuratedListsResponse {
+  lists: CuratedList[];
+  total: number;
+}
+
+// ============================================================================
+// Recommendation Types
+// ============================================================================
+
+export type RecommendationType = 'buy' | 'sell' | 'hold' | 'strong_buy' | 'strong_sell';
+
+export interface Recommendation {
+  instrumentId: number;
+  symbol: string;
+  displayName: string;
+  recommendationType: RecommendationType;
+  confidence?: number;
+  targetPrice?: number;
+  reason?: string;
+  updatedAt?: string;
+}
+
+export interface RecommendationsResponse {
+  recommendations: Recommendation[];
+  total: number;
+}
+
+// ============================================================================
 // Instrument Types
 // ============================================================================
 
@@ -241,4 +291,45 @@ export interface OrderUpdatePayload {
   status: OrderStatus;
   executedRate?: number;
   executedAt?: string;
+}
+
+// ============================================================================
+// Feed Types
+// ============================================================================
+
+export interface FeedAuthor {
+  userId: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string;
+  isVerified?: boolean;
+  isPopularInvestor?: boolean;
+}
+
+export interface FeedPost {
+  postId: string;
+  author: FeedAuthor;
+  content: string;
+  instrumentId?: number;
+  instrumentSymbol?: string;
+  likes: number;
+  comments: number;
+  isLiked?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePostRequest {
+  content: string;
+  instrumentId?: number;
+}
+
+export interface CreatePostResponse {
+  post: FeedPost;
+}
+
+export interface FeedResponse {
+  posts: FeedPost[];
+  nextCursor?: string;
+  hasMore: boolean;
 }

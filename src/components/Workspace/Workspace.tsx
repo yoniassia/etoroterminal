@@ -1,6 +1,7 @@
 import { useState, useCallback, CSSProperties } from 'react';
 import Panel from './Panel';
 import { PanelRegistry, PanelInstance } from './PanelRegistry';
+import CompareTray from '../CompareTray';
 
 export interface WorkspaceProps {
   className?: string;
@@ -174,8 +175,10 @@ export default function Workspace({ className, style }: WorkspaceProps) {
           </div>
         </div>
       )}
+
+      <CompareTray />
     </div>
   );
 }
 
-export { addPanel, removePanel, resizePanel } from './useWorkspace';
+

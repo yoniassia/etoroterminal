@@ -11,8 +11,28 @@ Parent Task: 1
 
 ---
 
+## 2026-01-19 - T012: Workspace shell with panel registry
+Task ID: T012
+- Created workspace and panel management system
+- Files: src/components/Workspace/
+---
+
+## 2026-01-19 - T001: API contract lock
+Task ID: T001
+- Created API contract types and endpoints
+- Files: src/api/contracts/etoro-api.types.ts, src/api/contracts/endpoints.ts
+- Docs: docs/API-CONTRACT.md
+---
+
 ## 2026-01-19 - T006: Key manager with encrypted storage
 Task ID: T006
 - Created secure key manager service
 - Files: src/services/keyManager.ts, src/services/crypto.ts
+---
+
+## 2026-01-19 - T002: Symbol resolution adapter
+Task ID: T002
+- Created symbol resolution service with in-memory caching
+- Features: resolveSymbol(), searchSymbols(), fuzzy matching, autocomplete support
+- Files: src/services/symbolResolver.ts
 ---

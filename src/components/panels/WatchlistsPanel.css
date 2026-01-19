@@ -1,0 +1,327 @@
+.watchlists-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+}
+
+.watchlists-panel__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #00cc00;
+}
+
+.watchlists-panel__error {
+  padding: 12px;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  margin-bottom: 12px;
+}
+
+.watchlists-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.watchlists-panel__empty-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.watchlists-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.watchlists-panel__item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #111;
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.watchlists-panel__item:hover {
+  background-color: #1a1a1a;
+  border-color: #00cc00;
+}
+
+.watchlists-panel__item--default {
+  border-color: #ffcc00;
+}
+
+.watchlists-panel__star {
+  margin-right: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.watchlists-panel__star:hover {
+  color: #ffcc00;
+}
+
+.watchlists-panel__star--active {
+  color: #ffcc00;
+}
+
+.watchlists-panel__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.watchlists-panel__name {
+  color: #00ff00;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.watchlists-panel__count {
+  color: #888;
+  font-size: 12px;
+}
+
+.watchlists-panel__arrow {
+  color: #666;
+  font-size: 14px;
+}
+
+.watchlists-panel__item:hover .watchlists-panel__arrow {
+  color: #00cc00;
+}
+
+.watchlists-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 8px;
+}
+
+.watchlists-panel__title {
+  color: #00cc00;
+  font-size: 12px;
+}
+
+.watchlists-panel__refresh {
+  background: none;
+  border: 1px solid #00cc00;
+  color: #00cc00;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.watchlists-panel__refresh:hover {
+  background-color: #003300;
+}
+
+.watchlists-panel__refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.watchlists-panel__header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.watchlists-panel__btn-new {
+  background: none;
+  border: 1px solid #00cc00;
+  color: #00cc00;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.watchlists-panel__btn-new:hover {
+  background-color: #003300;
+}
+
+.watchlists-panel__delete {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 12px;
+  transition: color 0.2s;
+  opacity: 0;
+}
+
+.watchlists-panel__item:hover .watchlists-panel__delete {
+  opacity: 1;
+}
+
+.watchlists-panel__delete:hover {
+  color: #ff4444;
+}
+
+.watchlists-panel__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.watchlists-panel__dialog {
+  background-color: #1a1a1a;
+  border: 2px solid #00cc00;
+  min-width: 320px;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 204, 0, 0.3);
+}
+
+.watchlists-panel__dialog--danger {
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+}
+
+.watchlists-panel__dialog-header {
+  background-color: #002200;
+  color: #00ff00;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 14px;
+  border-bottom: 1px solid #003300;
+  font-family: "Courier New", monospace;
+}
+
+.watchlists-panel__dialog-header--danger {
+  background-color: #331111;
+  color: #ff4444;
+  border-bottom-color: #662222;
+}
+
+.watchlists-panel__dialog-body {
+  padding: 16px;
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.6;
+  font-family: "Courier New", monospace;
+}
+
+.watchlists-panel__dialog-body p {
+  margin: 6px 0;
+}
+
+.watchlists-panel__dialog-body strong {
+  color: #fff;
+}
+
+.watchlists-panel__dialog-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #888;
+  font-size: 12px;
+}
+
+.watchlists-panel__dialog-input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.watchlists-panel__dialog-input:focus {
+  outline: none;
+  border-color: #00cc00;
+  box-shadow: 0 0 4px rgba(0, 204, 0, 0.3);
+}
+
+.watchlists-panel__dialog-warning {
+  color: #ff6666;
+  font-size: 12px;
+}
+
+.watchlists-panel__dialog-actions {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px 16px;
+  justify-content: flex-end;
+}
+
+.watchlists-panel__dialog-btn {
+  padding: 8px 16px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s;
+}
+
+.watchlists-panel__dialog-btn--primary {
+  background-color: #003300;
+  border-color: #00cc00;
+  color: #00ff00;
+}
+
+.watchlists-panel__dialog-btn--primary:hover:not(:disabled) {
+  background-color: #004400;
+}
+
+.watchlists-panel__dialog-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.watchlists-panel__dialog-btn--danger {
+  background-color: #331111;
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.watchlists-panel__dialog-btn--danger:hover:not(:disabled) {
+  background-color: #441111;
+}
+
+.watchlists-panel__dialog-btn--danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.watchlists-panel__dialog-btn--cancel {
+  background-color: #222;
+  border-color: #555;
+  color: #888;
+}
+
+.watchlists-panel__dialog-btn--cancel:hover {
+  background-color: #333;
+  border-color: #666;
+  color: #aaa;
+}

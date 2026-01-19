@@ -1,0 +1,178 @@
+.curated-lists-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.curated-lists-loading,
+.curated-lists-error {
+  padding: 20px;
+  text-align: center;
+}
+
+.curated-lists-loading {
+  color: #00cc00;
+}
+
+.curated-lists-error {
+  color: #ff4444;
+}
+
+.curated-lists-retry {
+  background: none;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  padding: 4px 12px;
+  margin-top: 12px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.curated-lists-retry:hover {
+  background-color: #331111;
+}
+
+.curated-lists-empty {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+.curated-list-item {
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.curated-list-item:hover {
+  border-color: #00cc00;
+}
+
+.curated-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.curated-list-header:hover {
+  background-color: #222;
+}
+
+.curated-list-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.curated-list-name {
+  color: #00ff00;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.curated-list-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.curated-list-category {
+  color: #00cccc;
+  padding: 1px 6px;
+  border: 1px solid #00cccc;
+  border-radius: 2px;
+}
+
+.curated-list-count {
+  color: #888;
+}
+
+.curated-list-toggle {
+  color: #00cc00;
+  font-size: 12px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.curated-list-description {
+  padding: 8px 12px;
+  color: #aaa;
+  font-size: 12px;
+  background-color: #111;
+  border-top: 1px solid #333;
+}
+
+.curated-list-contents {
+  background-color: #0a0a0a;
+  border-top: 1px solid #333;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.curated-list-contents-header {
+  padding: 8px 12px;
+  color: #00cc00;
+  font-size: 11px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+.curated-list-instruments {
+  display: flex;
+  flex-direction: column;
+}
+
+.curated-list-instrument {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #222;
+  transition: background-color 0.2s;
+}
+
+.curated-list-instrument:last-child {
+  border-bottom: none;
+}
+
+.curated-list-instrument:hover {
+  background-color: #1a1a1a;
+}
+
+.instrument-symbol {
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.instrument-name {
+  color: #888;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.instrument-weight {
+  color: #ffcc00;
+  font-size: 11px;
+}
+
+.curated-list-no-items {
+  padding: 12px;
+  color: #666;
+  text-align: center;
+  font-size: 12px;
+}

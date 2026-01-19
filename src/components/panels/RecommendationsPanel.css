@@ -1,0 +1,206 @@
+.recommendations-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+}
+
+.recommendations-panel__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #00cc00;
+}
+
+.recommendations-panel__error {
+  padding: 12px;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  margin-bottom: 12px;
+}
+
+.recommendations-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.recommendations-panel__empty-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.recommendations-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 8px;
+}
+
+.recommendations-panel__title {
+  color: #00cc00;
+  font-size: 12px;
+}
+
+.recommendations-panel__refresh {
+  background: none;
+  border: 1px solid #00cc00;
+  color: #00cc00;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.recommendations-panel__refresh:hover {
+  background-color: #003300;
+}
+
+.recommendations-panel__refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recommendations-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.recommendations-panel__item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #111;
+  border: 1px solid #333;
+  gap: 12px;
+}
+
+.recommendations-panel__item:hover {
+  background-color: #1a1a1a;
+  border-color: #00cc00;
+}
+
+.recommendations-panel__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.recommendations-panel__symbol {
+  color: #00ff00;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.recommendations-panel__name {
+  color: #888;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recommendations-panel__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.recommendations-panel__price-value {
+  color: #00ff00;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.recommendations-panel__price-value--stale {
+  color: #666;
+}
+
+.recommendations-panel__price-change {
+  font-size: 11px;
+}
+
+.recommendations-panel__price-change--positive {
+  color: #00ff00;
+}
+
+.recommendations-panel__price-change--negative {
+  color: #ff4444;
+}
+
+.recommendations-panel__price-change--neutral {
+  color: #888;
+}
+
+.recommendations-panel__type {
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 1px solid;
+  min-width: 70px;
+  text-align: center;
+}
+
+.recommendations-panel__type--buy,
+.recommendations-panel__type--strong_buy {
+  color: #00ff00;
+  border-color: #00ff00;
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.recommendations-panel__type--sell,
+.recommendations-panel__type--strong_sell {
+  color: #ff4444;
+  border-color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.recommendations-panel__type--hold {
+  color: #ffcc00;
+  border-color: #ffcc00;
+  background-color: rgba(255, 204, 0, 0.1);
+}
+
+.recommendations-panel__add-btn {
+  background: none;
+  border: 1px solid #00cc00;
+  color: #00cc00;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.recommendations-panel__add-btn:hover {
+  background-color: #003300;
+}
+
+.recommendations-panel__add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recommendations-panel__add-btn--added {
+  border-color: #666;
+  color: #666;
+}
