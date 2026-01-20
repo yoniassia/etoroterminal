@@ -1,7 +1,7 @@
 ```md
 # eToro Terminal (US) — SpecKit Master Document (Merged)
-Version: 1.0.0  
-Date: 2026-01-19  
+Version: 1.1.3  
+Date: 2026-01-20  
 Audience: US pro / active traders  
 Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 
@@ -13,6 +13,40 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 > - `.specify/specs/001-etoro-terminal-us/wireframes.md`
 > - `.specify/specs/001-etoro-terminal-us/tasks.md`
 > - `.specify/specs/001-etoro-terminal-us/checklists/requirements.md`
+> - **[UPDATED v1.1.3]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
+
+---
+
+## Changelog
+
+### v1.1.3 (2026-01-20) - Watchlist & Symbol Universe Cache
+- ✅ **Watchlist API Fix**: Fixed item parsing to use `itemId` (not `instrumentId`) and `itemRank` for ordering
+- ✅ **User Items Filtered**: Watchlist now filters out `itemType: "User"` entries, only showing instruments
+- ✅ **Symbol Universe Cache**: Created `src/data/symbolUniverse.json` with 10,808 pre-cached instruments
+- ✅ **Static Cache Loading**: `symbolResolver` loads from static JSON cache on init (no API call needed)
+- ✅ **Quote Subscription on Load**: WatchlistMonitorPanel subscribes to `quotesPollingService` when watchlist loads
+- ✅ **User Info Display**: Header shows username extracted from JWT user key after login
+- ✅ **Network Binding**: Vite server binds to `0.0.0.0` for LAN access
+
+### v1.1.2 (2026-01-20) - API Integration & Live Quotes Fix
+- ✅ **API Key Propagation**: `etoroApi.setKeys()` ensures all services use authenticated user keys after login
+- ✅ **Symbol Resolution Fix**: API returns paginated `items` array (not `instruments`); added PascalCase normalization
+- ✅ **REST Quotes Polling**: New `quotesPollingService` polls `/api/v1/market-data/search` every 3s as WebSocket fallback
+- ✅ **Enriched Data Display**: Portfolio shows instrument names; Watchlists show resolved symbols via `symbolResolver`
+- ✅ **AddToWatchlist Fix**: Correct API parameter (`internalSymbolFull`), response parsing, and `order` field handling
+- ✅ **RALPH Enhancements**: Detailed API logging, quotes endpoint test, verified AAPL resolution (instrumentId: 1001)
+
+### v1.1.0 (2026-01-20)
+- ✅ All 16 panels implemented and tested
+- ✅ API endpoints verified against official eToro documentation
+- ✅ WebSocket streaming for quotes implemented
+- ✅ Portfolio panel with Demo/Real mode switching
+- ✅ Watchlist Monitor with popular instruments fallback
+- ✅ RALPH automated test suite added
+- ✅ Field name normalization for PascalCase API responses
+
+### v1.0.0 (2026-01-19)
+- Initial specification
 
 ---
 
@@ -145,7 +179,7 @@ If you want this formatted for Jira import (CSV), convert `tasks.md` into CSV an
 - Security reviews are mandatory before enabling Real trading in production.
 - If an API is ambiguous, the spec must mark it as "API-SPEC PENDING" and create tasks to confirm exact contracts.
 
-Version: 1.0.0 | Ratified: 2026-01-19 | Last Amended: 2026-01-19
+Version: 1.1.0 | Ratified: 2026-01-19 | Last Amended: 2026-01-19
 
 ---
 
@@ -897,6 +931,24 @@ These wireframes are ASCII layouts intended to fully specify:
 1) Terminal Shell (Default Workspace)
 -------------------------------------------------------------------
 
+**DEFAULT OPEN SCREEN REQUIREMENT:**
+On successful login, the terminal MUST automatically open 5 default panels that connect to eToro Public APIs:
+
+- Panel A: **Quote (QT)** - Real-time bid/ask/last with streaming updates via WebSocket
+- Panel B: **Watchlists (WL)** - Fetches user watchlists from `/api/v1/watchlists`
+- Panel C: **Portfolio (PF)** - Fetches portfolio/positions from `/api/v1/trading/info/demo/pnl`
+- Panel D: **API Tester (API)** - Test any eToro API endpoint directly (like Swagger UI)
+- Panel E: **Help (HELP)** - Documentation and getting started guide
+
+This ensures the trader immediately sees:
+1. Live market data via API connections
+2. Tools to test and explore all available APIs
+3. Documentation on how to use the terminal
+
+All panels follow the "Active Symbol" context by default (linked to Group A).
+
+-------------------------------------------------------------------
+
 +-----------------------------------------------------------------------------------+
 | eToro Terminal (Demo)   WS: Connected   REST: OK   Subs: 42   Lat: 120ms   [User] |
 |-----------------------------------------------------------------------------------|
@@ -1609,7 +1661,7 @@ Core Bloomberg-like patterns implemented:
 - Security reviews are mandatory before enabling Real trading in production.
 - If an API is ambiguous, the spec must mark it as "API-SPEC PENDING" and create tasks to confirm exact contracts.
 
-Version: 1.0.0 | Ratified: 2026-01-19 | Last Amended: 2026-01-19
+Version: 1.1.0 | Ratified: 2026-01-19 | Last Amended: 2026-01-19
 
 ---
 

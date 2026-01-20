@@ -42,6 +42,7 @@ function generateUUID(): string {
 export class EToroApiService {
   private userKey: string;
   private apiKey: string;
+  private isDemo: boolean = true;
 
   constructor(userKey: string, apiKey: string) {
     console.log('[EToroApiService] Initializing with keys:', {
@@ -50,6 +51,20 @@ export class EToroApiService {
       'apiKey length': apiKey?.length || 0,
       'apiKey preview': apiKey?.substring(0, 30) || 'MISSING',
     });
+    this.userKey = userKey;
+    this.apiKey = apiKey;
+  }
+
+  setDemoMode(isDemo: boolean): void {
+    this.isDemo = isDemo;
+  }
+
+  isDemoMode(): boolean {
+    return this.isDemo;
+  }
+
+  setKeys(userKey: string, apiKey: string): void {
+    console.log('[EToroApiService] Updating keys');
     this.userKey = userKey;
     this.apiKey = apiKey;
   }
@@ -110,21 +125,35 @@ export class EToroApiService {
 
   async getPortfolio(): Promise<PortfolioData> {
     try {
-      // Use DEMO account endpoint with public demo API keys
-      console.log('Fetching demo account portfolio: /api/v1/trading/info/demo/portfolio');
-      const data = await this.makeRequest('/api/v1/trading/info/demo/portfolio');
+      const endpoint = this.isDemo 
+        ? '/api/v1/trading/info/demo/portfolio' 
+        : '/api/v1/trading/info/portfolio';
+      console.log(`[EToroApiService] Fetching portfolio from: ${endpoint} (demo=${this.isDemo})`);
+      const data = await this.makeRequest(endpoint);
 
       console.log('Full portfolio response:', JSON.stringify(data, null, 2));
 
-      // Extract data from the actual API response structure
       const clientPortfolio = data.clientPortfolio || data;
-      const credit = clientPortfolio.credit || 0;
-      const bonusCredit = clientPortfolio.bonusCredit || 0;
+      const credit = clientPortfolio.credit || clientPortfolio.Credit || 0;
+      const bonusCredit = clientPortfolio.bonusCredit || clientPortfolio.BonusCredit || 0;
 
-      // Calculate total value from positions
+      const rawPositions = clientPortfolio.positions || clientPortfolio.Positions || [];
+      const positions: Position[] = rawPositions.map((p: Record<string, unknown>) => ({
+        positionId: p.positionId || p.PositionID || p.positionID,
+        instrumentId: p.instrumentId || p.InstrumentID || p.instrumentID,
+        isBuy: p.isBuy ?? p.IsBuy ?? true,
+        amount: p.amount || p.Amount || 0,
+        leverage: p.leverage || p.Leverage || 1,
+        units: p.units || p.Units || 0,
+        openRate: p.openRate || p.OpenRate || 0,
+        openDateTime: p.openDateTime || p.OpenDateTime || new Date().toISOString(),
+        takeProfitRate: p.takeProfitRate || p.TakeProfitRate,
+        stopLossRate: p.stopLossRate || p.StopLossRate,
+      }));
+
       let positionsValue = 0;
-      if (clientPortfolio.positions && Array.isArray(clientPortfolio.positions)) {
-        positionsValue = clientPortfolio.positions.reduce((total: number, position: any) => {
+      if (positions.length > 0) {
+        positionsValue = positions.reduce((total: number, position: Position) => {
           return total + (position.amount || 0);
         }, 0);
       }
@@ -143,8 +172,8 @@ export class EToroApiService {
         equity: positionsValue,
         credit,
         bonusCredit,
-        profit: 0, // Would need PnL endpoint for actual profit
-        positions: clientPortfolio.positions || [],
+        profit: 0,
+        positions,
       };
     } catch (error) {
       console.error('Error fetching portfolio:', error);
@@ -152,21 +181,39 @@ export class EToroApiService {
     }
   }
 
-  async getUserInfo(): Promise<UserInfo> {
+  async getUserInfo(): Promise<UserInfo | null> {
     try {
-      const data = await this.makeRequest('/api/v1/user-info/people');
-      console.log('User info response:', data);
-
-      return {
-        username: data.username || data.userName || 'Unknown',
-        customerId: data.customerId || data.cid || data.id || '',
-        firstName: data.firstName || data.first_name,
-        lastName: data.lastName || data.last_name,
-        email: data.email,
-      };
+      // Decode user info from the JWT user key
+      // The user key is base64-encoded JSON with format: {"ci":"customer-id","ean":"app-name","ek":"..."}
+      const decoded = this.decodeUserKey();
+      if (decoded) {
+        return {
+          username: decoded.ean || 'eToro User',
+          customerId: decoded.ci || '',
+          firstName: undefined,
+          lastName: undefined,
+          email: undefined,
+        };
+      }
+      return null;
     } catch (error) {
-      console.error('Error fetching user info:', error);
-      throw error;
+      console.error('Error getting user info:', error);
+      return null;
+    }
+  }
+
+  private decodeUserKey(): { ci?: string; ean?: string; ek?: string } | null {
+    try {
+      if (!this.userKey) return null;
+      // Remove trailing underscores and convert URL-safe base64 to standard base64
+      const base64 = this.userKey
+        .replace(/__$/, '')
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      const decoded = atob(base64);
+      return JSON.parse(decoded);
+    } catch {
+      return null;
     }
   }
 }

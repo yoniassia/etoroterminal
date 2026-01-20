@@ -1,7 +1,8 @@
-import { useState, useCallback, CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 import Panel from './Panel';
-import { PanelRegistry, PanelInstance } from './PanelRegistry';
+import { PanelRegistry } from './PanelRegistry';
 import CompareTray from '../CompareTray';
+import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
 
 export interface WorkspaceProps {
   className?: string;
@@ -46,7 +47,7 @@ const workspaceStyles: Record<string, CSSProperties> = {
   },
   panelGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
     gap: '8px',
     padding: '12px',
     flex: 1,
@@ -64,48 +65,8 @@ const workspaceStyles: Record<string, CSSProperties> = {
   },
 };
 
-let instanceCounter = 0;
-
 export default function Workspace({ className, style }: WorkspaceProps) {
-  const [panels, setPanels] = useState<PanelInstance[]>([]);
-
-  const addPanel = useCallback((typeId: string) => {
-    const config = PanelRegistry.get(typeId);
-    if (!config) {
-      console.warn(`Panel type "${typeId}" not registered`);
-      return null;
-    }
-
-    const instanceId = `panel-${++instanceCounter}`;
-    const instance: PanelInstance = {
-      instanceId,
-      typeId,
-      title: config.title,
-      width: config.defaultWidth,
-      height: config.defaultHeight,
-    };
-
-    setPanels((prev) => [...prev, instance]);
-    return instanceId;
-  }, []);
-
-  const removePanel = useCallback((instanceId: string) => {
-    setPanels((prev) => prev.filter((p) => p.instanceId !== instanceId));
-  }, []);
-
-  const resizePanel = useCallback(
-    (instanceId: string, width?: number, height?: number) => {
-      setPanels((prev) =>
-        prev.map((p) =>
-          p.instanceId === instanceId
-            ? { ...p, width: width ?? p.width, height: height ?? p.height }
-            : p
-        )
-      );
-    },
-    []
-  );
-
+  const { panels, addPanel, removePanel } = useWorkspaceContext();
   const registeredTypes = PanelRegistry.getRegisteredTypes();
 
   return (
@@ -169,9 +130,9 @@ export default function Workspace({ className, style }: WorkspaceProps) {
         </div>
       ) : (
         <div style={workspaceStyles.emptyState}>
-          <div>▓▓▓ NO ACTIVE PANELS ▓▓▓</div>
+          <div>▓▓▓ LOADING PANELS... ▓▓▓</div>
           <div style={{ fontSize: '12px' }}>
-            Use the toolbar above to add panels
+            If panels don't load, use the toolbar above to add them manually
           </div>
         </div>
       )}
@@ -180,5 +141,3 @@ export default function Workspace({ className, style }: WorkspaceProps) {
     </div>
   );
 }
-
-

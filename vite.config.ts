@@ -5,9 +5,9 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   server: {
-    host: '0.0.0.0', // Listen on all network interfaces
-    port: 3002,
-    strictPort: true
+    port: 3005,
+    strictPort: true,
+    host: '0.0.0.0'
   },
   build: {
     outDir: 'dist',

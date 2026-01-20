@@ -1,13 +1,26 @@
 // Symbol Resolution Service
 // Maps ticker symbols to eToro instrument IDs with caching and fuzzy matching
 
-import { API_BASE_URL, ENDPOINTS } from '../api/contracts/endpoints';
+import { ENDPOINTS } from '../api/contracts/endpoints';
 import { Instrument, InstrumentType } from '../api/contracts/etoro-api.types';
+import { getDefaultAdapter } from '../api/restAdapter';
+
+// Import pre-cached symbol universe for faster lookups
+import symbolUniverseData from '../data/symbolUniverse.json';
+
+interface CachedInstrument {
+  id: number;
+  sym: string;
+  name: string;
+  type: string;
+  exchange: string;
+}
 
 export interface ResolvedSymbol {
   instrumentId: number;
   symbol: string;
   name: string;
+  displayName: string;
   type: InstrumentType;
   exchange?: string;
 }
@@ -34,31 +47,123 @@ class SymbolResolver {
   };
 
   private headers: Record<string, string> = {};
+  private staticCacheLoaded = false;
+
+  constructor() {
+    // Pre-load the static symbol universe cache on initialization
+    this.loadStaticCache();
+  }
+
+  private loadStaticCache(): void {
+    if (this.staticCacheLoaded) return;
+    
+    try {
+      const data = symbolUniverseData as CachedInstrument[];
+      console.log(`[SymbolResolver] Loading ${data.length} instruments from static cache`);
+      
+      for (const item of data) {
+        const instrument: Instrument = {
+          instrumentId: item.id,
+          symbol: item.sym,
+          displayName: item.name,
+          type: item.type as InstrumentType,
+          exchange: item.exchange,
+          isActive: true,
+        };
+        this.cache.byId.set(item.id, instrument);
+        this.cache.bySymbol.set(item.sym.toUpperCase(), instrument);
+        this.cache.allInstruments.push(instrument);
+      }
+      
+      this.cache.lastFetched = Date.now();
+      this.staticCacheLoaded = true;
+      console.log(`[SymbolResolver] Static cache loaded: ${this.cache.allInstruments.length} instruments`);
+    } catch (err) {
+      console.warn('[SymbolResolver] Failed to load static cache:', err);
+    }
+  }
 
   setHeaders(headers: Record<string, string>): void {
     this.headers = headers;
   }
 
   private isCacheValid(): boolean {
-    return Date.now() - this.cache.lastFetched < CACHE_TTL_MS && this.cache.allInstruments.length > 0;
+    return this.staticCacheLoaded || (Date.now() - this.cache.lastFetched < CACHE_TTL_MS && this.cache.allInstruments.length > 0);
   }
 
   private async fetchInstruments(): Promise<Instrument[]> {
-    const url = `${API_BASE_URL}${ENDPOINTS.INSTRUMENTS_LIST}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.headers,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch instruments: ${response.status}`);
+    try {
+      // Use the restAdapter which handles API keys automatically
+      const adapter = getDefaultAdapter();
+      const data = await adapter.get<Record<string, unknown> | Record<string, unknown>[]>(
+        ENDPOINTS.MARKET_DATA_SEARCH
+      );
+      
+      console.log('[SymbolResolver] Raw API response sample:', Array.isArray(data) ? (data as Record<string, unknown>[]).slice(0, 2) : Object.keys(data as Record<string, unknown>));
+      
+      // API returns paginated response with 'items' key, or may return array directly
+      const rawData = data as Record<string, unknown>;
+      const rawItems = Array.isArray(data) 
+        ? data as Record<string, unknown>[]
+        : (rawData.items || rawData.Items || rawData.instruments || rawData.Instruments || []) as Record<string, unknown>[];
+      
+      // Map API response fields to our Instrument interface (handle multiple field name formats)
+      const instruments = rawItems.map((item: Record<string, unknown>) => ({
+        instrumentId: (item.instrumentId ?? item.InstrumentID ?? item.instrumentID ?? item.InstrumentId ?? 0) as number,
+        symbol: String(item.internalSymbolFull ?? item.InternalSymbolFull ?? item.symbol ?? item.Symbol ?? ''),
+        displayName: String(item.instrumentDisplayName ?? item.InstrumentDisplayName ?? item.displayName ?? item.DisplayName ?? item.name ?? item.Name ?? ''),
+        type: (item.instrumentTypeId ?? item.InstrumentTypeId ?? item.type ?? 'stock') as string,
+        exchange: String(item.exchangeId ?? item.ExchangeId ?? item.exchange ?? ''),
+        isActive: item.isActive !== false && item.IsActive !== false,
+      }));
+      
+      console.log('[SymbolResolver] Parsed instruments count:', instruments.length);
+      if (instruments.length > 0) {
+        console.log('[SymbolResolver] Sample instrument:', instruments[0]);
+      }
+      
+      return instruments;
+    } catch (error) {
+      console.error('[SymbolResolver] Failed to fetch instruments:', error);
+      throw error;
     }
+  }
 
-    const data = await response.json();
-    return data.instruments || data || [];
+  async searchBySymbol(symbol: string): Promise<Instrument | null> {
+    try {
+      const adapter = getDefaultAdapter();
+      const data = await adapter.get<Record<string, unknown> | Record<string, unknown>[]>(
+        `${ENDPOINTS.MARKET_DATA_SEARCH}?internalSymbolFull=${encodeURIComponent(symbol.toUpperCase())}`
+      );
+      
+      // API returns paginated response with 'items' key, or may return array directly
+      const rawData = data as Record<string, unknown>;
+      const items = Array.isArray(data) 
+        ? data as Record<string, unknown>[]
+        : (rawData.items || rawData.Items || rawData.instruments || rawData.Instruments || []) as Record<string, unknown>[];
+      
+      const upperSymbol = symbol.toUpperCase();
+      const match = items.find((item: Record<string, unknown>) => {
+        const itemSymbol = String(item.internalSymbolFull ?? item.InternalSymbolFull ?? item.symbol ?? item.Symbol ?? '');
+        return itemSymbol.toUpperCase() === upperSymbol;
+      });
+      
+      if (match) {
+        return {
+          instrumentId: (match.instrumentId ?? match.InstrumentID ?? match.instrumentID ?? match.InstrumentId ?? 0) as number,
+          symbol: String(match.internalSymbolFull ?? match.InternalSymbolFull ?? match.symbol ?? match.Symbol ?? ''),
+          displayName: String(match.instrumentDisplayName ?? match.InstrumentDisplayName ?? match.displayName ?? match.DisplayName ?? match.name ?? match.Name ?? ''),
+          type: (match.instrumentTypeId ?? match.InstrumentTypeId ?? match.type ?? 'stock') as string,
+          exchange: String(match.exchangeId ?? match.ExchangeId ?? match.exchange ?? ''),
+          isActive: true,
+        } as Instrument;
+      }
+      
+      console.log(`[SymbolResolver] No exact match for ${symbol} in ${items.length} items`);
+    } catch (e) {
+      console.error('[SymbolResolver] Symbol search failed:', e);
+    }
+    return null;
   }
 
   private async ensureCache(): Promise<void> {
@@ -91,6 +196,7 @@ class SymbolResolver {
       instrumentId: instrument.instrumentId,
       symbol: instrument.symbol,
       name: instrument.displayName,
+      displayName: instrument.displayName,
       type: instrument.type,
       exchange: instrument.exchange,
     };
@@ -183,9 +289,47 @@ class SymbolResolver {
   async getInstrumentById(instrumentId: number): Promise<ResolvedSymbol | null> {
     await this.ensureCache();
 
+    // Check cache first
     const instrument = this.cache.byId.get(instrumentId);
     if (instrument) {
       return this.instrumentToResolved(instrument);
+    }
+
+    // If not in cache, try direct API lookup
+    try {
+      const adapter = getDefaultAdapter();
+      const data = await adapter.get<Record<string, unknown>>(
+        `${ENDPOINTS.MARKET_DATA_SEARCH}?instrumentIds=${instrumentId}`
+      );
+      
+      const rawData = data as Record<string, unknown>;
+      const items = (rawData.items || rawData.Items || []) as Record<string, unknown>[];
+      
+      if (items.length > 0) {
+        const item = items[0];
+        const resolved: ResolvedSymbol = {
+          instrumentId: (item.internalInstrumentId ?? item.InternalInstrumentId ?? item.instrumentId ?? item.InstrumentId ?? instrumentId) as number,
+          symbol: String(item.internalSymbolFull ?? item.InternalSymbolFull ?? item.symbol ?? item.Symbol ?? ''),
+          name: String(item.internalInstrumentDisplayName ?? item.InternalInstrumentDisplayName ?? item.instrumentDisplayName ?? item.InstrumentDisplayName ?? item.displayName ?? item.DisplayName ?? ''),
+          displayName: String(item.internalInstrumentDisplayName ?? item.InternalInstrumentDisplayName ?? item.instrumentDisplayName ?? item.InstrumentDisplayName ?? item.displayName ?? item.DisplayName ?? ''),
+          type: (item.instrumentTypeId ?? item.InstrumentTypeId ?? 'stock') as InstrumentType,
+          exchange: String(item.internalExchangeName ?? item.InternalExchangeName ?? item.exchangeId ?? ''),
+        };
+        
+        // Add to cache
+        this.cache.byId.set(instrumentId, {
+          instrumentId: resolved.instrumentId,
+          symbol: resolved.symbol,
+          displayName: resolved.displayName,
+          type: resolved.type,
+          exchange: resolved.exchange,
+          isActive: true,
+        });
+        
+        return resolved;
+      }
+    } catch (e) {
+      console.warn(`[SymbolResolver] Failed to lookup instrument ${instrumentId}:`, e);
     }
 
     return null;

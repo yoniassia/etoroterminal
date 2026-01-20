@@ -152,7 +152,7 @@ class OrdersStore {
 
     const updatedOrder: StoredOrder = {
       ...existing,
-      status: 'status' in update ? update.status : existing.status,
+      status: 'status' in update && update.status !== undefined ? update.status : existing.status,
       executedRate: 'executedRate' in update ? update.executedRate : existing.executedRate,
       executedAt: 'executedAt' in update ? update.executedAt : existing.executedAt,
       updatedAt: new Date().toISOString(),

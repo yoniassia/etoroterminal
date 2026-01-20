@@ -15,13 +15,43 @@ export type QuoteUpdateCallback = (quote: StoredQuote) => void;
 
 const STALENESS_THRESHOLD_MS = 10_000;
 
+interface RawQuotePayload {
+  instrumentId?: number;
+  InstrumentId?: number;
+  bid?: number;
+  Bid?: number;
+  ask?: number;
+  Ask?: number;
+  lastPrice?: number;
+  LastPrice?: number;
+  change?: number;
+  Change?: number;
+  changePercent?: number;
+  ChangePercent?: number;
+  timestamp?: string;
+  Timestamp?: string;
+}
+
+function normalizeQuotePayload(raw: RawQuotePayload): Partial<QuoteUpdatePayload> & { timestamp?: string } {
+  return {
+    instrumentId: raw.instrumentId ?? raw.InstrumentId,
+    bid: raw.bid ?? raw.Bid,
+    ask: raw.ask ?? raw.Ask,
+    lastPrice: raw.lastPrice ?? raw.LastPrice,
+    change: raw.change ?? raw.Change,
+    changePercent: raw.changePercent ?? raw.ChangePercent,
+    timestamp: raw.timestamp ?? raw.Timestamp,
+  };
+}
+
 class QuotesStore {
   private quotes: Map<number, StoredQuote> = new Map();
   private subscribers: Map<number, Set<QuoteUpdateCallback>> = new Map();
 
-  updateQuote(instrumentId: number, quote: Partial<Quote> | QuoteUpdatePayload): void {
+  updateQuote(instrumentId: number, rawQuote: Partial<Quote> | QuoteUpdatePayload | RawQuotePayload): void {
     const now = Date.now();
     const existing = this.quotes.get(instrumentId);
+    const quote = normalizeQuotePayload(rawQuote as RawQuotePayload);
 
     const storedQuote: StoredQuote = {
       instrumentId,
@@ -30,10 +60,11 @@ class QuotesStore {
       lastPrice: quote.lastPrice ?? existing?.lastPrice ?? 0,
       change: quote.change ?? existing?.change,
       changePercent: quote.changePercent ?? existing?.changePercent,
-      timestamp: 'timestamp' in quote && quote.timestamp ? quote.timestamp : new Date().toISOString(),
+      timestamp: quote.timestamp ?? new Date().toISOString(),
       receivedAt: now,
     };
 
+    console.log(`[QuotesStore] updateQuote(${instrumentId}):`, storedQuote);
     this.quotes.set(instrumentId, storedQuote);
     this.notifySubscribers(instrumentId, storedQuote);
   }

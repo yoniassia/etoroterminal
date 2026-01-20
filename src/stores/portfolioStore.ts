@@ -1,5 +1,6 @@
 import type { Position, Portfolio } from '../api/contracts/etoro-api.types';
 import { etoroApi } from '../services/etoroApi';
+import { symbolResolver } from '../services/symbolResolver';
 
 export type AutoRefreshInterval = 30000 | 60000 | 300000;
 
@@ -10,6 +11,7 @@ export interface PortfolioState {
   lastUpdated: number | null;
   autoRefreshEnabled: boolean;
   autoRefreshInterval: AutoRefreshInterval;
+  isDemo: boolean;
 }
 
 const STALE_THRESHOLD_MS = 5 * 60 * 1000;
@@ -24,6 +26,7 @@ class PortfolioStore {
     lastUpdated: null,
     autoRefreshEnabled: false,
     autoRefreshInterval: 60000,
+    isDemo: true,
   };
   private subscribers: Set<PortfolioUpdateCallback> = new Set();
   private autoRefreshTimer: ReturnType<typeof setInterval> | null = null;
@@ -64,17 +67,52 @@ class PortfolioStore {
     this.notify();
   }
 
+  setDemoMode(isDemo: boolean): void {
+    if (isDemo !== this.state.isDemo) {
+      etoroApi.setDemoMode(isDemo);
+      this.setState({ isDemo, portfolio: null, lastUpdated: null, error: null });
+      this.fetchPortfolio().catch(() => {});
+    }
+  }
+
+  isDemoMode(): boolean {
+    return this.state.isDemo;
+  }
+
   async fetchPortfolio(): Promise<void> {
     this.setState({ loading: true, error: null });
     try {
+      etoroApi.setDemoMode(this.state.isDemo);
       const data = await etoroApi.getPortfolio();
+      
+      // Enrich positions with instrument names from symbolResolver
+      const enrichedPositions: Position[] = await Promise.all(
+        data.positions.map(async (position) => {
+          if (position.instrumentName) {
+            return position as Position;
+          }
+          try {
+            const resolved = await symbolResolver.getInstrumentById(position.instrumentId);
+            if (resolved) {
+              return {
+                ...position,
+                instrumentName: `${resolved.symbol} - ${resolved.displayName}`,
+              } as Position;
+            }
+          } catch (e) {
+            console.warn(`[PortfolioStore] Failed to resolve instrument ${position.instrumentId}:`, e);
+          }
+          return position as Position;
+        })
+      );
+      
       const portfolio: Portfolio = {
         totalValue: data.totalValue,
         equity: data.equity,
         credit: data.credit,
         bonusCredit: data.bonusCredit,
         profit: data.profit,
-        positions: data.positions,
+        positions: enrichedPositions,
       };
       this.setState({
         portfolio,
@@ -128,6 +166,7 @@ class PortfolioStore {
       lastUpdated: null,
       autoRefreshEnabled: false,
       autoRefreshInterval: 60000,
+      isDemo: true,
     });
   }
 
@@ -171,3 +210,8 @@ class PortfolioStore {
 }
 
 export const portfolioStore = new PortfolioStore();
+
+// Auto-fetch portfolio on initialization
+portfolioStore.fetchPortfolio().catch((err) => {
+  console.log('[PortfolioStore] Initial fetch (demo mode):', err.message);
+});

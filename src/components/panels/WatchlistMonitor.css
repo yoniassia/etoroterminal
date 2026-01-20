@@ -263,3 +263,123 @@
 .watchlist-monitor__table-header:has(span:nth-child(7)) {
   grid-template-columns: 100px 80px 100px 80px 80px 100px 30px;
 }
+
+/* Panel wrapper styles */
+.watchlist-monitor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #0a0a0a;
+}
+
+.watchlist-monitor-panel__selector {
+  padding: 8px 12px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+.watchlist-monitor-panel__selector select {
+  width: 100%;
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  color: #00ff00;
+  padding: 6px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.watchlist-monitor-panel__selector select:focus {
+  outline: none;
+  border-color: #00cc00;
+}
+
+.watchlist-monitor-panel__popular-header {
+  padding: 8px 12px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+  color: #ffcc00;
+  font-size: 12px;
+  font-family: "Courier New", monospace;
+}
+
+/* Loading/Error/Empty states for standalone panel */
+.watchlist-monitor--loading,
+.watchlist-monitor--error,
+.watchlist-monitor--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.watchlist-monitor__loading-text {
+  color: #00cc00;
+  font-size: 14px;
+  animation: pulse 1.5s infinite;
+}
+
+.watchlist-monitor__error-text {
+  color: #ff4444;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.watchlist-monitor__retry-btn {
+  background: none;
+  border: 1px solid #00cc00;
+  color: #00cc00;
+  padding: 8px 16px;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+}
+
+.watchlist-monitor__retry-btn:hover {
+  background-color: #003300;
+}
+
+.watchlist-monitor__empty-icon {
+  font-size: 48px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.watchlist-monitor__empty-text {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.watchlist-monitor__empty-hint {
+  color: #444;
+  font-size: 12px;
+}
+
+.watchlist-monitor__selector {
+  margin-top: 16px;
+}
+
+.watchlist-monitor__selector label {
+  display: block;
+  color: #888;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.watchlist-monitor__selector select {
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  color: #00ff00;
+  padding: 6px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

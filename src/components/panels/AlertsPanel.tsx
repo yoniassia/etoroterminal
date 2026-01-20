@@ -8,7 +8,7 @@ import {
 } from '../../services/alertsEngine';
 import { ENDPOINTS } from '../../api/contracts/endpoints';
 import { getDefaultAdapter } from '../../api/restAdapter';
-import type { Instrument } from '../../api/contracts/etoro-api.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './AlertsPanel.css';
 
 interface SearchResult {
@@ -34,7 +34,7 @@ interface InstrumentInfo {
   displayName: string;
 }
 
-export interface AlertsPanelProps {
+export interface AlertsPanelProps extends PanelContentProps {
   engine?: AlertsEngine;
 }
 
@@ -47,7 +47,7 @@ function formatAlertType(type: AlertType): string {
     case 'staleness':
       return 'STALE';
     default:
-      return type.toUpperCase();
+      return String(type).toUpperCase();
   }
 }
 
@@ -70,7 +70,7 @@ function formatValue(value: number, type: AlertType): string {
   return value.toFixed(6);
 }
 
-export default function AlertsPanel({ engine }: AlertsPanelProps) {
+export default function AlertsPanel({ engine }: AlertsPanelProps = { panelId: '' }) {
   const alertsEngine = engine ?? getDefaultAlertsEngine();
 
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -148,14 +148,15 @@ export default function AlertsPanel({ engine }: AlertsPanelProps) {
     setSearching(true);
     try {
       const adapter = getDefaultAdapter();
-      const response = await adapter.get<{ instruments: Instrument[] }>(
+      const response = await adapter.get<Record<string, unknown>>(
         `${ENDPOINTS.INSTRUMENTS_SEARCH}?query=${encodeURIComponent(query)}&limit=10`
       );
 
-      const results = response.instruments.map((inst) => ({
-        instrumentId: inst.instrumentId,
-        symbol: inst.symbol,
-        displayName: inst.displayName,
+      const rawInstruments = (response.instruments ?? response.Instruments ?? []) as Record<string, unknown>[];
+      const results = rawInstruments.map((inst) => ({
+        instrumentId: (inst.instrumentId ?? inst.InstrumentId ?? inst.InstrumentID ?? 0) as number,
+        symbol: (inst.symbol ?? inst.Symbol ?? '') as string,
+        displayName: (inst.displayName ?? inst.DisplayName ?? inst.symbol ?? inst.Symbol ?? '') as string,
       }));
 
       setSearchResults(results);

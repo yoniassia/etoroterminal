@@ -24,12 +24,20 @@ interface FunctionCode {
 const FUNCTION_CODES: FunctionCode[] = [
   { code: 'QT', name: 'Quote', description: 'Get price quote for symbol' },
   { code: 'WL', name: 'Watchlist', description: 'View/manage watchlist' },
+  { code: 'WLM', name: 'Watchlist Monitor', description: 'Monitor watchlist prices' },
+  { code: 'CUR', name: 'Curated Lists', description: 'Browse curated lists' },
+  { code: 'REC', name: 'Recommendations', description: 'View recommendations' },
   { code: 'TRD', name: 'Trade', description: 'Execute trade' },
   { code: 'ORD', name: 'Orders', description: 'View pending orders' },
   { code: 'PF', name: 'Portfolio', description: 'View portfolio positions' },
-  { code: 'PI', name: 'Position Info', description: 'Detailed position info' },
+  { code: 'PI', name: 'Trader Search', description: 'Search for traders' },
+  { code: 'PIP', name: 'Trader Profile', description: 'View trader profile' },
   { code: 'CH', name: 'Chart', description: 'View price chart' },
   { code: 'AL', name: 'Alerts', description: 'Manage price alerts' },
+  { code: 'FEED', name: 'Feeds', description: 'View social feeds' },
+  { code: 'API', name: 'API Tester', description: 'Test API endpoints' },
+  { code: 'HELP', name: 'Help', description: 'View help documentation' },
+  { code: 'STATUS', name: 'Status', description: 'Connection status' },
 ];
 
 export const CommandBar: React.FC<CommandBarProps> = ({
@@ -125,12 +133,25 @@ export const CommandBar: React.FC<CommandBarProps> = ({
     [onCommand]
   );
 
+  const handleExecute = useCallback(() => {
+    if (inputValue.trim()) {
+      parseAndExecuteCommand(inputValue.trim());
+    }
+  }, [inputValue]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showAutocomplete) {
-      if (e.key === 'Enter' && inputValue.trim()) {
+    // Enter key always executes command (with or without autocomplete)
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (showAutocomplete && suggestions[selectedIndex]) {
+        handleSelectItem(suggestions[selectedIndex]);
+      } else if (inputValue.trim()) {
         parseAndExecuteCommand(inputValue.trim());
-        return;
       }
+      return;
+    }
+
+    if (!showAutocomplete) {
       return;
     }
 
@@ -146,12 +167,6 @@ export const CommandBar: React.FC<CommandBarProps> = ({
         setSelectedIndex((prev) =>
           prev > 0 ? prev - 1 : suggestions.length - 1
         );
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (suggestions[selectedIndex]) {
-          handleSelectItem(suggestions[selectedIndex]);
-        }
         break;
       case 'Escape':
         e.preventDefault();
@@ -253,6 +268,14 @@ export const CommandBar: React.FC<CommandBarProps> = ({
           aria-activedescendant={showAutocomplete && suggestions[selectedIndex] ? `suggestion-${selectedIndex}` : undefined}
           role="combobox"
         />
+        <button 
+          className="command-bar-execute-btn"
+          onClick={handleExecute}
+          type="button"
+          aria-label="Execute command"
+        >
+          [ GO ]
+        </button>
       </div>
       <nav className="command-bar-function-codes" aria-label="Quick function codes">
         {FUNCTION_CODES.map((fc) => (

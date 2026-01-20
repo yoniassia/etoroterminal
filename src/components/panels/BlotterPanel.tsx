@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { OrderStatus } from '../../api/contracts/etoro-api.types';
 import { ordersStore, StoredOrder } from '../../stores/ordersStore';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './BlotterPanel.css';
 
-export interface BlotterPanelProps {
+export interface BlotterPanelProps extends PanelContentProps {
   onOrderSelect?: (order: StoredOrder) => void;
   selectedOrderId?: string;
 }
@@ -62,7 +63,7 @@ function getStatusLabel(status: OrderStatus, isUnknown?: boolean): string {
     case 'rejected':
       return 'REJECTED';
     default:
-      return status.toUpperCase();
+      return String(status).toUpperCase();
   }
 }
 
@@ -86,7 +87,7 @@ function getRowClassName(order: StoredOrder, isSelected: boolean): string {
   return classes.join(' ');
 }
 
-export default function BlotterPanel({ onOrderSelect, selectedOrderId }: BlotterPanelProps) {
+export default function BlotterPanel({ onOrderSelect, selectedOrderId }: BlotterPanelProps = { panelId: '' }) {
   const [orders, setOrders] = useState<StoredOrder[]>([]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [drawerOrder, setDrawerOrder] = useState<StoredOrder | null>(null);

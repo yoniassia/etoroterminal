@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 
 export interface PanelConfig {
-  id: string;
+  typeId: string;
   title: string;
   component: ComponentType<PanelContentProps>;
   defaultWidth?: number;
@@ -26,7 +26,7 @@ class PanelRegistryClass {
   private panels: Map<string, PanelConfig> = new Map();
 
   register(config: PanelConfig): void {
-    this.panels.set(config.id, config);
+    this.panels.set(config.typeId, config);
   }
 
   unregister(id: string): boolean {

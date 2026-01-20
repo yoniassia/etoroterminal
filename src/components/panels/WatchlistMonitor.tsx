@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { WatchlistItem } from '../../api/contracts/etoro-api.types';
 import { quotesStore, StoredQuote } from '../../stores/quotesStore';
+import { quotesPollingService } from '../../services/quotesPollingService';
 import { WS_TOPICS } from '../../api/contracts/endpoints';
 import AddToWatchlistDialog from './AddToWatchlistDialog';
 import './WatchlistMonitor.css';
@@ -113,8 +114,6 @@ export default function WatchlistMonitor({
   }, []);
 
   useEffect(() => {
-    if (!wsSubscribe || !wsUnsubscribe) return;
-
     const currentSubscribed = subscribedIdsRef.current;
     const toSubscribe: number[] = [];
     const toUnsubscribe: number[] = [];
@@ -133,14 +132,20 @@ export default function WatchlistMonitor({
 
     if (toUnsubscribe.length > 0) {
       toUnsubscribe.forEach((id) => {
-        wsUnsubscribe(WS_TOPICS.QUOTES_INSTRUMENT(id));
+        if (wsUnsubscribe) {
+          wsUnsubscribe(WS_TOPICS.QUOTES_INSTRUMENT(id));
+        }
+        quotesPollingService.unsubscribe(id);
         currentSubscribed.delete(id);
       });
     }
 
     if (toSubscribe.length > 0) {
       toSubscribe.forEach((id) => {
-        wsSubscribe(WS_TOPICS.QUOTES_INSTRUMENT(id));
+        if (wsSubscribe) {
+          wsSubscribe(WS_TOPICS.QUOTES_INSTRUMENT(id));
+        }
+        quotesPollingService.subscribe(id);
         currentSubscribed.add(id);
       });
     }
@@ -148,11 +153,12 @@ export default function WatchlistMonitor({
 
   useEffect(() => {
     return () => {
-      if (wsUnsubscribe) {
-        subscribedIdsRef.current.forEach((id) => {
+      subscribedIdsRef.current.forEach((id) => {
+        if (wsUnsubscribe) {
           wsUnsubscribe(WS_TOPICS.QUOTES_INSTRUMENT(id));
-        });
-      }
+        }
+        quotesPollingService.unsubscribe(id);
+      });
       subscribedIdsRef.current.clear();
       flashTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
       flashTimeoutsRef.current.clear();

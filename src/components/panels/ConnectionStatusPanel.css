@@ -1,0 +1,250 @@
+.connection-status-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  background-color: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  overflow: auto;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+.status-header h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.refresh-btn {
+  background-color: #003300;
+  border: 1px solid #00cc00;
+  color: #00ff00;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background-color: #004400;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-keys-warning {
+  background-color: #332200;
+  border: 1px solid #cc8800;
+  color: #ffcc00;
+  padding: 16px;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.no-keys-warning a {
+  color: #00ccff;
+}
+
+.summary-bar {
+  display: flex;
+  gap: 20px;
+  padding: 8px;
+  background-color: #111;
+  border: 1px solid #333;
+  margin-bottom: 12px;
+}
+
+.summary-success {
+  color: #00ff00;
+  font-size: 12px;
+}
+
+.summary-error {
+  color: #ff4444;
+  font-size: 12px;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.result-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 12px;
+  padding: 8px;
+  background-color: #111;
+  border: 1px solid #333;
+  align-items: center;
+}
+
+.result-item.status-success {
+  border-left: 3px solid #00ff00;
+}
+
+.result-item.status-error {
+  border-left: 3px solid #ff4444;
+}
+
+.result-item.status-pending {
+  border-left: 3px solid #888;
+}
+
+.result-name {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.result-status .pending {
+  color: #888;
+  animation: pulse 1s infinite;
+}
+
+.result-status .success {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.result-status .error {
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.result-code {
+  font-size: 11px;
+  color: #888;
+}
+
+.result-latency {
+  font-size: 11px;
+  color: #00cc00;
+}
+
+.result-message {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: #ff8888;
+  padding-top: 4px;
+  word-break: break-word;
+}
+
+.info-section {
+  background-color: #111;
+  border: 1px solid #333;
+  padding: 12px;
+}
+
+.info-section h4 {
+  margin: 0 0 8px 0;
+  color: #00cc00;
+  font-size: 12px;
+}
+
+.info-section ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 11px;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.info-section strong {
+  color: #ffcc00;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* WebSocket Status Section */
+.ws-status-section {
+  background-color: #111;
+  border: 1px solid #333;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.ws-status-section h4 {
+  margin: 0 0 12px 0;
+  color: #00ccff;
+  font-size: 12px;
+}
+
+.ws-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.ws-label {
+  color: #888;
+}
+
+.ws-value {
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.ws-value.ws-connected {
+  color: #00ff00;
+  background-color: #002200;
+}
+
+.ws-value.ws-connecting,
+.ws-value.ws-reconnecting,
+.ws-value.ws-authenticating {
+  color: #ffcc00;
+  background-color: #332200;
+  animation: pulse 1s infinite;
+}
+
+.ws-value.ws-disconnected,
+.ws-value.ws-unauthenticated,
+.ws-value.ws-failed {
+  color: #ff4444;
+  background-color: #330000;
+}
+
+.ws-value.ws-authenticated {
+  color: #00ff00;
+  background-color: #002200;
+}
+
+.connect-btn {
+  width: 100%;
+  margin-top: 12px;
+  background-color: #003300;
+  border: 1px solid #00cc00;
+  color: #00ff00;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.connect-btn:hover:not(:disabled) {
+  background-color: #004400;
+}
+
+.connect-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

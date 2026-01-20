@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import Panel from '../Workspace/Panel';
 import { usePanelLink } from '../Workspace/usePanelLink';
 import { LinkGroup } from '../Workspace/ActiveSymbolContext';
 import { quotesStore, StoredQuote } from '../../stores/quotesStore';
 import { symbolResolver, ResolvedSymbol } from '../../services/symbolResolver';
 import { WS_TOPICS } from '../../api/contracts/endpoints';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './ChartPanel.css';
 
 type Timeframe = '1m' | '5m' | '15m';
@@ -22,11 +22,9 @@ interface AggregatedCandle {
   close: number;
 }
 
-export interface ChartPanelProps {
-  id: string;
+export interface ChartPanelProps extends PanelContentProps {
   initialSymbol?: string;
   initialLinkGroup?: LinkGroup;
-  onClose?: (id: string) => void;
   wsSubscribe?: (topic: string) => void;
   wsUnsubscribe?: (topic: string) => void;
 }
@@ -109,13 +107,12 @@ function formatChange(change: number, changePercent: number): string {
 }
 
 export default function ChartPanel({
-  id,
+  panelId,
   initialSymbol,
   initialLinkGroup = 'A',
-  onClose,
   wsSubscribe,
   wsUnsubscribe,
-}: ChartPanelProps) {
+}: ChartPanelProps = { panelId: '' }) {
   const {
     currentSymbol,
     linkGroup,
@@ -456,19 +453,7 @@ export default function ChartPanel({
     );
   };
 
-  const panelTitle = resolvedSymbol ? `Chart: ${resolvedSymbol.symbol}` : 'Chart';
-
-  return (
-    <Panel
-      id={id}
-      title={panelTitle}
-      onClose={onClose}
-      linkGroup={linkGroup}
-      isPinned={isPinned}
-      onLinkGroupChange={setLinkGroup}
-      onPinToggle={togglePin}
-    >
-      {isLoading ? renderLoading() : error ? renderError() : renderChart()}
-    </Panel>
-  );
+  if (isLoading) return renderLoading();
+  if (error) return renderError();
+  return renderChart();
 }

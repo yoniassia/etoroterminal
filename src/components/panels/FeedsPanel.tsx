@@ -2,9 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { featureFlags } from '../../config/featureFlags';
 import { getFeedsAdapter } from '../../api/adapters/feedsAdapter';
 import type { FeedPost, FeedResponse } from '../../api/contracts/etoro-api.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './FeedsPanel.css';
 
-export interface FeedsPanelProps {
+export interface FeedsPanelProps extends PanelContentProps {
   className?: string;
   userId?: string;
   instrumentId?: number;
@@ -58,7 +59,7 @@ function FeedPostItem({ post }: { post: FeedPost }) {
   );
 }
 
-export default function FeedsPanel({ className, userId, instrumentId }: FeedsPanelProps) {
+export default function FeedsPanel({ className, userId, instrumentId }: FeedsPanelProps = { panelId: '' }) {
   const isEnabled = featureFlags.FEEDS_ENABLED;
   const [activeTab, setActiveTab] = useState<FeedTab>('my-feed');
   const [feedState, setFeedState] = useState<FeedState>({

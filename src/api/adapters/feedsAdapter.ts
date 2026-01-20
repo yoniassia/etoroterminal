@@ -14,6 +14,11 @@ import { getDefaultAdapter, RestAdapter } from '../restAdapter';
 // Feeds Adapter Class
 // ============================================================================
 
+export interface FeedQueryOptions {
+  cursor?: string;
+  limit?: number;
+}
+
 export class FeedsAdapter {
   private readonly rest: RestAdapter;
 
@@ -35,14 +40,34 @@ export class FeedsAdapter {
     return response.post;
   }
 
-  async getUserFeed(userId: string, cursor?: string): Promise<FeedResponse> {
-    const params = cursor ? { cursor } : undefined;
-    return this.rest.get<FeedResponse>(ENDPOINTS.FEED_USER(userId), params);
+  async getUserFeed(userId: string, options?: FeedQueryOptions): Promise<FeedResponse> {
+    const params = new URLSearchParams();
+    if (options?.cursor) {
+      params.append('cursor', options.cursor);
+    }
+    if (options?.limit) {
+      params.append('limit', options.limit.toString());
+    }
+    const queryString = params.toString();
+    const endpoint = queryString
+      ? `${ENDPOINTS.FEED_USER(userId)}?${queryString}`
+      : ENDPOINTS.FEED_USER(userId);
+    return this.rest.get<FeedResponse>(endpoint);
   }
 
-  async getInstrumentFeed(instrumentId: number, cursor?: string): Promise<FeedResponse> {
-    const params = cursor ? { cursor } : undefined;
-    return this.rest.get<FeedResponse>(ENDPOINTS.FEED_INSTRUMENT(instrumentId), params);
+  async getInstrumentFeed(instrumentId: number, options?: FeedQueryOptions): Promise<FeedResponse> {
+    const params = new URLSearchParams();
+    if (options?.cursor) {
+      params.append('cursor', options.cursor);
+    }
+    if (options?.limit) {
+      params.append('limit', options.limit.toString());
+    }
+    const queryString = params.toString();
+    const endpoint = queryString
+      ? `${ENDPOINTS.FEED_INSTRUMENT(instrumentId)}?${queryString}`
+      : ENDPOINTS.FEED_INSTRUMENT(instrumentId);
+    return this.rest.get<FeedResponse>(endpoint);
   }
 }
 

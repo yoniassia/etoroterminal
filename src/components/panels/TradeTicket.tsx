@@ -1,6 +1,8 @@
 import { useState, useCallback, KeyboardEvent } from 'react';
 import { useTradingMode, TradingMode } from '../../contexts/TradingModeContext';
 import { keyManager } from '../../services/keyManager';
+import { getTradingAdapter } from '../../api/adapters/tradingAdapter';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './TradeTicket.css';
 
 export type InputMode = 'amount' | 'units';
@@ -17,16 +19,17 @@ export interface TradeTicketData {
   takeProfit?: number;
 }
 
-export interface TradeTicketProps {
+export interface TradeTicketProps extends PanelContentProps {
   symbol?: string;
+  instrumentId?: number;
   onSubmit?: (data: TradeTicketData) => void;
   onCancel?: () => void;
 }
 
 const LEVERAGE_OPTIONS: LeverageOption[] = ['1x', '2x', '5x', '10x', '20x'];
 
-export default function TradeTicket({ symbol = '', onSubmit, onCancel }: TradeTicketProps) {
-  const { mode, isRealMode, requiresConfirmation } = useTradingMode();
+export default function TradeTicket({ symbol = '', instrumentId, onSubmit, onCancel }: TradeTicketProps = { panelId: '' }) {
+  const { mode, isRealMode, isDemoMode, requiresConfirmation } = useTradingMode();
   const hasApiKeys = keyManager.hasKeys();
 
   const [inputMode, setInputMode] = useState<InputMode>('amount');
@@ -36,8 +39,10 @@ export default function TradeTicket({ symbol = '', onSubmit, onCancel }: TradeTi
   const [takeProfit, setTakeProfit] = useState<string>('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingSide, setPendingSide] = useState<OrderSide | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const isDisabled = !hasApiKeys;
+  const isDisabled = !hasApiKeys || isSubmitting;
   const value = parseFloat(inputValue) || 0;
 
   const buildTradeData = (side: OrderSide): TradeTicketData => ({
@@ -50,8 +55,62 @@ export default function TradeTicket({ symbol = '', onSubmit, onCancel }: TradeTi
     takeProfit: takeProfit ? parseFloat(takeProfit) : undefined,
   });
 
+  const executeTrade = useCallback(async (side: OrderSide) => {
+    if (!instrumentId) {
+      setSubmitError('No instrument selected');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const tradingAdapter = getTradingAdapter();
+      tradingAdapter.setDemoMode(isDemoMode());
+
+      const leverageValue = parseInt(leverage.replace('x', ''), 10);
+      const isBuy = side === 'buy';
+      const instrumentInfo = { symbol, displayName: symbol };
+
+      if (inputMode === 'amount') {
+        await tradingAdapter.openPositionByAmount(
+          instrumentId,
+          value,
+          isBuy,
+          leverageValue,
+          stopLoss ? parseFloat(stopLoss) : undefined,
+          takeProfit ? parseFloat(takeProfit) : undefined,
+          instrumentInfo
+        );
+      } else {
+        await tradingAdapter.openPositionByUnits(
+          instrumentId,
+          value,
+          isBuy,
+          leverageValue,
+          stopLoss ? parseFloat(stopLoss) : undefined,
+          takeProfit ? parseFloat(takeProfit) : undefined,
+          instrumentInfo,
+          value
+        );
+      }
+
+      onSubmit?.(buildTradeData(side));
+      setInputValue('');
+      setStopLoss('');
+      setTakeProfit('');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Trade failed';
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [instrumentId, isDemoMode, leverage, inputMode, value, stopLoss, takeProfit, symbol, onSubmit]);
+
   const handleTrade = useCallback((side: OrderSide) => {
     if (isDisabled || value <= 0) return;
+
+    setSubmitError(null);
 
     if (requiresConfirmation()) {
       setPendingSide(side);
@@ -59,16 +118,16 @@ export default function TradeTicket({ symbol = '', onSubmit, onCancel }: TradeTi
       return;
     }
 
-    onSubmit?.(buildTradeData(side));
-  }, [isDisabled, value, requiresConfirmation, onSubmit, symbol, inputMode, leverage, stopLoss, takeProfit]);
+    executeTrade(side);
+  }, [isDisabled, value, requiresConfirmation, executeTrade]);
 
   const confirmTrade = useCallback(() => {
     if (pendingSide) {
-      onSubmit?.(buildTradeData(pendingSide));
+      executeTrade(pendingSide);
     }
     setShowConfirmation(false);
     setPendingSide(null);
-  }, [pendingSide, onSubmit, symbol, inputMode, value, leverage, stopLoss, takeProfit]);
+  }, [pendingSide, executeTrade]);
 
   const cancelConfirmation = useCallback(() => {
     setShowConfirmation(false);
@@ -118,6 +177,18 @@ export default function TradeTicket({ symbol = '', onSubmit, onCancel }: TradeTi
       {isRealMode() && (
         <div className="trade-ticket-real-warning" role="alert">
           ⚠ REAL MODE - Trades will execute with real money
+        </div>
+      )}
+
+      {submitError && (
+        <div className="trade-ticket-error" role="alert">
+          ✗ {submitError}
+        </div>
+      )}
+
+      {isSubmitting && (
+        <div className="trade-ticket-loading" role="status" aria-live="polite">
+          Submitting order...
         </div>
       )}
 

@@ -1,0 +1,126 @@
+.help-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  background-color: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  overflow: auto;
+}
+
+.help-header h2 {
+  margin: 0 0 16px 0;
+  color: #00ff00;
+  font-size: 16px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+.help-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.help-section {
+  background-color: #111;
+  border: 1px solid #333;
+  padding: 12px;
+  border-radius: 2px;
+}
+
+.help-section h3 {
+  margin: 0 0 10px 0;
+  color: #00cc00;
+  font-size: 14px;
+}
+
+.help-section p {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.help-section ul,
+.help-section ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.help-section li {
+  margin-bottom: 4px;
+}
+
+.help-section strong {
+  color: #00ff00;
+}
+
+.help-section a {
+  color: #00ccff;
+  text-decoration: none;
+}
+
+.help-section a:hover {
+  text-decoration: underline;
+}
+
+.command-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.command-table th,
+.command-table td {
+  border: 1px solid #333;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.command-table th {
+  background-color: #1a1a1a;
+  color: #00cc00;
+}
+
+.command-table td:first-child {
+  color: #ffcc00;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.command-table td:last-child {
+  color: #ccc;
+}
+
+.status-indicator {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 10px;
+}
+
+.status-indicator.connected {
+  color: #00ff00;
+}
+
+.status-indicator.reconnecting {
+  color: #ffcc00;
+}
+
+.status-indicator.disconnected {
+  color: #ff4444;
+}
+
+.warning {
+  background-color: #332200;
+  border: 1px solid #cc8800;
+  color: #ffcc00;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 11px;
+}

@@ -349,13 +349,24 @@ export function createRestAdapter(config: RestAdapterConfig): RestAdapter {
 // Default Instance (singleton pattern)
 // ============================================================================
 
+import { keyManager } from '../services/keyManager';
+
 let defaultAdapter: RestAdapter | null = null;
 
 export function getDefaultAdapter(): RestAdapter {
-  if (!defaultAdapter) {
+  const keys = keyManager.getKeys();
+  
+  // Always create a new adapter with current keys to ensure they're up to date
+  if (keys) {
     defaultAdapter = new RestAdapter({
-      apiKey: import.meta.env.VITE_ETORO_PUBLIC_KEY || '',
-      userKey: import.meta.env.VITE_ETORO_USER_KEY || '',
+      apiKey: keys.apiKey,
+      userKey: keys.userKey,
+    });
+  } else if (!defaultAdapter) {
+    // Fallback to empty keys if no keys configured
+    defaultAdapter = new RestAdapter({
+      apiKey: '',
+      userKey: '',
     });
   }
   return defaultAdapter;
@@ -363,4 +374,8 @@ export function getDefaultAdapter(): RestAdapter {
 
 export function setDefaultAdapter(adapter: RestAdapter): void {
   defaultAdapter = adapter;
+}
+
+export function resetDefaultAdapter(): void {
+  defaultAdapter = null;
 }

@@ -31,20 +31,21 @@ export class PositionAdapter {
   private readonly rest: RestAdapter;
   private readonly isDemo: boolean;
 
-  constructor(restAdapter?: RestAdapter, isDemo: boolean = false) {
+  constructor(restAdapter?: RestAdapter, isDemo: boolean = true) {
     this.rest = restAdapter || getDefaultAdapter();
     this.isDemo = isDemo;
   }
 
-  private getCloseEndpoint(): string {
-    return this.isDemo ? ENDPOINTS.TRADING_DEMO_CLOSE : ENDPOINTS.TRADING_CLOSE;
+  private getCloseEndpoint(positionId: number): string {
+    return this.isDemo 
+      ? ENDPOINTS.TRADING_DEMO_CLOSE(positionId) 
+      : ENDPOINTS.TRADING_CLOSE(positionId);
   }
 
   async closePosition(positionId: number): Promise<ClosePositionResult> {
-    const request: ClosePositionRequest = { positionId };
     const response = await this.rest.post<ClosePositionResponse>(
-      this.getCloseEndpoint(),
-      request
+      this.getCloseEndpoint(positionId),
+      {}
     );
 
     return {
@@ -61,9 +62,9 @@ export class PositionAdapter {
       throw new Error('Units must be greater than 0 for partial close');
     }
 
-    const request: ClosePositionRequest = { positionId, units };
+    const request = { UnitsToDeduct: units };
     const response = await this.rest.post<ClosePositionResponse>(
-      this.getCloseEndpoint(),
+      this.getCloseEndpoint(positionId),
       request
     );
 
@@ -82,7 +83,7 @@ export class PositionAdapter {
 // Factory Functions
 // ============================================================================
 
-export function createPositionAdapter(restAdapter?: RestAdapter, isDemo: boolean = false): PositionAdapter {
+export function createPositionAdapter(restAdapter?: RestAdapter, isDemo: boolean = true): PositionAdapter {
   return new PositionAdapter(restAdapter, isDemo);
 }
 
@@ -93,7 +94,7 @@ export function createPositionAdapter(restAdapter?: RestAdapter, isDemo: boolean
 let defaultRealAdapter: PositionAdapter | null = null;
 let defaultDemoAdapter: PositionAdapter | null = null;
 
-export function getPositionAdapter(isDemo: boolean = false): PositionAdapter {
+export function getPositionAdapter(isDemo: boolean = true): PositionAdapter {
   if (isDemo) {
     if (!defaultDemoAdapter) {
       defaultDemoAdapter = new PositionAdapter(undefined, true);
@@ -107,7 +108,7 @@ export function getPositionAdapter(isDemo: boolean = false): PositionAdapter {
   return defaultRealAdapter;
 }
 
-export function setPositionAdapter(adapter: PositionAdapter, isDemo: boolean = false): void {
+export function setPositionAdapter(adapter: PositionAdapter, isDemo: boolean = true): void {
   if (isDemo) {
     defaultDemoAdapter = adapter;
   } else {

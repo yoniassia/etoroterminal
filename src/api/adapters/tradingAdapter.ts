@@ -64,8 +64,12 @@ export class TradingAdapter {
     return this.isDemo;
   }
 
-  private getOpenEndpoint(): string {
-    return this.isDemo ? ENDPOINTS.TRADING_DEMO_OPEN : ENDPOINTS.TRADING_OPEN;
+  private getOpenByAmountEndpoint(): string {
+    return this.isDemo ? ENDPOINTS.TRADING_DEMO_OPEN_BY_AMOUNT : ENDPOINTS.TRADING_OPEN_BY_AMOUNT;
+  }
+
+  private getOpenByUnitsEndpoint(): string {
+    return this.isDemo ? ENDPOINTS.TRADING_DEMO_OPEN_BY_UNITS : ENDPOINTS.TRADING_OPEN_BY_UNITS;
   }
 
   async openPositionByAmount(
@@ -96,18 +100,17 @@ export class TradingAdapter {
     }
 
     const request = {
-      instrumentId,
-      orderType,
-      side,
-      amount,
-      leverage,
-      stopLossRate,
-      takeProfitRate,
+      InstrumentID: instrumentId,
+      IsBuy: isBuy,
+      Amount: amount,
+      Leverage: leverage,
+      StopLossRate: stopLossRate,
+      TakeProfitRate: takeProfitRate,
     };
 
     try {
       const response = await this.rest.post<TradeResponse>(
-        this.getOpenEndpoint(),
+        this.getOpenByAmountEndpoint(),
         request
       );
 
@@ -165,18 +168,17 @@ export class TradingAdapter {
     }
 
     const request = {
-      instrumentId,
-      orderType,
-      side,
-      units,
-      leverage,
-      stopLossRate,
-      takeProfitRate,
+      InstrumentID: instrumentId,
+      IsBuy: isBuy,
+      AmountInUnits: units,
+      Leverage: leverage,
+      StopLossRate: stopLossRate,
+      TakeProfitRate: takeProfitRate,
     };
 
     try {
       const response = await this.rest.post<TradeResponse>(
-        this.getOpenEndpoint(),
+        this.getOpenByUnitsEndpoint(),
         request
       );
 

@@ -13,6 +13,8 @@ const STORAGE_KEY = 'etoro_encrypted_keys';
 export interface StoredKeys {
   userKey: string;
   apiKey: string;
+  username?: string;
+  fullName?: string;
 }
 
 class KeyManager {
@@ -21,8 +23,31 @@ class KeyManager {
   /**
    * Store credentials in memory
    */
-  setKeys(userKey: string, apiKey: string): void {
-    this.keys = { userKey, apiKey };
+  setKeys(userKey: string, apiKey: string, username?: string, fullName?: string): void {
+    this.keys = { userKey, apiKey, username, fullName };
+  }
+
+  /**
+   * Update user info only
+   */
+  setUserInfo(username: string, fullName: string): void {
+    if (this.keys) {
+      this.keys.username = username;
+      this.keys.fullName = fullName;
+    }
+  }
+
+  /**
+   * Get user display info
+   */
+  getUserInfo(): { username: string; fullName: string } | null {
+    if (this.keys?.username || this.keys?.fullName) {
+      return {
+        username: this.keys.username || '',
+        fullName: this.keys.fullName || '',
+      };
+    }
+    return null;
   }
 
   /**

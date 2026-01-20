@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { ENDPOINTS } from '../../api/contracts/endpoints';
 import { getDefaultAdapter } from '../../api/restAdapter';
-import type { Instrument } from '../../api/contracts/etoro-api.types';
 import './AddToWatchlistDialog.css';
 
 interface SearchResult {
@@ -55,18 +54,26 @@ export default function AddToWatchlistDialog({
 
     try {
       const adapter = getDefaultAdapter();
-      const response = await adapter.get<{ instruments: Instrument[] }>(
-        `${ENDPOINTS.INSTRUMENTS_SEARCH}?query=${encodeURIComponent(query)}&limit=20`
+      // API uses internalSymbolFull parameter for symbol search
+      const response = await adapter.get<Record<string, unknown> | Record<string, unknown>[]>(
+        `${ENDPOINTS.INSTRUMENTS_SEARCH}?internalSymbolFull=${encodeURIComponent(query.toUpperCase())}`
       );
       
-      const filteredResults = response.instruments
-        .filter((inst) => !existingInstrumentIds.has(inst.instrumentId))
+      // Handle both array and object response formats - API returns 'items' key
+      const rawData = response as Record<string, unknown>;
+      const rawInstruments = Array.isArray(response) 
+        ? response as Record<string, unknown>[]
+        : (rawData.items ?? rawData.Items ?? rawData.instruments ?? rawData.Instruments ?? []) as Record<string, unknown>[];
+      
+      const filteredResults = rawInstruments
         .map((inst) => ({
-          instrumentId: inst.instrumentId,
-          symbol: inst.symbol,
-          displayName: inst.displayName,
-          type: inst.type,
-        }));
+          instrumentId: (inst.instrumentId ?? inst.InstrumentId ?? inst.InstrumentID ?? 0) as number,
+          symbol: String(inst.internalSymbolFull ?? inst.InternalSymbolFull ?? inst.symbol ?? inst.Symbol ?? ''),
+          displayName: String(inst.instrumentDisplayName ?? inst.InstrumentDisplayName ?? inst.displayName ?? inst.DisplayName ?? inst.name ?? inst.Name ?? ''),
+          type: String(inst.instrumentTypeId ?? inst.InstrumentTypeId ?? inst.type ?? inst.Type ?? 'stock'),
+        }))
+        .filter((inst) => inst.instrumentId > 0 && !existingInstrumentIds.has(inst.instrumentId))
+        .slice(0, 20);
 
       setResults(filteredResults);
       setSelectedIndex(filteredResults.length > 0 ? 0 : -1);

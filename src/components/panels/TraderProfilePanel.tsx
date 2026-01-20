@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import { compareStore } from '../../stores/compareStore';
+import { getTradersAdapter, Trader } from '../../api/adapters/tradersAdapter';
 import './TraderProfilePanel.css';
 
 export interface TraderProfile {
@@ -38,24 +39,6 @@ interface TraderProfilePanelProps extends PanelContentProps {
   traderId?: string;
   onCopyTrader?: (username: string) => void;
 }
-
-const MOCK_TRADER: TraderProfile = {
-  username: 'TopTrader2024',
-  displayName: 'Alex Morgan',
-  avatarUrl: undefined,
-  country: 'United States',
-  isPopularInvestor: true,
-  riskScore: 4,
-  gain: 42.5,
-  maxDrawdown: -12.3,
-  copiers: 1847,
-  copiersGrowth: 15.2,
-  winRatio: 68,
-  profitableMonths: 18,
-  totalTrades: 342,
-  activeSince: '2019-03-15',
-  canCopy: true,
-};
 
 const MOCK_HOLDINGS: TraderHolding[] = [
   { instrumentId: 1, symbol: 'AAPL', displayName: 'Apple Inc.', allocation: 18.5, profit: 12.3 },
@@ -96,19 +79,52 @@ export default function TraderProfilePanel({ traderId, onCopyTrader }: TraderPro
     return unsubscribe;
   }, [trader, traderId]);
 
-  useEffect(() => {
+  const fetchTraderProfile = useCallback(async () => {
+    if (!traderId) {
+      setTrader(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
-    const timer = setTimeout(() => {
-      setTrader(MOCK_TRADER);
+    try {
+      const adapter = getTradersAdapter();
+      const data: Trader = await adapter.getTraderProfile(traderId);
+      
+      const profile: TraderProfile = {
+        username: data.username,
+        displayName: data.displayName || data.username,
+        avatarUrl: data.avatarUrl,
+        country: data.country,
+        isPopularInvestor: data.isVerified || false,
+        riskScore: data.riskScore,
+        gain: data.gainPercent,
+        maxDrawdown: -10,
+        copiers: data.copiers,
+        copiersGrowth: undefined,
+        winRatio: data.profitableTrades && data.trades ? Math.round((data.profitableTrades / data.trades) * 100) : undefined,
+        profitableMonths: undefined,
+        totalTrades: data.trades,
+        activeSince: undefined,
+        canCopy: true,
+      };
+      
+      setTrader(profile);
       setHoldings(MOCK_HOLDINGS);
       setPerformance(MOCK_PERFORMANCE);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch trader profile';
+      setError(message);
+    } finally {
       setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    }
   }, [traderId]);
+
+  useEffect(() => {
+    fetchTraderProfile();
+  }, [fetchTraderProfile]);
 
   const drawChart = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
     ctx.clearRect(0, 0, width, height);
@@ -214,15 +230,8 @@ export default function TraderProfilePanel({ traderId, onCopyTrader }: TraderPro
   }, [trader, onCopyTrader]);
 
   const handleRefresh = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    setTimeout(() => {
-      setTrader(MOCK_TRADER);
-      setHoldings(MOCK_HOLDINGS);
-      setPerformance(MOCK_PERFORMANCE);
-      setLoading(false);
-    }, 500);
-  }, []);
+    fetchTraderProfile();
+  }, [fetchTraderProfile]);
 
   const handleAddToCompare = useCallback(() => {
     if (!trader) return;

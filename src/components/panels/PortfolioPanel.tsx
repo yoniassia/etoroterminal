@@ -39,13 +39,17 @@ export default function PortfolioPanel({ onSelectPosition }: PortfolioPanelProps
   const [closeConfirmation, setCloseConfirmation] = useState<CloseConfirmation | null>(null);
   const [closeResult, setCloseResult] = useState<CloseResultState | null>(null);
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const { isDemoMode, isRealMode } = useTradingMode();
+  const { isDemoMode, isRealMode, mode } = useTradingMode();
 
   useEffect(() => {
     const unsubscribe = portfolioStore.subscribe(setState);
     portfolioStore.fetchPortfolio().catch(() => {});
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    portfolioStore.setDemoMode(isDemoMode());
+  }, [mode, isDemoMode]);
 
   useEffect(() => {
     const interval = setInterval(() => {

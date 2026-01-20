@@ -53,17 +53,16 @@ export class TradersAdapter {
   async searchTraders(params: TraderSearchParams = {}): Promise<TraderSearchResponse> {
     const queryParams = new URLSearchParams();
 
-    if (params.username) {
-      queryParams.append('username', params.username);
-    }
+    queryParams.append('period', 'LastYear');
+    
     if (params.minGainPercent !== undefined) {
-      queryParams.append('minGain', params.minGainPercent.toString());
-    }
-    if (params.minCopiers !== undefined) {
-      queryParams.append('minCopiers', params.minCopiers.toString());
+      queryParams.append('gainMin', params.minGainPercent.toString());
     }
     if (params.maxRiskScore !== undefined) {
-      queryParams.append('maxRisk', params.maxRiskScore.toString());
+      queryParams.append('maxDailyRiskScoreMax', params.maxRiskScore.toString());
+    }
+    if (params.minCopiers !== undefined) {
+      queryParams.append('copiersMin', params.minCopiers.toString());
     }
     if (params.page !== undefined) {
       queryParams.append('page', params.page.toString());
@@ -72,22 +71,52 @@ export class TradersAdapter {
       queryParams.append('pageSize', params.pageSize.toString());
     }
     if (params.sortBy) {
-      queryParams.append('sortBy', params.sortBy);
-    }
-    if (params.sortOrder) {
-      queryParams.append('sortOrder', params.sortOrder);
+      const sortPrefix = params.sortOrder === 'asc' ? '' : '-';
+      const sortField = params.sortBy === 'gainPercent' ? 'gain' : params.sortBy;
+      queryParams.append('sort', `${sortPrefix}${sortField}`);
     }
 
     const queryString = queryParams.toString();
-    const url = queryString
-      ? `${ENDPOINTS.TRADERS_SEARCH}?${queryString}`
-      : ENDPOINTS.TRADERS_SEARCH;
+    const url = `${ENDPOINTS.TRADERS_SEARCH}?${queryString}`;
 
-    return this.rest.get<TraderSearchResponse>(url);
+    const response = await this.rest.get<{ status?: string; totalRows?: number; items?: Array<Record<string, unknown>> }>(url);
+    
+    const items = response.items || [];
+    const traders: Trader[] = items.map((item) => this.mapApiResponseToTrader(item));
+    
+    return {
+      traders,
+      total: response.totalRows || 0,
+      page: params.page || 1,
+      pageSize: params.pageSize || 10,
+      totalPages: Math.ceil((response.totalRows || 0) / (params.pageSize || 10)),
+    };
   }
 
   async getTraderProfile(userId: string): Promise<Trader> {
-    return this.rest.get<Trader>(ENDPOINTS.TRADER_PROFILE(userId));
+    const response = await this.rest.get<Record<string, unknown> | Array<Record<string, unknown>>>(ENDPOINTS.TRADER_PROFILE(userId));
+    const data = Array.isArray(response) ? response[0] : response;
+    if (!data) {
+      throw new Error(`Trader not found: ${userId}`);
+    }
+    return this.mapApiResponseToTrader(data);
+  }
+
+  private mapApiResponseToTrader(item: Record<string, unknown>): Trader {
+    return {
+      userId: String(item.userId || item.customerId || item.cid || ''),
+      username: String(item.username || item.userName || ''),
+      displayName: String(item.displayName || item.fullName || item.username || ''),
+      avatarUrl: item.avatarUrl as string | undefined,
+      country: item.country as string | undefined,
+      gainPercent: Number(item.gain || item.gainPercent || item.yearlyGain || 0),
+      copiers: Number(item.copiers || item.copiersCount || 0),
+      riskScore: Math.min(7, Math.max(1, Number(item.riskScore || item.maxDailyRiskScore || 4))) as RiskScore,
+      assetsUnderManagement: item.aum as number | undefined,
+      trades: item.trades as number | undefined,
+      profitableTrades: item.profitableTrades as number | undefined,
+      isVerified: Boolean(item.isVerified || item.verified || item.isPopularInvestor),
+    };
   }
 }
 

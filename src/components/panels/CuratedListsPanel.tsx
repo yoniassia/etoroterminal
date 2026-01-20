@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getDefaultCuratedListsAdapter } from '../../api/adapters/curatedListsAdapter';
 import type { CuratedList, CuratedListItem } from '../../api/contracts/etoro-api.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './CuratedListsPanel.css';
 
-export interface CuratedListsPanelProps {
+export interface CuratedListsPanelProps extends PanelContentProps {
   onInstrumentSelect?: (instrumentId: number, symbol: string) => void;
 }
 
-export default function CuratedListsPanel({ onInstrumentSelect }: CuratedListsPanelProps) {
+export default function CuratedListsPanel({ onInstrumentSelect }: CuratedListsPanelProps = { panelId: '' }) {
   const [lists, setLists] = useState<CuratedList[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

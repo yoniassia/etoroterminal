@@ -4,6 +4,7 @@ import { usePanelLink } from '../Workspace/usePanelLink';
 import { LinkGroup } from '../Workspace/ActiveSymbolContext';
 import { quotesStore, StoredQuote } from '../../stores/quotesStore';
 import { symbolResolver, ResolvedSymbol } from '../../services/symbolResolver';
+import { quotesPollingService } from '../../services/quotesPollingService';
 import { WS_TOPICS } from '../../api/contracts/endpoints';
 import './QuotePanel.css';
 
@@ -150,6 +151,8 @@ export default function QuotePanel({
     if (wsSubscribe) {
       wsSubscribe(topic);
     }
+    // Also subscribe via REST polling as fallback
+    quotesPollingService.subscribe(instrumentId);
     subscribedInstrumentRef.current = instrumentId;
 
     const existingQuote = quotesStore.getQuote(instrumentId);
@@ -169,9 +172,12 @@ export default function QuotePanel({
 
   useEffect(() => {
     return () => {
-      if (subscribedInstrumentRef.current !== null && wsUnsubscribe) {
-        const topic = WS_TOPICS.QUOTES_INSTRUMENT(subscribedInstrumentRef.current);
-        wsUnsubscribe(topic);
+      if (subscribedInstrumentRef.current !== null) {
+        if (wsUnsubscribe) {
+          const topic = WS_TOPICS.QUOTES_INSTRUMENT(subscribedInstrumentRef.current);
+          wsUnsubscribe(topic);
+        }
+        quotesPollingService.unsubscribe(subscribedInstrumentRef.current);
       }
     };
   }, [wsUnsubscribe]);
