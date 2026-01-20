@@ -1,7 +1,10 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
+import { useState, useCallback, useEffect, useRef, KeyboardEvent } from 'react';
 import { useTradingMode, TradingMode } from '../../contexts/TradingModeContext';
 import { keyManager } from '../../services/keyManager';
 import { getTradingAdapter } from '../../api/adapters/tradingAdapter';
+import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
+import { useActiveSymbol } from '../Workspace/ActiveSymbolContext';
+import { symbolResolver } from '../../services/symbolResolver';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './TradeTicket.css';
 
@@ -28,10 +31,15 @@ export interface TradeTicketProps extends PanelContentProps {
 
 const LEVERAGE_OPTIONS: LeverageOption[] = ['1x', '2x', '5x', '10x', '20x'];
 
-export default function TradeTicket({ symbol = '', instrumentId, onSubmit, onCancel }: TradeTicketProps = { panelId: '' }) {
+export default function TradeTicket({ symbol: propSymbol = '', instrumentId: propInstrumentId, onSubmit, onCancel }: TradeTicketProps = { panelId: '' }) {
   const { mode, isRealMode, isDemoMode, requiresConfirmation } = useTradingMode();
+  const { getPendingSymbol } = useWorkspaceContext();
+  const { activeSymbol } = useActiveSymbol();
   const hasApiKeys = keyManager.hasKeys();
+  const initializedRef = useRef(false);
 
+  const [symbol, setSymbol] = useState(propSymbol);
+  const [instrumentId, setInstrumentId] = useState<number | undefined>(propInstrumentId);
   const [inputMode, setInputMode] = useState<InputMode>('amount');
   const [inputValue, setInputValue] = useState<string>('');
   const [leverage, setLeverage] = useState<LeverageOption>('1x');
@@ -41,6 +49,39 @@ export default function TradeTicket({ symbol = '', instrumentId, onSubmit, onCan
   const [pendingSide, setPendingSide] = useState<OrderSide | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Check for pending symbol on mount
+  useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      const pending = getPendingSymbol();
+      if (pending?.symbol) {
+        setSymbol(pending.symbol);
+        if (pending.instrumentId) {
+          setInstrumentId(pending.instrumentId);
+        } else {
+          // Resolve the symbol to get instrumentId
+          symbolResolver.resolveSymbol(pending.symbol).then((resolved) => {
+            if (resolved) {
+              setInstrumentId(resolved.instrumentId);
+            }
+          });
+        }
+      }
+    }
+  }, [getPendingSymbol]);
+
+  // Also listen to active symbol changes
+  useEffect(() => {
+    if (activeSymbol && activeSymbol !== symbol) {
+      setSymbol(activeSymbol);
+      symbolResolver.resolveSymbol(activeSymbol).then((resolved) => {
+        if (resolved) {
+          setInstrumentId(resolved.instrumentId);
+        }
+      });
+    }
+  }, [activeSymbol]);
 
   const isDisabled = !hasApiKeys || isSubmitting;
   const value = parseFloat(inputValue) || 0;

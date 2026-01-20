@@ -351,6 +351,28 @@
   border-color: #cc6600;
 }
 
+.quote-panel__trade-btn {
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  transition: all 0.15s;
+}
+
+.quote-panel__trade-btn:hover {
+  transform: scale(1.02);
+}
+
+.quote-panel__bid.quote-panel__trade-btn:hover {
+  background-color: #001a33;
+  border-color: #0099ff;
+  box-shadow: 0 0 8px rgba(0, 102, 204, 0.5);
+}
+
+.quote-panel__ask.quote-panel__trade-btn:hover {
+  background-color: #331a00;
+  border-color: #ff9900;
+  box-shadow: 0 0 8px rgba(204, 102, 0, 0.5);
+}
+
 .quote-panel__label {
   font-size: 10px;
   color: #666;
@@ -394,4 +416,65 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* Autocomplete Styles */
+.quote-panel__input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.quote-panel__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #0a0a0a;
+  border: 1px solid #00cc00;
+  border-top: none;
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.quote-panel__suggestion {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #222;
+  transition: background-color 0.1s;
+}
+
+.quote-panel__suggestion:last-child {
+  border-bottom: none;
+}
+
+.quote-panel__suggestion:hover,
+.quote-panel__suggestion--selected {
+  background-color: #002200;
+}
+
+.quote-panel__suggestion-symbol {
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.quote-panel__suggestion-name {
+  color: #ccc;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quote-panel__suggestion-exchange {
+  color: #666;
+  font-size: 10px;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

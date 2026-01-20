@@ -89,7 +89,10 @@ const panelStyles: Record<string, CSSProperties> = {
   content: {
     flex: 1,
     padding: '12px',
-    overflow: 'auto',
+    overflow: 'hidden', /* Changed from 'auto' - children handle their own scrolling */
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0, /* Allow flex children to shrink and scroll properly */
     color: '#00ff00',
     fontFamily: '"Courier New", monospace',
     fontSize: '13px',

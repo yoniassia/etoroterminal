@@ -1,6 +1,6 @@
 ```md
 # eToro Terminal (US) — SpecKit Master Document (Merged)
-Version: 1.1.3  
+Version: 1.1.5  
 Date: 2026-01-20  
 Audience: US pro / active traders  
 Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
@@ -13,11 +13,31 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 > - `.specify/specs/001-etoro-terminal-us/wireframes.md`
 > - `.specify/specs/001-etoro-terminal-us/tasks.md`
 > - `.specify/specs/001-etoro-terminal-us/checklists/requirements.md`
-> - **[UPDATED v1.1.3]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
+> - **[UPDATED v1.1.4]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
 
 ---
 
 ## Changelog
+
+### v1.1.5 (2026-01-20) - Asset Explorer & Quote Autocomplete
+- ✅ **Asset Explorer Panel (EXP)**: Browse entire asset universe by exchange, industry, or asset type
+- ✅ **Exchange Filtering**: Filter by NYSE, NASDAQ, Hong Kong, and other exchanges
+- ✅ **Asset Type Filtering**: Filter by Stocks, ETFs, Crypto, Indices
+- ✅ **Search Within Results**: Search within filtered asset results
+- ✅ **Add to Watchlist**: Click to view quote or add to watchlist from explorer
+- ✅ **Pagination**: Paginated results for large asset sets
+- ✅ **Quote Panel Autocomplete**: Symbol autocomplete from cached universe when typing
+- ✅ **Keyboard Navigation**: Up/down arrows and Enter to select from autocomplete
+- ✅ **Debounced Search**: Debounced autocomplete search for performance
+- ✅ **Scrollbar Fix**: Removed duplicate scrollbar issue in WatchlistMonitor panel
+
+### v1.1.4 (2026-01-20) - Workspace Layout Persistence & Draggable Panels
+- ✅ **Layout Persistence**: Save current panel configuration as default (localStorage)
+- ✅ **Auto-Load Layout**: Saved layout loads automatically on next session
+- ✅ **Reset to Factory Defaults**: Option to restore original DEFAULT_PANELS configuration
+- ✅ **Draggable Panel Reordering**: Drag and drop panels to reorder within workspace
+- ✅ **Drag Visual Feedback**: Visual indicators during panel drag operations
+- ✅ **Keyboard Accessible Reorder**: Ctrl+Arrow keys for panel repositioning
 
 ### v1.1.3 (2026-01-20) - Watchlist & Symbol Universe Cache
 - ✅ **Watchlist API Fix**: Fixed item parsing to use `itemId` (not `instrumentId`) and `itemRank` for ordering

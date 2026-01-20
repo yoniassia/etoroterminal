@@ -7,6 +7,7 @@ import { getWatchlistsAdapter } from '../../api/adapters/watchlistsAdapter';
 import { streamingService } from '../../services/streamingService';
 import { quotesPollingService } from '../../services/quotesPollingService';
 import { symbolResolver } from '../../services/symbolResolver';
+import { useActiveSymbol } from '../Workspace/ActiveSymbolContext';
 import type { Watchlist, WatchlistItem } from '../../api/contracts/etoro-api.types';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './WatchlistMonitor.css';
@@ -27,11 +28,20 @@ const FALLBACK_INSTRUMENTS: WatchlistItem[] = [
 ];
 
 export default function WatchlistMonitorPanel(_props: PanelContentProps) {
+  const { setActiveSymbol } = useActiveSymbol();
   const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
   const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
   const [popularInstruments, setPopularInstruments] = useState<WatchlistItem[]>(FALLBACK_INSTRUMENTS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedInstrumentId, setSelectedInstrumentId] = useState<number | undefined>(undefined);
+
+  // Handle symbol selection - update active symbol for Quote panel
+  const handleSelectSymbol = useCallback((symbol: string, instrumentId: number) => {
+    setSelectedInstrumentId(instrumentId);
+    setActiveSymbol(symbol);
+    console.log('[WatchlistMonitor] Selected symbol:', symbol, instrumentId);
+  }, [setActiveSymbol]);
 
   // Fetch popular instrument IDs from API on mount
   useEffect(() => {
@@ -228,6 +238,8 @@ export default function WatchlistMonitorPanel(_props: PanelContentProps) {
           title="Popular Instruments"
           wsSubscribe={handleWsSubscribe}
           wsUnsubscribe={handleWsUnsubscribe}
+          onSelectSymbol={handleSelectSymbol}
+          selectedInstrumentId={selectedInstrumentId}
         />
       </div>
     );
@@ -260,6 +272,8 @@ export default function WatchlistMonitorPanel(_props: PanelContentProps) {
         wsUnsubscribe={handleWsUnsubscribe}
         onAddItem={handleAddItem}
         onRemoveItem={handleRemoveItem}
+        onSelectSymbol={handleSelectSymbol}
+        selectedInstrumentId={selectedInstrumentId}
       />
     </div>
   );

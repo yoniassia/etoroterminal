@@ -1,6 +1,6 @@
 # eToro Terminal (US)
 
-[![Version](https://img.shields.io/badge/version-1.1.3-blue.svg)](https://github.com/yourusername/etoro-terminal)
+[![Version](https://img.shields.io/badge/version-1.1.6-blue.svg)](https://github.com/yourusername/etoro-terminal)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
@@ -10,12 +10,18 @@ A Bloomberg-style terminal interface for eToro, built with React and TypeScript.
 
 ## Features
 
-- **16 Functional Panels** - Quote tile, watchlists, portfolio, trading, charts, alerts, and more
+- **17 Functional Panels** - Quote tile, watchlists, portfolio, trading, charts, alerts, asset explorer, and more
 - **Real-time Quotes** - REST polling with WebSocket fallback for live market data
 - **Command Bar** - Bloomberg-style navigation (`AAPL QT`, `WL`, `PF`, `TRD`)
 - **Demo/Real Mode** - Safe trading with explicit confirmation for real trades
 - **Keyboard-first** - Pro-trader workflows without mouse dependency
 - **Symbol Universe** - 10,800+ pre-cached instruments for instant lookups
+- **Draggable Panels** - Drag and drop to reorder panels in your workspace
+- **Save/Load Layout** - Save your panel configuration as default for next session
+- **Asset Explorer** - Browse entire universe by exchange, type, or search
+- **Symbol Autocomplete** - Smart suggestions when typing in Quote panel
+- **Panel Linking** - Click watchlist/explorer items to load in Quote panel
+- **Quick Trade** - Click BUY/SELL buttons on Quote panel to open Trade Ticket
 
 ## Quick Start
 
@@ -67,6 +73,7 @@ Type these in the command bar:
 | `CUR` | Curated Lists | `REC` | Recommendations |
 | `FEED` | Social Feed | `API` | API Tester |
 | `HELP` | Help | `STATUS` | Connection Status |
+| `EXP` | Asset Explorer | | |
 
 ## Keyboard Shortcuts
 
@@ -199,9 +206,28 @@ npm run electron:build
 - [Testing Guide](docs/TESTING.md) - 100+ test cases
 - [Keyboard Shortcuts](docs/KEYBOARD-SHORTCUTS.md) - Accessibility guide
 - [API Contract](docs/API-CONTRACT.md) - Endpoint documentation
-- [Changelog](docs/CHANGELOG_v1.1.3.md) - Version history
+- [Changelog v1.1.6](docs/CHANGELOG_v1.1.6.md) - Latest version history
+- [Changelog v1.1.5](docs/CHANGELOG_v1.1.5.md) - Previous version
 
 ## Version History
+
+### v1.1.6 (2026-01-20)
+- Panel linking: click watchlist/explorer items to load in Quote panel
+- Quick trade: click BUY/SELL on Quote panel to open Trade Ticket
+- Improved panel grid layout with flex-wrap for better drag/drop
+- Active symbol context synchronization across panels
+
+### v1.1.5 (2026-01-20)
+- Asset Explorer panel (EXP) - browse 10,800+ instruments by exchange/type
+- Symbol autocomplete in Quote panel from cached universe
+- Fixed double scrollbar in Watchlist Monitor
+- 17 panels total
+
+### v1.1.4 (2026-01-20)
+- Draggable panel reordering with visual feedback
+- Save/Load workspace layout to localStorage
+- Reset to factory defaults option
+- RALPH test suite updated (19 tests)
 
 ### v1.1.3 (2026-01-20)
 - Symbol universe cache (10,800+ instruments)

@@ -1,15 +1,40 @@
 // Simple Quote Panel - displays a quote tile with streaming price
-// Simpler version that works as a standalone panel content
+// With symbol autocomplete from the cached universe
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { quotesStore, StoredQuote } from '../../stores/quotesStore';
 import { symbolResolver, ResolvedSymbol } from '../../services/symbolResolver';
 import { streamingService } from '../../services/streamingService';
 import { quotesPollingService } from '../../services/quotesPollingService';
+import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
+import { useActiveSymbol } from '../Workspace/ActiveSymbolContext';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './QuotePanel.css';
 
+interface UniverseItem {
+  id: number;
+  sym: string;
+  name: string;
+  type: string;
+  exchange: string;
+}
+
+let universeCache: UniverseItem[] | null = null;
+
+async function loadUniverse(): Promise<UniverseItem[]> {
+  if (universeCache) return universeCache;
+  try {
+    const data = await import('../../data/symbolUniverse.json');
+    universeCache = data.default as UniverseItem[];
+    return universeCache;
+  } catch (err) {
+    console.error('Failed to load symbol universe:', err);
+    return [];
+  }
+}
+
 const DEFAULT_SYMBOLS = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN'];
+const MAX_SUGGESTIONS = 8;
 
 interface DisplayQuote {
   bid: number;
@@ -43,6 +68,9 @@ function formatTime(timestamp: string): string {
 }
 
 export default function QuotePanelSimple(_props: PanelContentProps) {
+  const { getPendingSymbol, openPanelForSymbol } = useWorkspaceContext();
+  const { activeSymbol, setActiveSymbol } = useActiveSymbol();
+  
   const [symbol, setSymbol] = useState<string>('AAPL');
   const [inputSymbol, setInputSymbol] = useState<string>('AAPL');
   const [resolvedSymbol, setResolvedSymbol] = useState<ResolvedSymbol | null>(null);
@@ -50,6 +78,72 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
   const [isStale, setIsStale] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Autocomplete state
+  const [universe, setUniverse] = useState<UniverseItem[]>([]);
+  const [suggestions, setSuggestions] = useState<UniverseItem[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+
+  // Load universe on mount and check for pending symbol
+  useEffect(() => {
+    loadUniverse().then(setUniverse);
+    
+    // Check if opened with a specific symbol
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      const pending = getPendingSymbol();
+      if (pending?.symbol) {
+        setSymbol(pending.symbol);
+        setInputSymbol(pending.symbol);
+      }
+    }
+  }, [getPendingSymbol]);
+
+  // Listen for active symbol changes from other panels
+  useEffect(() => {
+    if (activeSymbol && activeSymbol !== symbol) {
+      setSymbol(activeSymbol);
+      setInputSymbol(activeSymbol);
+    }
+  }, [activeSymbol]);
+
+  // Filter suggestions based on input
+  const filteredSuggestions = useMemo(() => {
+    if (!inputSymbol.trim() || inputSymbol.length < 1) return [];
+    
+    const query = inputSymbol.toLowerCase();
+    const matches = universe.filter(
+      (item) =>
+        item.sym.toLowerCase().startsWith(query) ||
+        item.name.toLowerCase().includes(query)
+    );
+    
+    // Sort: exact symbol match first, then symbol starts with, then name contains
+    matches.sort((a, b) => {
+      const aExact = a.sym.toLowerCase() === query;
+      const bExact = b.sym.toLowerCase() === query;
+      if (aExact && !bExact) return -1;
+      if (bExact && !aExact) return 1;
+      
+      const aStarts = a.sym.toLowerCase().startsWith(query);
+      const bStarts = b.sym.toLowerCase().startsWith(query);
+      if (aStarts && !bStarts) return -1;
+      if (bStarts && !aStarts) return 1;
+      
+      return a.sym.localeCompare(b.sym);
+    });
+    
+    return matches.slice(0, MAX_SUGGESTIONS);
+  }, [universe, inputSymbol]);
+
+  useEffect(() => {
+    setSuggestions(filteredSuggestions);
+    setSelectedSuggestionIndex(-1);
+  }, [filteredSuggestions]);
 
   // Resolve symbol
   useEffect(() => {
@@ -83,18 +177,14 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
 
     const instrumentId = resolvedSymbol.instrumentId;
 
-    // Subscribe to streaming via WebSocket
     streamingService.subscribeToInstrument(instrumentId);
-    // Also subscribe via REST polling as fallback
     quotesPollingService.subscribe(instrumentId);
 
-    // Get existing quote
     const existingQuote = quotesStore.getQuote(instrumentId);
     if (existingQuote) {
       updateQuote(existingQuote);
     }
 
-    // Subscribe to updates
     const unsubscribe = quotesStore.subscribe(instrumentId, updateQuote);
 
     return () => {
@@ -117,7 +207,7 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
     setIsStale(false);
   }, []);
 
-  // Check staleness periodically
+  // Check staleness
   useEffect(() => {
     if (!resolvedSymbol) return;
 
@@ -132,7 +222,59 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
     e.preventDefault();
     if (inputSymbol.trim()) {
       setSymbol(inputSymbol.trim().toUpperCase());
+      setShowSuggestions(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toUpperCase();
+    setInputSymbol(value);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleInputFocus = () => {
+    if (inputSymbol.length > 0 && suggestions.length > 0) {
+      setShowSuggestions(true);
+    }
+  };
+
+  const handleInputBlur = () => {
+    // Delay to allow click on suggestion
+    setTimeout(() => setShowSuggestions(false), 150);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex((prev) =>
+          prev < suggestions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : -1));
+        break;
+      case 'Enter':
+        if (selectedSuggestionIndex >= 0) {
+          e.preventDefault();
+          const selected = suggestions[selectedSuggestionIndex];
+          selectSuggestion(selected);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        break;
+    }
+  };
+
+  const selectSuggestion = (item: UniverseItem) => {
+    setInputSymbol(item.sym);
+    setSymbol(item.sym);
+    setShowSuggestions(false);
+    inputRef.current?.blur();
   };
 
   const handleQuickSelect = (sym: string) => {
@@ -140,18 +282,51 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
     setSymbol(sym);
   };
 
+  const handleTrade = (side: 'buy' | 'sell') => {
+    if (resolvedSymbol) {
+      // Set active symbol so Trade Ticket picks it up
+      setActiveSymbol(resolvedSymbol.symbol);
+      openPanelForSymbol('TRD', resolvedSymbol.symbol, resolvedSymbol.instrumentId);
+    }
+  };
+
   const changeClass = quote && quote.change >= 0 ? 'quote-panel__positive' : 'quote-panel__negative';
 
   return (
     <div className="quote-panel">
       <form className="quote-panel__search" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={inputSymbol}
-          onChange={(e) => setInputSymbol(e.target.value.toUpperCase())}
-          placeholder="Enter symbol..."
-          className="quote-panel__input"
-        />
+        <div className="quote-panel__input-wrapper">
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputSymbol}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter symbol..."
+            className="quote-panel__input"
+            autoComplete="off"
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <div ref={suggestionsRef} className="quote-panel__suggestions">
+              {suggestions.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`quote-panel__suggestion ${
+                    index === selectedSuggestionIndex ? 'quote-panel__suggestion--selected' : ''
+                  }`}
+                  onMouseDown={() => selectSuggestion(item)}
+                  onMouseEnter={() => setSelectedSuggestionIndex(index)}
+                >
+                  <span className="quote-panel__suggestion-symbol">{item.sym}</span>
+                  <span className="quote-panel__suggestion-name">{item.name}</span>
+                  <span className="quote-panel__suggestion-exchange">{item.exchange}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <button type="submit" className="quote-panel__search-btn">GO</button>
       </form>
 
@@ -192,18 +367,26 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
               </div>
 
               <div className="quote-panel__bid-ask">
-                <div className="quote-panel__bid">
-                  <span className="quote-panel__label">BID</span>
+                <button 
+                  className="quote-panel__bid quote-panel__trade-btn"
+                  onClick={() => handleTrade('sell')}
+                  title="Sell at bid price"
+                >
+                  <span className="quote-panel__label">SELL</span>
                   <span className="quote-panel__value">{formatPrice(quote.bid)}</span>
-                </div>
+                </button>
                 <div className="quote-panel__spread">
                   <span className="quote-panel__label">SPREAD</span>
                   <span className="quote-panel__value">{formatPrice(quote.spread)}</span>
                 </div>
-                <div className="quote-panel__ask">
-                  <span className="quote-panel__label">ASK</span>
+                <button 
+                  className="quote-panel__ask quote-panel__trade-btn"
+                  onClick={() => handleTrade('buy')}
+                  title="Buy at ask price"
+                >
+                  <span className="quote-panel__label">BUY</span>
                   <span className="quote-panel__value">{formatPrice(quote.ask)}</span>
-                </div>
+                </button>
               </div>
 
               <div className="quote-panel__footer">

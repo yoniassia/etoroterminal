@@ -8,6 +8,36 @@
 
 ## Changelog
 
+### v1.1.6 (2026-01-20) - Panel Linking & Quick Trade
+- ✅ **Panel Linking**: Clicking Watchlist Monitor or Asset Explorer items loads symbol in Quote panel
+- ✅ **Active Symbol Context**: Cross-panel symbol synchronization via ActiveSymbolContext
+- ✅ **Quick Trade Buttons**: BUY/SELL buttons on Quote panel open Trade Ticket with pre-filled symbol
+- ✅ **Trade Ticket Symbol Loading**: Trade Ticket receives symbol from pending context or active symbol
+- ✅ **Flex Grid Layout**: Workspace uses flex-wrap for better drag-drop panel ordering
+- ✅ **Selected Row Highlighting**: Watchlist and Asset Explorer show selected row state
+
+### v1.1.5 (2026-01-20) - Asset Explorer & Quote Autocomplete
+- ✅ **Asset Explorer Panel (EXP)**: Browse entire asset universe by exchange, industry, or asset type
+- ✅ **Exchange Filtering**: Filter by NYSE, NASDAQ, Hong Kong, and other exchanges
+- ✅ **Asset Type Filtering**: Filter by Stocks, ETFs, Crypto, Indices
+- ✅ **Search Within Results**: Search within filtered asset results
+- ✅ **Add to Watchlist**: Click to view quote or add to watchlist from explorer
+- ✅ **Pagination**: Paginated results for large asset sets
+- ✅ **Quote Panel Autocomplete**: Symbol autocomplete from cached universe when typing
+- ✅ **Autocomplete Display**: Shows matching symbols with name and exchange
+- ✅ **Keyboard Navigation**: Up/down arrows and Enter to select from autocomplete
+- ✅ **Debounced Search**: Debounced autocomplete search for performance
+- ✅ **Scrollbar Fix**: Removed duplicate scrollbar issue in WatchlistMonitor panel
+
+### v1.1.4 (2026-01-20) - Workspace Layout Persistence & Draggable Panels
+- ✅ **Layout Persistence**: Users can save current panel configuration as default
+- ✅ **Auto-Load Layout**: Saved layout loads automatically on next session
+- ✅ **Reset to Factory Defaults**: Option to restore original panel layout
+- ✅ **localStorage Storage**: Layout configuration persisted in browser localStorage
+- ✅ **Draggable Panel Reordering**: Drag and drop panels to reorder within workspace
+- ✅ **Drag Visual Feedback**: Visual indicators during panel drag operations
+- ✅ **Keyboard Accessible Reorder**: Arrow keys + modifier for panel repositioning
+
 ### v1.1.3 (2026-01-20) - Watchlist & Symbol Universe Cache
 - ✅ **Watchlist API Fix**: Fixed item parsing to use `itemId` (not `instrumentId`) and `itemRank` for ordering
 - ✅ **User Items Filtered**: Watchlist now filters out `itemType: "User"` entries, only showing instruments
@@ -270,6 +300,186 @@ dist/index.html                   0.41 kB
 dist/assets/index-*.css          82.85 kB │ gzip: 11.39 kB
 dist/assets/index-*.js          333.96 kB │ gzip: 94.63 kB
 ```
+
+---
+
+---
+
+## Workspace Features (v1.1.4)
+
+### User Story 14 - Workspace Layout Persistence (Priority: P2)
+
+As a pro trader,  
+I want to save my current panel layout as my default workspace,  
+so that my preferred configuration loads automatically on my next session.
+
+Why this priority:
+Traders develop muscle memory around their workspace layout; preserving it reduces friction and setup time.
+
+Independent Test:
+- Arrange panels in custom layout -> save as default -> reload page -> layout restored.
+- Reset to factory defaults -> layout returns to DEFAULT_PANELS configuration.
+- Clear browser data -> layout reverts to factory defaults.
+
+Acceptance Scenarios:
+- Given I have arranged panels in a custom layout, when I click "Save as Default", then the layout is stored in localStorage.
+- Given I have saved a default layout, when I open the terminal in a new session, then my saved layout loads automatically.
+- Given I want to start fresh, when I click "Reset to Factory Defaults", then the layout returns to the original DEFAULT_PANELS configuration.
+- Given localStorage is unavailable or cleared, when I open the terminal, then the factory default layout loads.
+
+---
+
+### User Story 15 - Draggable Panel Reordering (Priority: P2)
+
+As a pro trader,  
+I want to drag and drop panels to reorder them in my workspace,  
+so that I can quickly reorganize my screen without using menus.
+
+Why this priority:
+Direct manipulation of panels is faster and more intuitive than menu-based reordering for power users.
+
+Independent Test:
+- Drag a panel header and drop it in a new position -> panel order updates.
+- Use keyboard (Ctrl+Arrow keys) to move focused panel -> panel repositions.
+- Drag operation shows visual drop indicator.
+
+Acceptance Scenarios:
+- Given I am viewing multiple panels, when I drag a panel header, then I see a visual indicator showing the drop target.
+- Given I am dragging a panel, when I drop it in a new position, then the panel order updates immediately.
+- Given I am dragging a panel, when I drop it outside valid drop zones, then the panel returns to its original position.
+- Given I am using keyboard navigation, when I press Ctrl+Arrow keys on a focused panel, then the panel moves in that direction.
+- Given I have reordered panels, when I save layout as default, then the new order is persisted.
+
+---
+
+### User Story 16 - Asset Explorer Panel (Priority: P2)
+
+As a pro trader,  
+I want to browse the entire asset universe by exchange, industry, or asset type,  
+so that I can discover new instruments to trade or add to my watchlists.
+
+Why this priority:
+Discovery of new trading opportunities is essential for active traders who want to expand beyond their current watchlists.
+
+Independent Test:
+- Open Asset Explorer -> filter by exchange (NYSE) -> results show only NYSE instruments.
+- Filter by asset type (ETFs) -> results show only ETFs.
+- Search within filtered results -> matching instruments displayed.
+- Click instrument -> opens Quote panel or adds to watchlist.
+
+Acceptance Scenarios:
+- Given I open the Asset Explorer panel, when the panel loads, then I see filter options for exchange and asset type.
+- Given I select an exchange filter (e.g., NASDAQ), when results load, then only instruments from that exchange are displayed.
+- Given I select an asset type filter (e.g., Crypto), when results load, then only crypto instruments are displayed.
+- Given I have filters applied, when I type in the search box, then results are filtered to match my search term.
+- Given I see an instrument in the results, when I click it, then I can view its quote or add it to a watchlist.
+- Given there are more than 50 results, when I scroll or click "Load More", then additional results are loaded (pagination).
+
+---
+
+### User Story 17 - Quote Panel Symbol Autocomplete (Priority: P2)
+
+As a pro trader,  
+I want symbol autocomplete when typing in the Quote panel,  
+so that I can quickly find and select instruments without remembering exact symbols.
+
+Why this priority:
+Fast symbol entry reduces friction and errors when looking up quotes.
+
+Independent Test:
+- Type "AA" in Quote panel -> autocomplete shows AAPL, AAL, etc.
+- Use arrow keys to navigate suggestions -> selection highlighted.
+- Press Enter -> selected symbol loads in Quote panel.
+
+Acceptance Scenarios:
+- Given I am typing in the Quote panel symbol input, when I type 2+ characters, then matching symbols appear in a dropdown.
+- Given autocomplete suggestions are visible, when I use up/down arrow keys, then the selection moves through the list.
+- Given a suggestion is highlighted, when I press Enter, then that symbol is selected and loaded.
+- Given I am typing quickly, when autocomplete searches, then searches are debounced for performance.
+- Given autocomplete suggestions are visible, when I click a suggestion, then that symbol is selected and loaded.
+
+---
+
+### Functional Requirements (v1.1.5)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-046 | The system MUST provide an Asset Explorer panel to browse instruments by exchange and asset type | P2 | ✅ Specified |
+| FR-047 | The system MUST provide symbol autocomplete in Quote panel from the cached symbol universe | P2 | ✅ Specified |
+| FR-048 | The system MUST NOT display duplicate scrollbars in WatchlistMonitor panel | P2 | ✅ Specified |
+
+---
+
+### Testing Scenarios (v1.1.5)
+
+#### Asset Explorer Tests
+
+| Test ID | Scenario | Expected Result |
+|---------|----------|-----------------|
+| EXP-001 | Open Asset Explorer panel | Panel displays with exchange and asset type filters |
+| EXP-002 | Filter by exchange (NYSE) | Only NYSE instruments shown |
+| EXP-003 | Filter by asset type (ETFs) | Only ETF instruments shown |
+| EXP-004 | Combine exchange + asset type filters | Results match both filters |
+| EXP-005 | Search within filtered results | Results filtered by search term |
+| EXP-006 | Click instrument to view quote | Quote panel opens with selected instrument |
+| EXP-007 | Click instrument to add to watchlist | Add to Watchlist dialog opens |
+| EXP-008 | Pagination with 100+ results | Load More button or scroll loads additional results |
+
+#### Quote Autocomplete Tests
+
+| Test ID | Scenario | Expected Result |
+|---------|----------|-----------------|
+| QT-AC-001 | Type "AA" in Quote panel | Autocomplete shows AAPL, AAL, etc. |
+| QT-AC-002 | Arrow down through suggestions | Selection moves to next item |
+| QT-AC-003 | Arrow up through suggestions | Selection moves to previous item |
+| QT-AC-004 | Press Enter on highlighted suggestion | Symbol selected and loaded |
+| QT-AC-005 | Click suggestion with mouse | Symbol selected and loaded |
+| QT-AC-006 | Type rapidly | Debounced search (no request per keystroke) |
+| QT-AC-007 | Press Escape | Autocomplete dropdown closes |
+
+#### WatchlistMonitor Scrollbar Tests
+
+| Test ID | Scenario | Expected Result |
+|---------|----------|-----------------|
+| WLM-SB-001 | Open WatchlistMonitor with 50+ items | Single scrollbar visible |
+| WLM-SB-002 | Resize WatchlistMonitor panel | No duplicate scrollbars appear |
+
+---
+
+### Functional Requirements (v1.1.4)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-041 | The system MUST persist workspace layout configuration to localStorage when user saves as default | P2 | ✅ Specified |
+| FR-042 | The system MUST load saved layout from localStorage on application startup if available | P2 | ✅ Specified |
+| FR-043 | The system MUST provide a "Reset to Factory Defaults" option that restores DEFAULT_PANELS configuration | P2 | ✅ Specified |
+| FR-044 | The system MUST support drag-and-drop reordering of panels with visual feedback during drag | P2 | ✅ Specified |
+| FR-045 | The system MUST provide keyboard-accessible panel reordering using Ctrl+Arrow keys | P2 | ✅ Specified |
+
+---
+
+### Testing Scenarios (v1.1.4)
+
+#### Layout Persistence Tests
+
+| Test ID | Scenario | Expected Result |
+|---------|----------|-----------------|
+| WS-001 | Save default layout with 5 panels open | Layout JSON stored in localStorage under `etoro-terminal-layout` key |
+| WS-002 | Load saved layout on fresh page load | All 5 panels restored in correct positions |
+| WS-003 | Reset to factory defaults | Layout matches DEFAULT_PANELS; localStorage key removed or reset |
+| WS-004 | Load with corrupted localStorage data | Graceful fallback to factory defaults; error logged |
+| WS-005 | Load with localStorage disabled | Factory defaults load; warning shown in console |
+
+#### Draggable Panel Tests
+
+| Test ID | Scenario | Expected Result |
+|---------|----------|-----------------|
+| DP-001 | Drag panel from position 1 to position 3 | Panel moves; other panels reflow |
+| DP-002 | Drag panel and drop outside workspace | Panel returns to original position |
+| DP-003 | Drag panel shows drop indicator | Visual highlight appears at valid drop targets |
+| DP-004 | Keyboard: Ctrl+Right on first panel | Panel moves to position 2 |
+| DP-005 | Keyboard: Ctrl+Left on first panel | No movement (already at start) |
+| DP-006 | Drag and drop then save layout | New order persisted to localStorage |
 
 ---
 

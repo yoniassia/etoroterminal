@@ -29,6 +29,7 @@ import FeedsPanel from './components/panels/FeedsPanel';
 import ApiTesterPanel from './components/panels/ApiTesterPanel';
 import HelpPanel from './components/panels/HelpPanel';
 import ConnectionStatusPanel from './components/panels/ConnectionStatusPanel';
+import AssetExplorerPanel from './components/panels/AssetExplorerPanel';
 
 // Register all panel types
 function registerPanels() {
@@ -159,6 +160,14 @@ function registerPanels() {
     defaultWidth: 450,
     defaultHeight: 500,
   });
+
+  PanelRegistry.register({
+    typeId: 'EXP',
+    title: 'Asset Explorer',
+    component: AssetExplorerPanel,
+    defaultWidth: 600,
+    defaultHeight: 500,
+  });
 }
 
 // Register panels on module load
@@ -255,6 +264,7 @@ const FUNCTION_TO_PANEL: Record<string, string> = {
   'API': 'API',
   'HELP': 'HELP',
   'STATUS': 'STATUS',
+  'EXP': 'EXP',
 };
 
 function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInfo: { username: string; fullName: string } | null }) {
