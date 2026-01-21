@@ -1,6 +1,6 @@
 ```md
 # eToro Terminal (US) — SpecKit Master Document (Merged)
-Version: 1.1.5  
+Version: 1.1.7  
 Date: 2026-01-20  
 Audience: US pro / active traders  
 Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
@@ -13,11 +13,25 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 > - `.specify/specs/001-etoro-terminal-us/wireframes.md`
 > - `.specify/specs/001-etoro-terminal-us/tasks.md`
 > - `.specify/specs/001-etoro-terminal-us/checklists/requirements.md`
-> - **[UPDATED v1.1.4]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
+> - **[UPDATED v1.1.7]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
+> - **[NEW v1.1.7]** `docs/CHANGELOG_v1.1.7.md` - Activity Log & Connection Status Fix
 
 ---
 
 ## Changelog
+
+### v1.1.7 (2026-01-20) - Activity Log & Connection Status Fix
+- ✅ **Activity Log Panel (ACT)**: New panel tracking trade executions with Demo/Real mode badges
+- ✅ **Trade Open Logging**: Records symbol, amount, and side (BUY/SELL) for opened positions
+- ✅ **Trade Close Logging**: Records realized profit/loss for closed positions
+- ✅ **Order Rejected Logging**: Shows rejected orders with error messages
+- ✅ **Filter by Mode**: Filter activity by All/Demo/Real
+- ✅ **Unread Count Badge**: Shows number of unread activities
+- ✅ **Mark All as Read**: Button to clear unread status
+- ✅ **Connection Status Panel Fix**: Now shows both REST API status (working) and WebSocket status (optional)
+- ✅ **REST API Status Indicator**: Green indicator when API endpoints are responding
+- ✅ **WebSocket Optional Note**: Clarifies WebSocket is optional with REST polling fallback
+- ✅ **Activity Store**: New `activityStore.ts` for centralized activity tracking
 
 ### v1.1.5 (2026-01-20) - Asset Explorer & Quote Autocomplete
 - ✅ **Asset Explorer Panel (EXP)**: Browse entire asset universe by exchange, industry, or asset type
@@ -57,7 +71,7 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 - ✅ **RALPH Enhancements**: Detailed API logging, quotes endpoint test, verified AAPL resolution (instrumentId: 1001)
 
 ### v1.1.0 (2026-01-20)
-- ✅ All 16 panels implemented and tested
+- ✅ All 18 panels implemented and tested (16 original + EXP + ACT)
 - ✅ API endpoints verified against official eToro documentation
 - ✅ WebSocket streaming for quotes implemented
 - ✅ Portfolio panel with Demo/Real mode switching

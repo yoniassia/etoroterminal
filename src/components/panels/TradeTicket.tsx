@@ -5,6 +5,7 @@ import { getTradingAdapter } from '../../api/adapters/tradingAdapter';
 import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
 import { useActiveSymbol } from '../Workspace/ActiveSymbolContext';
 import { symbolResolver } from '../../services/symbolResolver';
+import { activityStore } from '../../stores/activityStore';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './TradeTicket.css';
 
@@ -136,6 +137,10 @@ export default function TradeTicket({ symbol: propSymbol = '', instrumentId: pro
         );
       }
 
+      // Add activity notification for successful trade
+      const activityMode = isDemoMode() ? 'demo' : 'real';
+      activityStore.addTradeOpen(activityMode, symbol, value, side);
+
       onSubmit?.(buildTradeData(side));
       setInputValue('');
       setStopLoss('');
@@ -143,6 +148,10 @@ export default function TradeTicket({ symbol: propSymbol = '', instrumentId: pro
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Trade failed';
       setSubmitError(message);
+      
+      // Add activity notification for failed trade
+      const activityMode = isDemoMode() ? 'demo' : 'real';
+      activityStore.addOrderRejected(activityMode, symbol, message);
     } finally {
       setIsSubmitting(false);
     }

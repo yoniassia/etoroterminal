@@ -30,6 +30,7 @@ import ApiTesterPanel from './components/panels/ApiTesterPanel';
 import HelpPanel from './components/panels/HelpPanel';
 import ConnectionStatusPanel from './components/panels/ConnectionStatusPanel';
 import AssetExplorerPanel from './components/panels/AssetExplorerPanel';
+import ActivityPanel from './components/panels/ActivityPanel';
 
 // Register all panel types
 function registerPanels() {
@@ -168,6 +169,14 @@ function registerPanels() {
     defaultWidth: 600,
     defaultHeight: 500,
   });
+
+  PanelRegistry.register({
+    typeId: 'ACT',
+    title: 'Activity Log',
+    component: ActivityPanel,
+    defaultWidth: 400,
+    defaultHeight: 450,
+  });
 }
 
 // Register panels on module load
@@ -265,6 +274,7 @@ const FUNCTION_TO_PANEL: Record<string, string> = {
   'HELP': 'HELP',
   'STATUS': 'STATUS',
   'EXP': 'EXP',
+  'ACT': 'ACT',
 };
 
 function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInfo: { username: string; fullName: string } | null }) {

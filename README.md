@@ -1,6 +1,6 @@
 # eToro Terminal (US)
 
-[![Version](https://img.shields.io/badge/version-1.1.6-blue.svg)](https://github.com/yourusername/etoro-terminal)
+[![Version](https://img.shields.io/badge/version-1.1.7-blue.svg)](https://github.com/yourusername/etoro-terminal)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
@@ -10,7 +10,7 @@ A Bloomberg-style terminal interface for eToro, built with React and TypeScript.
 
 ## Features
 
-- **17 Functional Panels** - Quote tile, watchlists, portfolio, trading, charts, alerts, asset explorer, and more
+- **18 Functional Panels** - Quote tile, watchlists, portfolio, trading, charts, alerts, asset explorer, activity log, and more
 - **Real-time Quotes** - REST polling with WebSocket fallback for live market data
 - **Command Bar** - Bloomberg-style navigation (`AAPL QT`, `WL`, `PF`, `TRD`)
 - **Demo/Real Mode** - Safe trading with explicit confirmation for real trades
@@ -22,6 +22,7 @@ A Bloomberg-style terminal interface for eToro, built with React and TypeScript.
 - **Symbol Autocomplete** - Smart suggestions when typing in Quote panel
 - **Panel Linking** - Click watchlist/explorer items to load in Quote panel
 - **Quick Trade** - Click BUY/SELL buttons on Quote panel to open Trade Ticket
+- **Activity Log** - See trade executions with Demo/Real labels and P&L
 
 ## Quick Start
 
@@ -73,7 +74,7 @@ Type these in the command bar:
 | `CUR` | Curated Lists | `REC` | Recommendations |
 | `FEED` | Social Feed | `API` | API Tester |
 | `HELP` | Help | `STATUS` | Connection Status |
-| `EXP` | Asset Explorer | | |
+| `EXP` | Asset Explorer | `ACT` | Activity Log |
 
 ## Keyboard Shortcuts
 
@@ -206,10 +207,16 @@ npm run electron:build
 - [Testing Guide](docs/TESTING.md) - 100+ test cases
 - [Keyboard Shortcuts](docs/KEYBOARD-SHORTCUTS.md) - Accessibility guide
 - [API Contract](docs/API-CONTRACT.md) - Endpoint documentation
-- [Changelog v1.1.6](docs/CHANGELOG_v1.1.6.md) - Latest version history
-- [Changelog v1.1.5](docs/CHANGELOG_v1.1.5.md) - Previous version
+- [Changelog v1.1.7](docs/CHANGELOG_v1.1.7.md) - Latest version history
+- [Changelog v1.1.6](docs/CHANGELOG_v1.1.6.md) - Previous version
 
 ## Version History
+
+### v1.1.7 (2026-01-20)
+- Activity Log panel (ACT) - shows trade executions with Demo/Real labels
+- Trade notifications with profit/loss display
+- Fixed connection status to show REST API status (working) vs WebSocket (optional)
+- 18 panels total
 
 ### v1.1.6 (2026-01-20)
 - Panel linking: click watchlist/explorer items to load in Quote panel

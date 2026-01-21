@@ -154,8 +154,24 @@ export default function ConnectionStatusPanel(_props: PanelContentProps) {
 
       {keysConfigured && (
         <>
+          <div className="rest-status-section">
+            <h4>🌐 REST API</h4>
+            <div className="ws-status-row">
+              <span className="ws-label">Status:</span>
+              <span className={`ws-value ${successCount > 0 ? 'ws-connected' : 'ws-disconnected'}`}>
+                {successCount > 0 ? 'CONNECTED' : 'NOT TESTED'}
+              </span>
+            </div>
+            <div className="ws-status-row">
+              <span className="ws-label">Endpoints:</span>
+              <span className="ws-value">
+                {successCount}/{results.length} OK
+              </span>
+            </div>
+          </div>
+
           <div className="ws-status-section">
-            <h4>📡 WebSocket Streaming</h4>
+            <h4>📡 WebSocket Streaming (Optional)</h4>
             <div className="ws-status-row">
               <span className="ws-label">Connection:</span>
               <span className={`ws-value ws-${wsState.connectionState}`}>
@@ -167,6 +183,9 @@ export default function ConnectionStatusPanel(_props: PanelContentProps) {
               <span className={`ws-value ws-${wsState.authState}`}>
                 {wsState.authState.toUpperCase()}
               </span>
+            </div>
+            <div className="ws-status-note">
+              Note: WebSocket is optional. REST polling is used as fallback.
             </div>
             <button 
               className="connect-btn"

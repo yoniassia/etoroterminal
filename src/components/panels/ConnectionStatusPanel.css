@@ -248,3 +248,24 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* REST API Status Section */
+.rest-status-section {
+  background-color: #112211;
+  border: 1px solid #00cc00;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.rest-status-section h4 {
+  margin: 0 0 12px 0;
+  color: #00ff00;
+  font-size: 12px;
+}
+
+.ws-status-note {
+  font-size: 10px;
+  color: #666;
+  margin-top: 8px;
+  font-style: italic;
+}

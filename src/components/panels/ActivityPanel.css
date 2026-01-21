@@ -1,0 +1,225 @@
+.activity-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  background-color: #0a0a0a;
+}
+
+.activity-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+.activity-panel__title {
+  font-size: 12px;
+  color: #00cc00;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-panel__badge {
+  background-color: #ff4444;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.activity-panel__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.activity-panel__btn {
+  background: none;
+  border: 1px solid #333;
+  color: #00cc00;
+  padding: 4px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.activity-panel__btn:hover:not(:disabled) {
+  border-color: #00cc00;
+  background-color: #002200;
+}
+
+.activity-panel__btn:disabled {
+  color: #444;
+  cursor: not-allowed;
+}
+
+.activity-panel__btn--danger {
+  color: #ff6600;
+}
+
+.activity-panel__btn--danger:hover:not(:disabled) {
+  border-color: #ff6600;
+  background-color: #331100;
+}
+
+.activity-panel__filters {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #0a0a0a;
+  border-bottom: 1px solid #222;
+}
+
+.activity-panel__filter {
+  background: none;
+  border: 1px solid #333;
+  color: #888;
+  padding: 4px 12px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.activity-panel__filter:hover {
+  border-color: #666;
+  color: #ccc;
+}
+
+.activity-panel__filter--active {
+  border-color: #00cc00;
+  color: #00ff00;
+  background-color: #002200;
+}
+
+.activity-panel__filter--demo.activity-panel__filter--active {
+  border-color: #00ccff;
+  color: #00ccff;
+  background-color: #001a33;
+}
+
+.activity-panel__filter--real.activity-panel__filter--active {
+  border-color: #ff9900;
+  color: #ff9900;
+  background-color: #331a00;
+}
+
+.activity-panel__list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.activity-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+.activity-panel__empty-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.activity-panel__empty-hint {
+  font-size: 11px;
+  color: #444;
+  margin-top: 8px;
+}
+
+.activity-panel__item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.activity-panel__item:hover {
+  background-color: #111;
+}
+
+.activity-panel__item--unread {
+  background-color: #0a1a0a;
+  border-left: 3px solid #00cc00;
+}
+
+.activity-panel__item--unread.activity--demo {
+  border-left-color: #00ccff;
+}
+
+.activity-panel__item--unread.activity--real {
+  border-left-color: #ff9900;
+}
+
+.activity-panel__item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.activity-panel__item-icon {
+  font-size: 14px;
+}
+
+.activity-panel__item-mode {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.activity-panel__item-mode.activity--demo {
+  background-color: #003344;
+  color: #00ccff;
+}
+
+.activity-panel__item-mode.activity--real {
+  background-color: #442200;
+  color: #ff9900;
+}
+
+.activity-panel__item-time {
+  font-size: 10px;
+  color: #666;
+  margin-left: auto;
+}
+
+.activity-panel__item-message {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.activity-panel__item-details {
+  font-size: 10px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.activity-panel__item-profit {
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.activity-panel__item-profit.profit--positive {
+  color: #00ff00;
+}
+
+.activity-panel__item-profit.profit--negative {
+  color: #ff4444;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { portfolioStore, PortfolioState, AutoRefreshInterval } from '../../stores/portfolioStore';
 import { ordersStore, StoredOrder } from '../../stores/ordersStore';
+import { activityStore } from '../../stores/activityStore';
 import { useTradingMode } from '../../contexts/TradingModeContext';
 import { getPositionAdapter, ClosePositionResult } from '../../api/adapters/positionAdapter';
 import type { Position } from '../../api/contracts/etoro-api.types';
@@ -134,6 +135,14 @@ export default function PortfolioPanel({ onSelectPosition }: PortfolioPanelProps
         };
         ordersStore.addOrder(closeOrder);
 
+        // Add activity notification
+        const activityMode = isDemoMode() ? 'demo' : 'real';
+        activityStore.addTradeClose(
+          activityMode,
+          position.instrumentName || `#${position.instrumentId}`,
+          result.profit
+        );
+
         if (state.portfolio) {
           const updatedPositions = state.portfolio.positions.filter(
             (p) => p.positionId !== position.positionId
@@ -149,6 +158,16 @@ export default function PortfolioPanel({ onSelectPosition }: PortfolioPanelProps
         setSelectedPosition(null);
       } catch (err) {
         console.error('Failed to close position:', err);
+        
+        // Add error activity
+        const activityMode = isDemoMode() ? 'demo' : 'real';
+        const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+        activityStore.addError(
+          activityMode,
+          `Failed to close ${position.instrumentName || `#${position.instrumentId}`}`,
+          errorMsg
+        );
+        
         setCloseResult({
           success: false,
           profit: 0,
