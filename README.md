@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
-A Bloomberg-style terminal interface for eToro, built with React and TypeScript. Designed for US pro/active traders who want keyboard-first, high-density workflows.
+A Bloomberg-style terminal interface for eToro, built with React and TypeScript. Designed for pro/active traders who want keyboard-first, high-density workflows.
 
 ![Terminal Screenshot](docs/assets/terminal-screenshot.png)
 
@@ -158,8 +158,8 @@ docs/
 | Category | Technology |
 |----------|------------|
 | Frontend | React 18, TypeScript |
-| Build | Vite 5 |
-| Desktop | Electron 28 |
+| Build | Vite 7 |
+| Desktop | Electron 35 |
 | State | Custom Zustand-style stores |
 | Streaming | REST polling + WebSocket |
 | Bundle Size | 334 KB JS (95 KB gzipped) |
