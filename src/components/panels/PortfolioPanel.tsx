@@ -116,7 +116,7 @@ export default function PortfolioPanel({ onSelectPosition }: PortfolioPanelProps
       setCloseConfirmation(null);
       try {
         const adapter = getPositionAdapter(isDemoMode());
-        const result = await adapter.closePosition(position.positionId);
+        const result = await adapter.closePosition(position.positionId, position.instrumentId);
 
         const closeOrder: StoredOrder = {
           orderId: `close-${position.positionId}-${Date.now()}`,

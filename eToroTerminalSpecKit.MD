@@ -1,7 +1,7 @@
 ```md
 # eToro Terminal (US) — SpecKit Master Document (Merged)
-Version: 1.1.7  
-Date: 2026-01-20  
+Version: 1.1.8  
+Date: 2026-01-21  
 Audience: US pro / active traders  
 Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 
@@ -13,12 +13,28 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 > - `.specify/specs/001-etoro-terminal-us/wireframes.md`
 > - `.specify/specs/001-etoro-terminal-us/tasks.md`
 > - `.specify/specs/001-etoro-terminal-us/checklists/requirements.md`
-> - **[UPDATED v1.1.7]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
-> - **[NEW v1.1.7]** `docs/CHANGELOG_v1.1.7.md` - Activity Log & Connection Status Fix
+> - **[UPDATED v1.1.8]** `docs/SPECKIT_ADDENDUM_v1.1.0.md` - Verified API contracts & implementation status
+> - **[NEW v1.1.8]** `docs/CHANGELOG_v1.1.8.md` - Close Position Fix & User Info Enhancement
 
 ---
 
 ## Changelog
+
+### v1.1.8 (2026-01-21) - Close Position Fix & User Info Enhancement
+- ✅ **Close Position API Fix**: Fixed position closing - eToro API requires `InstrumentId` in request body
+- ✅ **Position Adapter Update**: `closePosition()` and `closePositionPartial()` now accept `instrumentId` parameter
+- ✅ **API Response Handling**: Updated `ClosePositionResponse` type to match actual API response structure (`orderForClose` wrapper)
+- ✅ **User Info from Real Endpoint**: Now fetches CID from real portfolio endpoint (not demo) for accurate user lookup
+- ✅ **Username/Real Name Display**: Attempts to fetch username and real name from `/api/v1/user-info/people?cidList={cid}`
+- ✅ **Customer ID Display**: Header now shows CID alongside username/name (format: `@username (CID: 12345)`)
+- ✅ **Fallback Handling**: Graceful fallback when user profile not available (demo accounts)
+
+**Files Changed:**
+- `src/api/adapters/positionAdapter.ts` - Added `instrumentId` parameter to close methods
+- `src/api/contracts/etoro-api.types.ts` - Updated `ClosePositionResponse` interface
+- `src/components/panels/PortfolioPanel.tsx` - Pass `instrumentId` when closing positions
+- `src/services/etoroApi.ts` - Enhanced `getUserInfo()` to fetch from real endpoints
+- `src/App.tsx` - Added `customerId` to userInfo state and display
 
 ### v1.1.7 (2026-01-20) - Activity Log & Connection Status Fix
 - ✅ **Activity Log Panel (ACT)**: New panel tracking trade executions with Demo/Real mode badges

@@ -183,12 +183,55 @@ export class EToroApiService {
 
   async getUserInfo(): Promise<UserInfo | null> {
     try {
-      // Decode user info from the JWT user key
-      // The user key is base64-encoded JSON with format: {"ci":"customer-id","ean":"app-name","ek":"..."}
+      // Always use REAL portfolio endpoint to get CID (works for both demo and real accounts)
+      const data = await this.makeRequest('/api/v1/trading/info/portfolio');
+      const clientPortfolio = data.clientPortfolio || data;
+      const rawPositions = clientPortfolio.positions || [];
+      
+      let numericCID: number | undefined;
+      
+      if (rawPositions.length > 0) {
+        numericCID = rawPositions[0].CID;
+      }
+      
+      if (numericCID) {
+        // Try to fetch user info using the numeric CID from REAL user-info endpoint
+        try {
+          const userInfoData = await this.makeRequest(`/api/v1/user-info/people?cidList=${numericCID}`);
+          const users = userInfoData.users || [];
+          if (users.length > 0) {
+            const user = users[0];
+            const firstName = user.firstName || user.first_name;
+            const lastName = user.lastName || user.last_name;
+            const fullName = [firstName, lastName].filter(Boolean).join(' ');
+            
+            return {
+              username: user.username || user.userName || '',
+              customerId: String(numericCID),
+              firstName: firstName,
+              lastName: lastName,
+              email: user.email,
+            };
+          }
+        } catch (userInfoError) {
+          console.log('[EToroApiService] Could not fetch user info from real endpoint');
+        }
+        
+        // Fallback: use numeric CID
+        return {
+          username: '',
+          customerId: String(numericCID),
+          firstName: undefined,
+          lastName: undefined,
+          email: undefined,
+        };
+      }
+      
+      // Fallback to decoding user key
       const decoded = this.decodeUserKey();
       if (decoded) {
         return {
-          username: decoded.ean || 'eToro User',
+          username: '',
           customerId: decoded.ci || '',
           firstName: undefined,
           lastName: undefined,

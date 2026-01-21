@@ -277,7 +277,7 @@ const FUNCTION_TO_PANEL: Record<string, string> = {
   'ACT': 'ACT',
 };
 
-function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInfo: { username: string; fullName: string } | null }) {
+function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInfo: { username: string; fullName: string; customerId: string } | null }) {
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const { addPanel, openPanelForSymbol } = useWorkspaceContext();
 
@@ -307,10 +307,11 @@ function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInf
         </div>
         
         {/* User Info - Center */}
-        {userInfo && (userInfo.fullName || userInfo.username) && (
+        {userInfo && (userInfo.fullName || userInfo.username || userInfo.customerId) && (
           <div style={appStyles.userInfo}>
             {userInfo.fullName && <span style={appStyles.userFullName}>{userInfo.fullName}</span>}
             {userInfo.username && <span style={appStyles.userName}>@{userInfo.username}</span>}
+            {userInfo.customerId && <span style={appStyles.userName}> (CID: {userInfo.customerId})</span>}
           </div>
         )}
         
@@ -344,7 +345,7 @@ function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInf
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; fullName: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ username: string; fullName: string; customerId: string } | null>(null);
 
   // Check if keys are already stored and connect streaming
   useEffect(() => {
@@ -364,10 +365,11 @@ export default function App() {
     try {
       const info = await etoroApi.getUserInfo();
       if (info) {
-        const fullName = [info.firstName, info.lastName].filter(Boolean).join(' ') || info.username || '';
+        const fullName = [info.firstName, info.lastName].filter(Boolean).join(' ') || '';
         setUserInfo({
           username: info.username || '',
           fullName: fullName,
+          customerId: info.customerId || '',
         });
         keyManager.setUserInfo(info.username || '', fullName);
       }

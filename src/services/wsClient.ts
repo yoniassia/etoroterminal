@@ -13,8 +13,8 @@ export type AuthState = 'unauthenticated' | 'authenticating' | 'authenticated' |
 
 export interface WSClientConfig {
   url?: string;
-  apiKey: string;
   userKey: string;
+  apiKey?: string;
   maxReconnectDelay?: number;
   initialReconnectDelay?: number;
   onStateChange?: (state: ConnectionState) => void;

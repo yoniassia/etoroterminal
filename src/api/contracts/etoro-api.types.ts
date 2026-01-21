@@ -162,10 +162,24 @@ export interface ClosePositionRequest {
 }
 
 export interface ClosePositionResponse {
-  positionId: number;
-  closedRate: number;
-  closedAt: string;
-  profit: number;
+  positionId?: number;
+  positionID?: number;
+  closedRate?: number;
+  closeRate?: number;
+  closedAt?: string;
+  openDateTime?: string;
+  profit?: number;
+  orderForClose?: {
+    positionID: number;
+    instrumentID: number;
+    orderID: number;
+    orderType: number;
+    statusID: number;
+    CID: number;
+    openDateTime: string;
+    lastUpdate: string;
+  };
+  token?: string;
 }
 
 export interface ModifyPositionRequest {

@@ -42,37 +42,49 @@ export class PositionAdapter {
       : ENDPOINTS.TRADING_CLOSE(positionId);
   }
 
-  async closePosition(positionId: number): Promise<ClosePositionResult> {
+  async closePosition(positionId: number, instrumentId?: number): Promise<ClosePositionResult> {
+    // eToro API requires InstrumentId in the request body
+    const body = instrumentId ? { InstrumentId: instrumentId } : {};
+    
     const response = await this.rest.post<ClosePositionResponse>(
       this.getCloseEndpoint(positionId),
-      {}
+      body
     );
 
+    // Handle both direct response and orderForClose wrapper
+    const orderData = response.orderForClose;
+    
     return {
-      positionId: response.positionId,
-      closedRate: response.closedRate,
-      closedAt: response.closedAt,
-      profit: response.profit,
+      positionId: response.positionId || response.positionID || orderData?.positionID || 0,
+      closedRate: response.closedRate || response.closeRate || 0,
+      closedAt: response.closedAt || response.openDateTime || orderData?.openDateTime || new Date().toISOString(),
+      profit: response.profit || 0,
       isPartialClose: false,
     };
   }
 
-  async closePositionPartial(positionId: number, units: number): Promise<ClosePositionResult> {
+  async closePositionPartial(positionId: number, units: number, instrumentId?: number): Promise<ClosePositionResult> {
     if (units <= 0) {
       throw new Error('Units must be greater than 0 for partial close');
     }
 
-    const request = { UnitsToDeduct: units };
+    const request: Record<string, unknown> = { UnitsToDeduct: units };
+    if (instrumentId) {
+      request.InstrumentId = instrumentId;
+    }
+    
     const response = await this.rest.post<ClosePositionResponse>(
       this.getCloseEndpoint(positionId),
       request
     );
 
+    const orderData = response.orderForClose;
+    
     return {
-      positionId: response.positionId,
-      closedRate: response.closedRate,
-      closedAt: response.closedAt,
-      profit: response.profit,
+      positionId: response.positionId || response.positionID || orderData?.positionID || 0,
+      closedRate: response.closedRate || response.closeRate || 0,
+      closedAt: response.closedAt || response.openDateTime || orderData?.openDateTime || new Date().toISOString(),
+      profit: response.profit || 0,
       isPartialClose: true,
       closedUnits: units,
     };
