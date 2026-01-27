@@ -8,7 +8,7 @@ interface LoginProps {
 
 export default function Login({ onLogin, error, loading }: LoginProps) {
   const [publicKey, setPublicKey] = useState(import.meta.env.VITE_ETORO_PUBLIC_KEY || '');
-  const [userKey, setUserKey] = useState(import.meta.env.VITE_ETORO_USER_KEY || '');
+  const [userKey, setUserKey] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ export default function Login({ onLogin, error, loading }: LoginProps) {
     <div className="terminal">
       <div className="terminal-header">
         ╔═══════════════════════════╗<br />
-        ║   eTORO TERMINAL LOGIN   ║<br />
+        ║   ETORO TERMINAL LOGIN   ║<br />
         ╚═══════════════════════════╝
       </div>
 
@@ -51,7 +51,7 @@ export default function Login({ onLogin, error, loading }: LoginProps) {
         </div>
 
         <button type="submit" className="terminal-button" disabled={loading}>
-          {loading ? '[ CONNECTING TO eTORO API... ]' : '[ LOGIN ]'}
+          {loading ? '[ CONNECTING TO ETORO API... ]' : '[ LOGIN ]'}
         </button>
 
         {error && (

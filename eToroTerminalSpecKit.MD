@@ -20,7 +20,7 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 
 ## Changelog
 
-### v1.1.8 (2026-01-21) - Close Position Fix & User Info Enhancement
+### v1.1.8 (2026-01-21) - Close Position Fix & User Info Enhancement & Branding
 - ✅ **Close Position API Fix**: Fixed position closing - eToro API requires `InstrumentId` in request body
 - ✅ **Position Adapter Update**: `closePosition()` and `closePositionPartial()` now accept `instrumentId` parameter
 - ✅ **API Response Handling**: Updated `ClosePositionResponse` type to match actual API response structure (`orderForClose` wrapper)
@@ -28,6 +28,7 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 - ✅ **Username/Real Name Display**: Attempts to fetch username and real name from `/api/v1/user-info/people?cidList={cid}`
 - ✅ **Customer ID Display**: Header now shows CID alongside username/name (format: `@username (CID: 12345)`)
 - ✅ **Fallback Handling**: Graceful fallback when user profile not available (demo accounts)
+- ✅ **ETORO Branding**: Changed all user-facing "eToro" text to "ETORO" (uppercase) for consistent branding
 
 **Files Changed:**
 - `src/api/adapters/positionAdapter.ts` - Added `instrumentId` parameter to close methods
@@ -35,6 +36,12 @@ Scope: Bloomberg-like terminal UX using eToro Public APIs (REST + WebSocket)
 - `src/components/panels/PortfolioPanel.tsx` - Pass `instrumentId` when closing positions
 - `src/services/etoroApi.ts` - Enhanced `getUserInfo()` to fetch from real endpoints
 - `src/App.tsx` - Added `customerId` to userInfo state and display
+- `src/components/Login.tsx` - Updated header to "ETORO TERMINAL LOGIN"
+- `src/components/Workspace/Workspace.tsx` - Updated header to "ETORO TERMINAL WORKSPACE"
+- `src/components/Portfolio.tsx` - Updated header to "ETORO PORTFOLIO TERMINAL"
+- `src/components/panels/HelpPanel.tsx` - Updated all eToro references to ETORO
+- `src/components/panels/ConnectionStatusPanel.tsx` - Updated eToro references to ETORO
+- `src/components/panels/ApiTesterPanel.tsx` - Updated eToro references to ETORO
 
 ### v1.1.7 (2026-01-20) - Activity Log & Connection Status Fix
 - ✅ **Activity Log Panel (ACT)**: New panel tracking trade executions with Demo/Real mode badges

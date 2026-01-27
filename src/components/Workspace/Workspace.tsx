@@ -203,7 +203,7 @@ export default function Workspace({ className, style }: WorkspaceProps) {
     >
       <div style={workspaceStyles.header}>
         ╔═══════════════════════════════╗<br />
-        ║   eTORO TERMINAL WORKSPACE    ║<br />
+        ║   ETORO TERMINAL WORKSPACE    ║<br />
         ╚═══════════════════════════════╝
       </div>
 

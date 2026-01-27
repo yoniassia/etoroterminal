@@ -5,16 +5,16 @@ export default function HelpPanel(_props: PanelContentProps) {
   return (
     <div className="help-panel">
       <div className="help-header">
-        <h2>▓ eTORO TERMINAL HELP</h2>
+        <h2>▓ ETORO TERMINAL HELP</h2>
       </div>
 
       <div className="help-content">
         <section className="help-section">
           <h3>📋 Overview</h3>
           <p>
-            This is a Bloomberg-like terminal for eToro traders. It provides real-time 
+            This is a Bloomberg-like terminal for ETORO traders. It provides real-time 
             streaming quotes, watchlist management, trading capabilities, and portfolio 
-            monitoring using eToro's Public APIs.
+            monitoring using ETORO's Public APIs.
           </p>
         </section>
 
@@ -24,7 +24,7 @@ export default function HelpPanel(_props: PanelContentProps) {
             <li>
               <strong>Get API Keys:</strong> Visit{' '}
               <a href="https://www.etoro.com/settings/trade" target="_blank" rel="noopener noreferrer">
-                eToro Settings → Trading
+                ETORO Settings → Trading
               </a>{' '}
               to generate your API keys
             </li>
@@ -125,7 +125,7 @@ export default function HelpPanel(_props: PanelContentProps) {
         <section className="help-section">
           <h3>🧪 API Tester</h3>
           <p>
-            Use the <strong>API</strong> panel to test eToro API endpoints directly.
+            Use the <strong>API</strong> panel to test ETORO API endpoints directly.
             Select an endpoint, fill in parameters, and click Execute to see the response.
           </p>
         </section>
@@ -143,7 +143,7 @@ export default function HelpPanel(_props: PanelContentProps) {
           <p>
             Full API documentation:{' '}
             <a href="https://public-api.etoro.com/index.html" target="_blank" rel="noopener noreferrer">
-              eToro Public API Docs
+              ETORO Public API Docs
             </a>
           </p>
           <p>

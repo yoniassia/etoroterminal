@@ -63,7 +63,7 @@ export default function Portfolio({ apiService, onLogout }: PortfolioProps) {
     <div className="terminal">
       <div className="terminal-header">
         ╔═════════════════════════════╗<br />
-        ║   eTORO PORTFOLIO TERMINAL  ║<br />
+        ║   ETORO PORTFOLIO TERMINAL  ║<br />
         ╚═════════════════════════════╝
       </div>
 
@@ -92,7 +92,7 @@ export default function Portfolio({ apiService, onLogout }: PortfolioProps) {
 
         {loading && (
           <div className="loading">
-            ▓▓▓ CONNECTING TO eTORO API ▓▓▓
+            ▓▓▓ CONNECTING TO ETORO API ▓▓▓
           </div>
         )}
 

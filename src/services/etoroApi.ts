@@ -263,6 +263,6 @@ export class EToroApiService {
 
 // Create singleton instance with environment variables
 export const etoroApi = new EToroApiService(
-  import.meta.env.VITE_ETORO_USER_KEY || '',
-  import.meta.env.VITE_ETORO_PUBLIC_KEY || ''
+  '', // User key - must be set via setKeys()
+  import.meta.env.VITE_ETORO_PUBLIC_KEY || '' // Public key from env
 );

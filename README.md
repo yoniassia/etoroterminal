@@ -173,12 +173,19 @@ docs/
 
 ### Environment Setup
 
-Create a `.env` file (optional, for persistent keys):
+The public key is included by default in `.env` (not sensitive).
 
-```env
-VITE_ETORO_PUBLIC_KEY=your_public_key
-VITE_ETORO_USER_KEY=your_user_key
+You only need to add your **user key** (keep this private):
+
+```bash
+# The .env file already contains the public key
+# Just add your user key (or enter it in the login screen)
+
+# Edit .env and add your user key:
+VITE_ETORO_USER_KEY=your_user_key_here
 ```
+
+**Note:** The user key can also be entered directly in the login screen.
 
 ### Running Tests
 

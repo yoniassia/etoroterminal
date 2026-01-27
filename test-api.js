@@ -1,12 +1,21 @@
-// Test new demo user key with eToro API
-const USER_KEY = 'eyJjaSI6IjYwY2FiYjBiLTU1OTctNDQ4NS04ZjYzLTdlOWUwNTZlMGJiOCIsImVhbiI6IlVucmVnaXN0ZXJlZEFwcGxpY2F0aW9uIiwiZWsiOiJVSy1OSDY3R2xXVC5vRTBUR3JzcXJ0VFJ3TnJ4RzRpMzEwU3VHT25LME4xMHNvaDBXczY2eGtGYWd3MWJyYlJ1RG5ZeEM0b0l0c2xhWDNsZGR1ajhYTHpneFpuREo3QjRzdHAyRnZCQ0Nhc18ifQ__';
-const API_KEY = 'sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf';
+// Test demo user key with eToro API
+// Public key is included, replace USER_KEY with your own
+const API_KEY = process.env.VITE_ETORO_PUBLIC_KEY || 'sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf';
+const USER_KEY = process.env.VITE_ETORO_USER_KEY || '';
 
 async function testDemoAPI() {
-  console.log('Testing NEW Demo User Key with eToro API...');
+  if (!USER_KEY) {
+    console.error('❌ Missing USER_KEY. Please set VITE_ETORO_USER_KEY environment variable.');
+    process.exit(1);
+  }
+  if (!API_KEY) {
+    console.error('❌ Missing API_KEY. Public key should be set by default.');
+    process.exit(1);
+  }
+
+  console.log('Testing Demo User Key with eToro API...');
+  console.log('Public Key length:', API_KEY.length);
   console.log('User Key length:', USER_KEY.length);
-  console.log('API Key length:', API_KEY.length);
-  console.log('User Key preview:', USER_KEY.substring(0, 80));
   console.log('');
 
   const headers = {

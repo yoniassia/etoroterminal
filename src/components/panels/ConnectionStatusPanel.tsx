@@ -146,9 +146,9 @@ export default function ConnectionStatusPanel(_props: PanelContentProps) {
 
       {!keysConfigured && (
         <div className="no-keys-warning">
-          ⚠️ No API keys configured. Please login with valid eToro API keys.
+          ⚠️ No API keys configured. Please login with valid ETORO API keys.
           <br/><br/>
-          Get keys from: <a href="https://www.etoro.com/settings/trade" target="_blank" rel="noopener noreferrer">eToro Settings → Trading</a>
+          Get keys from: <a href="https://www.etoro.com/settings/trade" target="_blank" rel="noopener noreferrer">ETORO Settings → Trading</a>
         </div>
       )}
 

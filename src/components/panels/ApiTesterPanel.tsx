@@ -152,7 +152,7 @@ export default function ApiTesterPanel(_props: PanelContentProps) {
       <div className="api-tester-header">
         <h3>▓ API TESTER</h3>
         <p className="api-tester-description">
-          Test eToro Public API endpoints directly. Select an endpoint, fill parameters, and click Execute.
+          Test ETORO Public API endpoints directly. Select an endpoint, fill parameters, and click Execute.
         </p>
       </div>
 
