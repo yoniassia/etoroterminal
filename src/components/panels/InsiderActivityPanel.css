@@ -1,0 +1,236 @@
+/* Insider Activity Panel Styles */
+.insider-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+.insider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #1a3a1a;
+  background: #050505;
+}
+
+.insider-header h2 {
+  margin: 0;
+  font-size: 14px;
+  color: #00ff00;
+}
+
+.loading-indicator {
+  font-size: 11px;
+  color: #666;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.insider-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.insider-empty p {
+  margin: 0;
+  color: #00cc00;
+}
+
+.insider-empty .hint {
+  color: #666;
+  font-size: 11px;
+}
+
+.insider-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #1a0a0a;
+  border-bottom: 1px solid #3a1a1a;
+  color: #ff4444;
+  font-size: 12px;
+}
+
+.error-icon {
+  font-size: 14px;
+}
+
+/* Sentiment Summary */
+.sentiment-summary {
+  padding: 12px 16px;
+  border-bottom: 1px solid #1a3a1a;
+  background: #0d0d0d;
+}
+
+.sentiment-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.sentiment-bullish {
+  background: #0a2a0a;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+}
+
+.sentiment-bearish {
+  background: #2a0a0a;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+}
+
+.sentiment-neutral {
+  background: #1a1a1a;
+  border: 1px solid #888;
+  color: #888;
+}
+
+.sentiment-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.stat-value.positive {
+  color: #00ff00;
+}
+
+.stat-value.negative {
+  color: #ff4444;
+}
+
+/* Trades Table */
+.trades-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.trades-header {
+  display: grid;
+  grid-template-columns: 70px 90px 80px 50px 80px 80px;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #0d0d0d;
+  border-bottom: 1px solid #1a3a1a;
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.trades-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.trade-row {
+  display: grid;
+  grid-template-columns: 70px 90px 80px 50px 80px 80px;
+  gap: 8px;
+  padding: 6px 16px;
+  font-size: 11px;
+  border-bottom: 1px solid #111;
+  transition: background 0.2s;
+}
+
+.trade-row:hover {
+  background: #111;
+}
+
+.trade-row.buy {
+  border-left: 2px solid #00ff00;
+}
+
+.trade-row.sell {
+  border-left: 2px solid #ff4444;
+}
+
+.col-date {
+  color: #888;
+}
+
+.col-name {
+  color: #00cc00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-title {
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-type {
+  font-weight: bold;
+}
+
+.buy-text {
+  color: #00ff00;
+}
+
+.sell-text {
+  color: #ff4444;
+}
+
+.col-shares {
+  text-align: right;
+  color: #00cc00;
+}
+
+.col-value {
+  text-align: right;
+}
+
+.positive {
+  color: #00ff00;
+}
+
+.negative {
+  color: #ff4444;
+}
+
+.no-data {
+  padding: 20px 16px;
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+}

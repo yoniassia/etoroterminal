@@ -1,11 +1,19 @@
 // Application version - update this when releasing new versions
-export const APP_VERSION = '1.7.2';
+export const APP_VERSION = '1.7.3';
 
 // Build info
 export const BUILD_DATE = '2026-01-31';
 
 // Changelog
 export const CHANGELOG = `
+v1.7.3 (2026-01-31) - Financial Datasets Panels Complete
+- NEW: INS Panel - Insider Activity with trades & sentiment analysis
+- NEW: FD Panel - Fundamentals (Income, Balance Sheet, Cash Flow)
+- FIX: Added missing command mappings for NEWS, INST, FILINGS panels
+- Commands: INS, INSIDER, FD, FUNDAMENTALS, NEWS, HEADLINES
+- Commands: INST, WHALES, 13F, FILINGS, SEC, 10K, 10Q, 8K
+- All Financial Datasets panels now fully functional
+
 v1.7.2 (2026-01-31) - TypeScript & Type Safety Cleanup
 - FIX: Made Instrument fields optional (minAmount, maxAmount, availableLeverage)
 - FIX: StreamingService.isConnected getter (was incorrectly called as function)

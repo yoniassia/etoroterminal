@@ -46,6 +46,8 @@ import WebhookAlertsPanel from './components/panels/WebhookAlertsPanel';
 import NewsPanel from './components/panels/NewsPanel';
 import InstitutionalPanel from './components/panels/InstitutionalPanel';
 import FilingsPanel from './components/panels/FilingsPanel';
+import InsiderActivityPanel from './components/panels/InsiderActivityPanel';
+import FundamentalsPanel from './components/panels/FundamentalsPanel';
 
 // Register all panel types
 function registerPanels() {
@@ -281,6 +283,22 @@ function registerPanels() {
     defaultWidth: 450,
     defaultHeight: 500,
   });
+
+  PanelRegistry.register({
+    typeId: 'INS',
+    title: 'Insider Activity',
+    component: InsiderActivityPanel,
+    defaultWidth: 500,
+    defaultHeight: 550,
+  });
+
+  PanelRegistry.register({
+    typeId: 'FD',
+    title: 'Fundamentals',
+    component: FundamentalsPanel,
+    defaultWidth: 600,
+    defaultHeight: 500,
+  });
 }
 
 // Register panels on module load
@@ -406,6 +424,23 @@ const FUNCTION_TO_PANEL: Record<string, string> = {
   'ALERTS': 'WEBHOOK',  // Alias for Webhook Alerts
   'CHAT': 'QUANT',
   'AI': 'QUANT',
+  // v1.7.0 Financial Datasets panels
+  'NEWS': 'NEWS',
+  'HEADLINES': 'NEWS',  // Alias for News
+  'INST': 'INST',
+  'WHALES': 'INST',  // Alias for Institutional
+  '13F': 'INST',  // Alias for Institutional
+  'FILINGS': 'FILINGS',
+  'SEC': 'FILINGS',  // Alias for SEC Filings
+  '10K': 'FILINGS',  // Alias for SEC Filings
+  '10Q': 'FILINGS',  // Alias for SEC Filings
+  '8K': 'FILINGS',  // Alias for SEC Filings
+  // Insider Activity
+  'INS': 'INS',
+  'INSIDER': 'INS',  // Alias for Insider Activity
+  // Fundamentals
+  'FD': 'FD',
+  'FUNDAMENTALS': 'FD',  // Alias for Fundamentals
 };
 
 function TerminalContent({ onLogout, userInfo, isDemo }: { onLogout: () => void; userInfo: { username: string; fullName: string; customerId: string } | null; isDemo: boolean }) {
