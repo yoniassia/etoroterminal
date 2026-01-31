@@ -5,6 +5,7 @@ import { ENDPOINTS } from '../contracts/endpoints';
 import type { Watchlist, WatchlistItem } from '../contracts/etoro-api.types';
 import { getDefaultAdapter, RestAdapter } from '../restAdapter';
 import { symbolResolver } from '../../services/symbolResolver';
+import { isDemoMode, getDemoWatchlist } from '../../services/demoDataService';
 
 // ============================================================================
 // Types
@@ -88,6 +89,23 @@ export class WatchlistsAdapter {
   }
 
   async getWatchlists(): Promise<Watchlist[]> {
+    // Return demo data if in demo mode
+    if (isDemoMode()) {
+      const demoItems = getDemoWatchlist();
+      const watchlist: Watchlist = {
+        watchlistId: 'demo-watchlist-1',
+        name: 'Demo Watchlist',
+        isDefault: true,
+        items: demoItems.map((item, idx) => ({
+          instrumentId: item.instrumentId,
+          symbol: item.symbol,
+          displayName: item.name,
+          order: idx,
+        })),
+      };
+      return [watchlist];
+    }
+    
     const response = await this.rest.get<Record<string, unknown>>(ENDPOINTS.WATCHLISTS);
     const rawWatchlists = (response.watchlists ?? response.Watchlists ?? []) as Record<string, unknown>[];
     const watchlists = rawWatchlists.map(normalizeWatchlist);

@@ -1,0 +1,325 @@
+.webhook-alerts-panel {
+  padding: 15px;
+  background: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.wa-header {
+  margin-bottom: 15px;
+}
+
+.wa-header h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #00ff00;
+}
+
+.wa-subtitle {
+  margin: 0;
+  font-size: 11px;
+  color: #666;
+}
+
+.wa-add-btn {
+  width: 100%;
+  padding: 12px;
+  background: #0a2a0a;
+  border: 1px solid #1a4a1a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.wa-add-btn:hover {
+  background: #0a3a0a;
+  border-color: #2a6a2a;
+}
+
+.wa-form {
+  background: #111;
+  border: 1px solid #333;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.wa-form-header {
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ff00;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #222;
+}
+
+.wa-form-field {
+  margin-bottom: 12px;
+}
+
+.wa-form-field label {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.wa-form-field input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.wa-hint {
+  display: block;
+  font-size: 10px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.wa-events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wa-event-btn {
+  padding: 6px 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wa-event-btn:hover {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.wa-event-btn.active {
+  background: #1a2a1a;
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.wa-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.wa-cancel-btn {
+  flex: 1;
+  padding: 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+}
+
+.wa-save-btn {
+  flex: 2;
+  padding: 10px;
+  background: #002200;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+}
+
+.wa-webhooks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wa-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: #666;
+}
+
+.wa-empty-hint {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.wa-webhook {
+  background: #111;
+  border: 1px solid #333;
+  padding: 12px;
+  border-left: 3px solid #00ff00;
+}
+
+.wa-webhook.disabled {
+  border-left-color: #444;
+  opacity: 0.7;
+}
+
+.wa-webhook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.wa-webhook-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.wa-toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.wa-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.wa-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  transition: 0.3s;
+  border-radius: 20px;
+}
+
+.wa-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #666;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.wa-toggle input:checked + .wa-toggle-slider {
+  background-color: #003300;
+}
+
+.wa-toggle input:checked + .wa-toggle-slider:before {
+  transform: translateX(20px);
+  background-color: #00ff00;
+}
+
+.wa-webhook-url {
+  font-size: 11px;
+  color: #666;
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+
+.wa-webhook-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.wa-event-tag {
+  font-size: 10px;
+  padding: 3px 6px;
+  background: #1a1a2a;
+  color: #8888ff;
+}
+
+.wa-webhook-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 10px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.wa-test-result {
+  padding: 8px;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.wa-test-result.success {
+  background: #0a2a0a;
+  border: 1px solid #1a4a1a;
+  color: #00ff00;
+}
+
+.wa-test-result.error {
+  background: #2a0a0a;
+  border: 1px solid #4a1a1a;
+  color: #ff6666;
+}
+
+.wa-webhook-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wa-webhook-actions button {
+  padding: 5px 10px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.wa-webhook-actions button:hover {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.wa-api-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #222;
+}
+
+.wa-api-section summary {
+  cursor: pointer;
+  color: #666;
+  font-size: 12px;
+}
+
+.wa-api-section summary:hover {
+  color: #00cc00;
+}
+
+.wa-code-block {
+  margin-top: 10px;
+  padding: 12px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  overflow-x: auto;
+}
+
+.wa-code-block pre {
+  margin: 0;
+  font-size: 11px;
+  color: #88ff88;
+}

@@ -11,6 +11,9 @@ import { PanelRegistry } from './components/Workspace/PanelRegistry';
 import { keyManager } from './services/keyManager';
 import { streamingService } from './services/streamingService';
 import { etoroApi } from './services/etoroApi';
+import { healthService } from './services/healthService';
+import { exportService } from './services/exportService';
+import { demoDataService } from './services/demoDataService';
 
 // Import all panels
 import QuotePanelSimple from './components/panels/QuotePanelSimple';
@@ -31,6 +34,17 @@ import HelpPanel from './components/panels/HelpPanel';
 import ConnectionStatusPanel from './components/panels/ConnectionStatusPanel';
 import AssetExplorerPanel from './components/panels/AssetExplorerPanel';
 import ActivityPanel from './components/panels/ActivityPanel';
+import StrategyBuilderPanel from './components/panels/StrategyBuilderPanel';
+import FeedbackPanel from './components/panels/FeedbackPanel';
+import QuantChatPanel from './components/panels/QuantChatPanel';
+import PositionSizingPanel from './components/panels/PositionSizingPanel';
+import DataExportPanel from './components/panels/DataExportPanel';
+import TradeJournalPanel from './components/panels/TradeJournalPanel';
+import CorrelationMatrixPanel from './components/panels/CorrelationMatrixPanel';
+import WebhookAlertsPanel from './components/panels/WebhookAlertsPanel';
+import NewsPanel from './components/panels/NewsPanel';
+import InstitutionalPanel from './components/panels/InstitutionalPanel';
+import FilingsPanel from './components/panels/FilingsPanel';
 
 // Register all panel types
 function registerPanels() {
@@ -177,6 +191,95 @@ function registerPanels() {
     defaultWidth: 400,
     defaultHeight: 450,
   });
+
+  PanelRegistry.register({
+    typeId: 'SB',
+    title: 'Strategy Builder',
+    component: StrategyBuilderPanel,
+    defaultWidth: 800,
+    defaultHeight: 600,
+  });
+
+  PanelRegistry.register({
+    typeId: 'FB',
+    title: 'Feedback',
+    component: FeedbackPanel,
+    defaultWidth: 450,
+    defaultHeight: 500,
+  });
+
+  PanelRegistry.register({
+    typeId: 'QUANT',
+    title: 'Quant Chat',
+    component: QuantChatPanel,
+    defaultWidth: 450,
+    defaultHeight: 550,
+  });
+
+  PanelRegistry.register({
+    typeId: 'PS',
+    title: 'Position Sizing',
+    component: PositionSizingPanel,
+    defaultWidth: 400,
+    defaultHeight: 600,
+  });
+
+  PanelRegistry.register({
+    typeId: 'EXPORT',
+    title: 'Data Export',
+    component: DataExportPanel,
+    defaultWidth: 400,
+    defaultHeight: 550,
+  });
+
+  PanelRegistry.register({
+    typeId: 'JOURNAL',
+    title: 'Trade Journal',
+    component: TradeJournalPanel,
+    defaultWidth: 500,
+    defaultHeight: 650,
+  });
+
+  PanelRegistry.register({
+    typeId: 'CORR',
+    title: 'Correlation Matrix',
+    component: CorrelationMatrixPanel,
+    defaultWidth: 550,
+    defaultHeight: 600,
+  });
+
+  PanelRegistry.register({
+    typeId: 'WEBHOOK',
+    title: 'Webhook Alerts',
+    component: WebhookAlertsPanel,
+    defaultWidth: 450,
+    defaultHeight: 600,
+  });
+
+  // v1.7.0 - Financial Datasets API panels
+  PanelRegistry.register({
+    typeId: 'NEWS',
+    title: 'News',
+    component: NewsPanel,
+    defaultWidth: 450,
+    defaultHeight: 550,
+  });
+
+  PanelRegistry.register({
+    typeId: 'INST',
+    title: 'Institutional Ownership',
+    component: InstitutionalPanel,
+    defaultWidth: 500,
+    defaultHeight: 500,
+  });
+
+  PanelRegistry.register({
+    typeId: 'FILINGS',
+    title: 'SEC Filings',
+    component: FilingsPanel,
+    defaultWidth: 450,
+    defaultHeight: 500,
+  });
 }
 
 // Register panels on module load
@@ -275,9 +378,36 @@ const FUNCTION_TO_PANEL: Record<string, string> = {
   'STATUS': 'STATUS',
   'EXP': 'EXP',
   'ACT': 'ACT',
+  'SB': 'SB',
+  'STRAT': 'SB',  // Alias for Strategy Builder
+  'FB': 'FB',
+  'FEEDBACK': 'FB',  // Alias for Feedback
+  'QUANT': 'QUANT',
+  'PS': 'PS',
+  'SIZE': 'PS',  // Alias for Position Sizing
+  'KELLY': 'PS',  // Alias for Position Sizing
+  'RISK': 'PS',  // Alias for Position Sizing
+  'EXPORT': 'EXPORT',
+  'DATA': 'EXPORT',  // Alias for Data Export
+  'CSV': 'EXPORT',  // Alias for Data Export
+  'JSON': 'EXPORT',  // Alias for Data Export
+  'JOURNAL': 'JOURNAL',
+  'LOG': 'JOURNAL',  // Alias for Trade Journal
+  'DIARY': 'JOURNAL',  // Alias for Trade Journal
+  'TRADES': 'JOURNAL',  // Alias for Trade Journal
+  'CORR': 'CORR',
+  'MATRIX': 'CORR',  // Alias for Correlation Matrix
+  'DIVERSIFY': 'CORR',  // Alias for Correlation Matrix
+  'CORRELATION': 'CORR',  // Alias for Correlation Matrix
+  'WEBHOOK': 'WEBHOOK',
+  'HOOKS': 'WEBHOOK',  // Alias for Webhook Alerts
+  'NOTIFY': 'WEBHOOK',  // Alias for Webhook Alerts
+  'ALERTS': 'WEBHOOK',  // Alias for Webhook Alerts
+  'CHAT': 'QUANT',
+  'AI': 'QUANT',
 };
 
-function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInfo: { username: string; fullName: string; customerId: string } | null }) {
+function TerminalContent({ onLogout, userInfo, isDemo }: { onLogout: () => void; userInfo: { username: string; fullName: string; customerId: string } | null; isDemo: boolean }) {
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const { addPanel, openPanelForSymbol } = useWorkspaceContext();
 
@@ -316,6 +446,18 @@ function TerminalContent({ onLogout, userInfo }: { onLogout: () => void; userInf
         )}
         
         <div style={appStyles.headerActions}>
+          {isDemo && (
+            <span style={{
+              padding: '4px 10px',
+              backgroundColor: '#1a1a2e',
+              border: '1px solid #4a4a8a',
+              color: '#8888ff',
+              fontSize: '11px',
+              fontFamily: '"Courier New", monospace',
+            }}>
+              🎮 DEMO
+            </span>
+          )}
           <TradingModeIndicator />
           <button
             style={appStyles.diagButton}
@@ -393,18 +535,39 @@ export default function App() {
   const handleLogout = () => {
     streamingService.disconnect();
     keyManager.clearKeys();
+    demoDataService.setDemoMode(false);
     setIsLoggedIn(false);
+    setUserInfo(null);
   };
 
+  const handleDemoMode = () => {
+    demoDataService.setDemoMode(true);
+    const demoInfo = demoDataService.getDemoUserInfo();
+    setUserInfo({
+      username: demoInfo.username,
+      fullName: demoInfo.fullName,
+      customerId: demoInfo.customerId,
+    });
+    setIsLoggedIn(true);
+    console.log('[App] Demo mode enabled');
+  };
+
+  // Check for demo mode on mount
+  useEffect(() => {
+    if (demoDataService.isDemoMode()) {
+      handleDemoMode();
+    }
+  }, []);
+
   if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
+    return <Login onLogin={handleLogin} onDemoMode={handleDemoMode} error={null} loading={false} />;
   }
 
   return (
     <TradingModeProvider>
       <ActiveSymbolProvider>
         <WorkspaceProvider>
-          <TerminalContent onLogout={handleLogout} userInfo={userInfo} />
+          <TerminalContent onLogout={handleLogout} userInfo={userInfo} isDemo={demoDataService.isDemoMode()} />
         </WorkspaceProvider>
       </ActiveSymbolProvider>
     </TradingModeProvider>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { keyManager } from '../../services/keyManager';
 import { streamingService } from '../../services/streamingService';
 import { ENDPOINTS } from '../../api/contracts/endpoints';
+import { isDemoMode } from '../../services/demoDataService';
 import type { ConnectionState, AuthState } from '../../services/wsClient';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './ConnectionStatusPanel.css';
@@ -44,7 +45,8 @@ export default function ConnectionStatusPanel(_props: PanelContentProps) {
 
   useEffect(() => {
     const keys = keyManager.getKeys();
-    setKeysConfigured(!!keys);
+    // Consider configured if we have keys OR are in demo mode
+    setKeysConfigured(!!keys || isDemoMode());
   }, []);
 
   useEffect(() => {

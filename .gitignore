@@ -60,3 +60,4 @@ coverage/
 # Misc
 -p/
 -
+.vercel

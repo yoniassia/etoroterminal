@@ -1,0 +1,401 @@
+.trade-journal-panel {
+  padding: 15px;
+  background: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.tj-header {
+  margin-bottom: 15px;
+}
+
+.tj-header h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #00ff00;
+}
+
+.tj-tabs {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+.tj-tab {
+  padding: 8px 15px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tj-tab:hover {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.tj-tab.active {
+  background: #002200;
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+/* Entries List */
+.tj-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tj-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: #666;
+}
+
+.tj-empty-hint {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.tj-add-first-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #002200;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+}
+
+.tj-entry {
+  background: #111;
+  border: 1px solid #222;
+  padding: 12px;
+  border-left: 3px solid #444;
+}
+
+.tj-entry.closed {
+  border-left-color: #00cc00;
+}
+
+.tj-entry.stopped {
+  border-left-color: #cc3333;
+}
+
+.tj-entry.open {
+  border-left-color: #cccc00;
+}
+
+.tj-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tj-entry-side {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.tj-entry-side.buy {
+  background: #002200;
+  color: #00ff00;
+}
+
+.tj-entry-side.sell {
+  background: #220000;
+  color: #ff6666;
+}
+
+.tj-entry-symbol {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.tj-entry-status {
+  font-size: 10px;
+  color: #666;
+  padding: 2px 6px;
+  border: 1px solid #333;
+}
+
+.tj-entry-profit {
+  margin-left: auto;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.tj-entry-profit.positive {
+  color: #00ff00;
+}
+
+.tj-entry-profit.negative {
+  color: #ff6666;
+}
+
+.tj-entry-details {
+  display: flex;
+  gap: 15px;
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.tj-entry-reasoning, .tj-entry-lessons {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.tj-entry-reasoning strong, .tj-entry-lessons strong {
+  color: #00cc00;
+}
+
+.tj-entry-lessons {
+  color: #cccc66;
+}
+
+.tj-entry-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+  color: #555;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.tj-entry-setup {
+  padding: 2px 6px;
+  background: #1a1a2a;
+  color: #8888ff;
+}
+
+.tj-entry-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tj-entry-actions button {
+  padding: 4px 10px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.tj-entry-actions button:hover {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+/* Form */
+.tj-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tj-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.tj-form-field {
+  flex: 1;
+}
+
+.tj-form-field label {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.tj-form-field input, .tj-form-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.tj-form-field textarea {
+  resize: vertical;
+}
+
+.tj-side-buttons, .tj-status-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.tj-side-btn, .tj-status-btn {
+  flex: 1;
+  padding: 8px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tj-side-btn.buy.active {
+  background: #002200;
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.tj-side-btn.sell.active {
+  background: #220000;
+  border-color: #ff6666;
+  color: #ff6666;
+}
+
+.tj-status-btn.active {
+  background: #002200;
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.tj-setup-grid, .tj-emotion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tj-setup-btn, .tj-emotion-btn {
+  padding: 6px 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.tj-setup-btn.active, .tj-emotion-btn.active {
+  background: #1a1a2a;
+  border-color: #6666ff;
+  color: #8888ff;
+}
+
+.tj-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tj-cancel-btn {
+  flex: 1;
+  padding: 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+}
+
+.tj-save-btn {
+  flex: 2;
+  padding: 10px;
+  background: #002200;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+}
+
+/* Stats */
+.tj-stats {
+  padding: 10px 0;
+}
+
+.tj-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tj-stat-card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 15px;
+  text-align: center;
+}
+
+.tj-stat-value {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00ff00;
+}
+
+.tj-stat-value.positive {
+  color: #00ff00;
+}
+
+.tj-stat-value.negative {
+  color: #ff6666;
+}
+
+.tj-stat-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.tj-stat-insight {
+  background: #0a1a0a;
+  border: 1px solid #1a3a1a;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.tj-stat-insight h4 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #00ff00;
+}
+
+.tj-stat-insight p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.tj-stat-insight p.positive {
+  color: #88ff88;
+}
+
+.tj-stat-insight p.negative {
+  color: #ff8888;
+}
+
+.tj-quote {
+  font-style: italic;
+  color: #555;
+  font-size: 11px;
+  text-align: center;
+  padding: 15px;
+  border-top: 1px dashed #222;
+}

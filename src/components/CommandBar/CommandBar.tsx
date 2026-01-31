@@ -38,6 +38,21 @@ const FUNCTION_CODES: FunctionCode[] = [
   { code: 'API', name: 'API Tester', description: 'Test API endpoints' },
   { code: 'HELP', name: 'Help', description: 'View help documentation' },
   { code: 'STATUS', name: 'Status', description: 'Connection status' },
+  { code: 'SB', name: 'Strategy Builder', description: 'AI-powered strategy creation' },
+  { code: 'STRAT', name: 'Strategy Builder', description: 'AI-powered strategy creation (alias)' },
+  { code: 'FB', name: 'Feedback', description: 'Submit feedback and suggestions' },
+  { code: 'FEEDBACK', name: 'Feedback', description: 'Submit feedback and suggestions (alias)' },
+  { code: 'INS', name: 'Insider Activity', description: 'View insider trades & sentiment' },
+  { code: 'INSIDER', name: 'Insider Activity', description: 'View insider trades & sentiment (alias)' },
+  { code: 'INST', name: 'Institutional', description: 'Who owns what - 13F filings' },
+  { code: 'WHALE', name: 'Institutional', description: 'Track Buffett, Soros, BlackRock holdings' },
+  { code: 'FD', name: 'Fundamentals', description: 'Income statements, EPS, margins' },
+  { code: 'FUND', name: 'Fundamentals', description: 'Financial statements (alias)' },
+  { code: 'FILINGS', name: 'SEC Filings', description: '10-K, 10-Q, 8-K filings' },
+  { code: 'SEC', name: 'SEC Filings', description: 'Browse SEC filings (alias)' },
+  { code: 'QUANT', name: 'Quant Chat', description: 'Chat with your AI trading co-pilot' },
+  { code: 'CHAT', name: 'Quant Chat', description: 'AI assistant (alias)' },
+  { code: 'AI', name: 'Quant Chat', description: 'AI assistant (alias)' },
 ];
 
 export const CommandBar: React.FC<CommandBarProps> = ({

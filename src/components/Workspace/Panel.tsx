@@ -1,4 +1,4 @@
-import { ReactNode, CSSProperties } from 'react';
+import { ReactNode, CSSProperties, useState, useCallback, useRef, useEffect } from 'react';
 import { LinkGroup } from './ActiveSymbolContext';
 
 export interface PanelProps {
@@ -13,6 +13,10 @@ export interface PanelProps {
   isPinned?: boolean;
   onLinkGroupChange?: (group: LinkGroup) => void;
   onPinToggle?: () => void;
+  onResize?: (id: string, width: number, height: number) => void;
+  resizable?: boolean;
+  minWidth?: number;
+  minHeight?: number;
 }
 
 const linkGroupColors: Record<Exclude<LinkGroup, null>, string> = {
@@ -101,23 +105,105 @@ const panelStyles: Record<string, CSSProperties> = {
 
 const linkGroups: Exclude<LinkGroup, null>[] = ['A', 'B', 'C'];
 
+type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
+
 export default function Panel({
   id,
   title,
   children,
   onClose,
-  width,
-  height,
+  width: initialWidth,
+  height: initialHeight,
   style,
   linkGroup = null,
   isPinned = false,
   onLinkGroupChange,
   onPinToggle,
+  onResize,
+  resizable = true,
+  minWidth = 250,
+  minHeight = 200,
 }: PanelProps) {
+  const [dimensions, setDimensions] = useState({
+    width: typeof initialWidth === 'number' ? initialWidth : 400,
+    height: typeof initialHeight === 'number' ? initialHeight : 350,
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeRef = useRef<{
+    direction: ResizeDirection;
+    startX: number;
+    startY: number;
+    startWidth: number;
+    startHeight: number;
+  } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const handleResizeStart = useCallback((e: React.MouseEvent, direction: ResizeDirection) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    resizeRef.current = {
+      direction,
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: dimensions.width,
+      startHeight: dimensions.height,
+    };
+    setIsResizing(true);
+  }, [dimensions]);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!resizeRef.current) return;
+      
+      const { direction, startX, startY, startWidth, startHeight } = resizeRef.current;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      let newWidth = startWidth;
+      let newHeight = startHeight;
+      
+      // Horizontal resizing
+      if (direction?.includes('e')) {
+        newWidth = Math.max(minWidth, startWidth + deltaX);
+      } else if (direction?.includes('w')) {
+        newWidth = Math.max(minWidth, startWidth - deltaX);
+      }
+      
+      // Vertical resizing
+      if (direction?.includes('s')) {
+        newHeight = Math.max(minHeight, startHeight + deltaY);
+      } else if (direction?.includes('n')) {
+        newHeight = Math.max(minHeight, startHeight - deltaY);
+      }
+      
+      setDimensions({ width: newWidth, height: newHeight });
+    };
+
+    const handleMouseUp = () => {
+      if (resizeRef.current && onResize) {
+        onResize(id, dimensions.width, dimensions.height);
+      }
+      resizeRef.current = null;
+      setIsResizing(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, id, onResize, dimensions, minWidth, minHeight]);
+
   const containerStyle: CSSProperties = {
     ...panelStyles.container,
-    width: width || 'auto',
-    height: height || 'auto',
+    width: dimensions.width,
+    height: dimensions.height,
+    position: 'relative',
     ...style,
   };
 
@@ -149,13 +235,30 @@ export default function Panel({
     return baseStyle;
   };
 
+  const resizeHandleStyle = (cursor: string): CSSProperties => ({
+    position: 'absolute',
+    background: 'transparent',
+    zIndex: 10,
+    cursor,
+  });
+
   return (
-    <div style={containerStyle} data-panel-id={id}>
+    <div 
+      ref={panelRef}
+      style={containerStyle} 
+      data-panel-id={id}
+      className={isResizing ? 'panel-resizing' : ''}
+    >
       <div style={panelStyles.header}>
         <div style={panelStyles.title}>
           <span>╔═</span>
           <span>{title}</span>
           <span>═╗</span>
+          {resizable && (
+            <span style={{ fontSize: '10px', color: '#444', marginLeft: '8px' }}>
+              {Math.round(dimensions.width)}×{Math.round(dimensions.height)}
+            </span>
+          )}
         </div>
         <div style={panelStyles.controls}>
           {onLinkGroupChange && (
@@ -195,6 +298,66 @@ export default function Panel({
         </div>
       </div>
       <div style={panelStyles.content}>{children}</div>
+      
+      {/* Resize handles */}
+      {resizable && (
+        <>
+          {/* Edge handles */}
+          <div
+            style={{ ...resizeHandleStyle('ew-resize'), top: '8px', bottom: '8px', right: '-4px', width: '8px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'e')}
+            title="Drag to resize horizontally"
+          />
+          <div
+            style={{ ...resizeHandleStyle('ew-resize'), top: '8px', bottom: '8px', left: '-4px', width: '8px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'w')}
+            title="Drag to resize horizontally"
+          />
+          <div
+            style={{ ...resizeHandleStyle('ns-resize'), left: '8px', right: '8px', bottom: '-4px', height: '8px' }}
+            onMouseDown={(e) => handleResizeStart(e, 's')}
+            title="Drag to resize vertically"
+          />
+          <div
+            style={{ ...resizeHandleStyle('ns-resize'), left: '8px', right: '8px', top: '-4px', height: '8px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'n')}
+            title="Drag to resize vertically"
+          />
+          
+          {/* Corner handles */}
+          <div
+            style={{ ...resizeHandleStyle('nwse-resize'), bottom: '-6px', right: '-6px', width: '14px', height: '14px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'se')}
+            title="Drag to resize diagonally"
+          >
+            <div style={{
+              position: 'absolute',
+              bottom: '2px',
+              right: '2px',
+              width: '8px',
+              height: '8px',
+              borderRight: '2px solid #00cc00',
+              borderBottom: '2px solid #00cc00',
+              opacity: 0.5,
+            }} />
+          </div>
+          <div
+            style={{ ...resizeHandleStyle('nesw-resize'), bottom: '-6px', left: '-6px', width: '14px', height: '14px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'sw')}
+            title="Drag to resize diagonally"
+          />
+          <div
+            style={{ ...resizeHandleStyle('nesw-resize'), top: '-6px', right: '-6px', width: '14px', height: '14px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'ne')}
+            title="Drag to resize diagonally"
+          />
+          <div
+            style={{ ...resizeHandleStyle('nwse-resize'), top: '-6px', left: '-6px', width: '14px', height: '14px' }}
+            onMouseDown={(e) => handleResizeStart(e, 'nw')}
+            title="Drag to resize diagonally"
+          />
+        </>
+      )}
     </div>
   );
 }

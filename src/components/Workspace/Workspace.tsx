@@ -1,8 +1,15 @@
-import { CSSProperties, useState, useRef } from 'react';
+import { CSSProperties, useState, useRef, useCallback } from 'react';
 import Panel from './Panel';
 import { PanelRegistry } from './PanelRegistry';
 import CompareTray from '../CompareTray';
 import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
+
+// Panel size storage
+interface PanelSizes {
+  [instanceId: string]: { width: number; height: number };
+}
+
+const PANEL_SIZES_KEY = 'etoro-terminal-panel-sizes';
 
 export interface WorkspaceProps {
   className?: string;
@@ -119,6 +126,25 @@ const workspaceStyles: Record<string, CSSProperties> = {
   },
 };
 
+// Load saved panel sizes from localStorage
+const loadPanelSizes = (): PanelSizes => {
+  try {
+    const saved = localStorage.getItem(PANEL_SIZES_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+};
+
+// Save panel sizes to localStorage
+const savePanelSizes = (sizes: PanelSizes): void => {
+  try {
+    localStorage.setItem(PANEL_SIZES_KEY, JSON.stringify(sizes));
+  } catch (e) {
+    console.error('Failed to save panel sizes:', e);
+  }
+};
+
 export default function Workspace({ className, style }: WorkspaceProps) {
   const { panels, addPanel, removePanel, movePanel, saveAsDefault, resetToDefault, hasCustomLayout } = useWorkspaceContext();
   const registeredTypes = PanelRegistry.getRegisteredTypes();
@@ -126,7 +152,17 @@ export default function Workspace({ className, style }: WorkspaceProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [panelSizes, setPanelSizes] = useState<PanelSizes>(loadPanelSizes);
   const dragNodeRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle panel resize
+  const handlePanelResize = useCallback((id: string, width: number, height: number) => {
+    setPanelSizes(prev => {
+      const updated = { ...prev, [id]: { width, height } };
+      savePanelSizes(updated);
+      return updated;
+    });
+  }, []);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     setDraggedIndex(index);
@@ -275,6 +311,10 @@ export default function Workspace({ className, style }: WorkspaceProps) {
             if (!config) return null;
 
             const PanelContent = config.component;
+            const savedSize = panelSizes[instance.instanceId];
+            const panelWidth = savedSize?.width || config.defaultWidth || 400;
+            const panelHeight = savedSize?.height || config.defaultHeight || 350;
+            
             return (
               <div
                 key={instance.instanceId}
@@ -284,8 +324,8 @@ export default function Workspace({ className, style }: WorkspaceProps) {
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, index)}
+                className="workspace-panel-wrapper"
                 style={{
-                  ...workspaceStyles.panelWrapper,
                   cursor: 'grab',
                   ...getPanelStyle(index),
                 }}
@@ -294,8 +334,12 @@ export default function Workspace({ className, style }: WorkspaceProps) {
                   id={instance.instanceId}
                   title={instance.title}
                   onClose={removePanel}
-                  width="100%"
-                  height={instance.height}
+                  width={panelWidth}
+                  height={panelHeight}
+                  onResize={handlePanelResize}
+                  resizable={true}
+                  minWidth={config.minWidth || 250}
+                  minHeight={config.minHeight || 200}
                 >
                   <PanelContent panelId={instance.instanceId} />
                 </Panel>

@@ -254,3 +254,34 @@ body {
   color: #00ff00;
   font-weight: bold;
 }
+
+/* Panel Resizing Styles */
+.panel-resizing {
+  user-select: none;
+  transition: none !important;
+}
+
+.panel-resizing * {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Make resize handles visible on hover */
+[data-panel-id]:hover > div[style*="ew-resize"],
+[data-panel-id]:hover > div[style*="ns-resize"],
+[data-panel-id]:hover > div[style*="nwse-resize"],
+[data-panel-id]:hover > div[style*="nesw-resize"] {
+  background: linear-gradient(to right, transparent, rgba(0, 204, 0, 0.1), transparent);
+}
+
+/* Workspace panel wrapper for resizable panels */
+.workspace-panel-wrapper {
+  flex: 0 0 auto !important;
+  max-width: none !important;
+}
+
+/* Global no-select during resize */
+body.resizing {
+  user-select: none;
+  cursor: inherit;
+}

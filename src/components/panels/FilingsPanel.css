@@ -1,0 +1,223 @@
+.filings-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--panel-bg, #1a1a2e);
+  color: var(--text-primary, #e0e0e0);
+}
+
+.filings-panel .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #333);
+  background: var(--header-bg, #0f0f1a);
+}
+
+.filings-panel .panel-header h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.filings-panel .ticker-search {
+  display: flex;
+  gap: 8px;
+}
+
+.filings-panel .ticker-search input {
+  width: 80px;
+  padding: 6px 10px;
+  background: var(--input-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 4px;
+  color: var(--text-primary, #e0e0e0);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.filings-panel .ticker-search button {
+  padding: 6px 12px;
+  background: var(--accent-blue, #3b82f6);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filings-panel .filter-row {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #333);
+  flex-wrap: wrap;
+}
+
+.filings-panel .filter-btn {
+  padding: 6px 12px;
+  background: var(--card-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 4px;
+  color: var(--text-secondary, #888);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filings-panel .filter-btn:hover {
+  background: var(--card-bg-hover, #2a2a4a);
+  color: var(--text-primary, #e0e0e0);
+}
+
+.filings-panel .filter-btn.active {
+  background: var(--accent-blue, #3b82f6);
+  border-color: var(--accent-blue, #3b82f6);
+  color: white;
+}
+
+.filings-panel .loading,
+.filings-panel .error,
+.filings-panel .no-data {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}
+
+.filings-panel .error {
+  color: var(--color-red, #ef4444);
+}
+
+.filings-panel .filings-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.filings-panel .filing-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  background: var(--card-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+
+.filings-panel .filing-item:hover {
+  background: var(--card-bg-hover, #2a2a4a);
+  border-color: var(--accent-blue, #3b82f6);
+}
+
+.filings-panel .filing-badge {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.filings-panel .badge-10k {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+}
+
+.filings-panel .badge-10q {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.filings-panel .badge-8k {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.filings-panel .badge-4 {
+  background: rgba(236, 72, 153, 0.2);
+  color: #ec4899;
+}
+
+.filings-panel .badge-other {
+  background: rgba(156, 163, 175, 0.2);
+  color: #9ca3af;
+}
+
+.filings-panel .filing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filings-panel .filing-desc {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.filings-panel .filing-date {
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+}
+
+.filings-panel .filing-link {
+  font-size: 11px;
+  color: var(--accent-blue, #3b82f6);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.filings-panel .filing-item:hover .filing-link {
+  opacity: 1;
+}
+
+/* API Key Setup */
+.filings-panel .api-key-setup {
+  padding: 20px;
+  text-align: center;
+}
+
+.filings-panel .api-key-setup p {
+  margin: 0 0 12px 0;
+  color: var(--text-secondary, #888);
+}
+
+.filings-panel .api-key-input-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.filings-panel .api-key-input-row input {
+  flex: 1;
+  max-width: 300px;
+  padding: 10px 14px;
+  background: var(--input-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 6px;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.filings-panel .api-key-input-row button {
+  padding: 10px 20px;
+  background: var(--accent-blue, #3b82f6);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.filings-panel .api-key-hint {
+  margin-top: 16px;
+  font-size: 12px;
+}
+
+.filings-panel .api-key-hint a {
+  color: var(--accent-blue, #3b82f6);
+}

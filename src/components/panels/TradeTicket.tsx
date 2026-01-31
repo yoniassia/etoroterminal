@@ -50,6 +50,7 @@ export default function TradeTicket({ symbol: propSymbol = '', instrumentId: pro
   const [pendingSide, setPendingSide] = useState<OrderSide | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [lastOrderStatus, setLastOrderStatus] = useState<'success' | 'rejected' | null>(null);
 
   // Check for pending symbol on mount
   useEffect(() => {
@@ -141,13 +142,18 @@ export default function TradeTicket({ symbol: propSymbol = '', instrumentId: pro
       const activityMode = isDemoMode() ? 'demo' : 'real';
       activityStore.addTradeOpen(activityMode, symbol, value, side);
 
+      setLastOrderStatus('success');
       onSubmit?.(buildTradeData(side));
       setInputValue('');
       setStopLoss('');
       setTakeProfit('');
+      
+      // Clear success status after 5 seconds
+      setTimeout(() => setLastOrderStatus(null), 5000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Trade failed';
       setSubmitError(message);
+      setLastOrderStatus('rejected');
       
       // Add activity notification for failed trade
       const activityMode = isDemoMode() ? 'demo' : 'real';
@@ -230,15 +236,38 @@ export default function TradeTicket({ symbol: propSymbol = '', instrumentId: pro
         </div>
       )}
 
-      {submitError && (
-        <div className="trade-ticket-error" role="alert">
-          ✗ {submitError}
+      {lastOrderStatus === 'rejected' && (
+        <div className="trade-ticket-status trade-ticket-status--rejected" role="alert">
+          <div className="trade-ticket-status-icon">✗</div>
+          <div className="trade-ticket-status-text">
+            <strong>ORDER REJECTED</strong>
+            {submitError && <span className="trade-ticket-status-reason">{submitError}</span>}
+          </div>
+          <button 
+            className="trade-ticket-status-dismiss" 
+            onClick={() => { setLastOrderStatus(null); setSubmitError(null); }}
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {lastOrderStatus === 'success' && (
+        <div className="trade-ticket-status trade-ticket-status--success" role="status">
+          <div className="trade-ticket-status-icon">✓</div>
+          <div className="trade-ticket-status-text">
+            <strong>ORDER SUBMITTED</strong>
+          </div>
         </div>
       )}
 
       {isSubmitting && (
-        <div className="trade-ticket-loading" role="status" aria-live="polite">
-          Submitting order...
+        <div className="trade-ticket-status trade-ticket-status--loading" role="status" aria-live="polite">
+          <div className="trade-ticket-status-icon spinning">◐</div>
+          <div className="trade-ticket-status-text">
+            <strong>SUBMITTING ORDER...</strong>
+          </div>
         </div>
       )}
 

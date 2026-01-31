@@ -5,14 +5,18 @@ export interface ParsedCommand {
 }
 
 const VALID_FUNCTION_CODES = new Set([
-  'QT',   // Quote
-  'WL',   // Watchlist
-  'TRD',  // Trade
-  'ORD',  // Orders
-  'PF',   // Portfolio
-  'PI',   // Position Info
-  'CH',   // Chart
-  'AL',   // Alerts
+  'QT',       // Quote
+  'WL',       // Watchlist
+  'TRD',      // Trade
+  'ORD',      // Orders
+  'PF',       // Portfolio
+  'PI',       // Position Info
+  'CH',       // Chart
+  'AL',       // Alerts
+  'SB',       // Strategy Builder
+  'STRAT',    // Strategy Builder (alias)
+  'FB',       // Feedback
+  'FEEDBACK', // Feedback (alias)
 ]);
 
 export function isValidFunctionCode(code: string): boolean {

@@ -1,0 +1,197 @@
+.institutional-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--panel-bg, #1a1a2e);
+  color: var(--text-primary, #e0e0e0);
+}
+
+.institutional-panel .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #333);
+  background: var(--header-bg, #0f0f1a);
+}
+
+.institutional-panel .panel-header h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.institutional-panel .ticker-search {
+  display: flex;
+  gap: 8px;
+}
+
+.institutional-panel .ticker-search input {
+  width: 80px;
+  padding: 6px 10px;
+  background: var(--input-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 4px;
+  color: var(--text-primary, #e0e0e0);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.institutional-panel .ticker-search button {
+  padding: 6px 12px;
+  background: var(--accent-blue, #3b82f6);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.institutional-panel .summary-row {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--card-bg, #252540);
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.institutional-panel .summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.institutional-panel .summary-item .label {
+  font-size: 10px;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+}
+
+.institutional-panel .summary-item .value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-blue, #3b82f6);
+}
+
+.institutional-panel .loading,
+.institutional-panel .error,
+.institutional-panel .no-data {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}
+
+.institutional-panel .error {
+  color: var(--color-red, #ef4444);
+}
+
+.institutional-panel .holdings-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.institutional-panel .holdings-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 100px;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--header-bg, #0f0f1a);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary, #888);
+  position: sticky;
+  top: 0;
+}
+
+.institutional-panel .holding-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 100px;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #333);
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.institutional-panel .holding-row:hover {
+  background: var(--card-bg-hover, #2a2a4a);
+}
+
+.institutional-panel .col-investor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.institutional-panel .rank {
+  font-size: 10px;
+  color: var(--text-tertiary, #666);
+  min-width: 24px;
+}
+
+.institutional-panel .col-shares {
+  font-family: 'SF Mono', 'Monaco', monospace;
+  text-align: right;
+}
+
+.institutional-panel .col-value {
+  font-family: 'SF Mono', 'Monaco', monospace;
+  text-align: right;
+  color: var(--color-green, #22c55e);
+}
+
+.institutional-panel .col-date {
+  font-family: 'SF Mono', 'Monaco', monospace;
+  text-align: right;
+  color: var(--text-secondary, #888);
+  font-size: 11px;
+}
+
+/* API Key Setup */
+.institutional-panel .api-key-setup {
+  padding: 20px;
+  text-align: center;
+}
+
+.institutional-panel .api-key-setup p {
+  margin: 0 0 12px 0;
+  color: var(--text-secondary, #888);
+}
+
+.institutional-panel .api-key-input-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.institutional-panel .api-key-input-row input {
+  flex: 1;
+  max-width: 300px;
+  padding: 10px 14px;
+  background: var(--input-bg, #252540);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 6px;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.institutional-panel .api-key-input-row button {
+  padding: 10px 20px;
+  background: var(--accent-blue, #3b82f6);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.institutional-panel .api-key-hint {
+  margin-top: 16px;
+  font-size: 12px;
+}
+
+.institutional-panel .api-key-hint a {
+  color: var(--accent-blue, #3b82f6);
+}

@@ -1,6 +1,6 @@
 {
   "name": "etoro-terminal",
-  "version": "1.0.0",
+  "version": "1.7.0",
   "description": "eToro Portfolio Terminal",
   "main": "dist-electron/main.js",
   "scripts": {

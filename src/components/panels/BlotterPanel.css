@@ -32,20 +32,31 @@
   background-color: #1a1a1a;
   color: #00ff00;
   border: 1px solid #333;
-  padding: 4px 8px;
+  padding: 6px 12px;
   font-family: "Courier New", monospace;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
+  min-width: 140px;
+  appearance: menulist;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+}
+
+.blotter-panel__filter:hover {
+  border-color: #00cc00;
+  background-color: #222;
 }
 
 .blotter-panel__filter:focus {
-  outline: none;
+  outline: 2px solid #00cc00;
+  outline-offset: 1px;
   border-color: #00cc00;
 }
 
 .blotter-panel__filter option {
   background-color: #1a1a1a;
   color: #00ff00;
+  padding: 8px;
 }
 
 .blotter-panel__table-header {

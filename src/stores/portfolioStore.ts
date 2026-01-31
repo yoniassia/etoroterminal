@@ -1,6 +1,7 @@
 import type { Position, Portfolio } from '../api/contracts/etoro-api.types';
 import { etoroApi } from '../services/etoroApi';
 import { symbolResolver } from '../services/symbolResolver';
+import { demoDataService, isDemoMode as isGlobalDemoMode } from '../services/demoDataService';
 
 export type AutoRefreshInterval = 30000 | 60000 | 300000;
 
@@ -82,6 +83,40 @@ class PortfolioStore {
   async fetchPortfolio(): Promise<void> {
     this.setState({ loading: true, error: null });
     try {
+      // Check if we're in global demo mode (from login page)
+      if (isGlobalDemoMode()) {
+        const demoPortfolio = demoDataService.getDemoPortfolio();
+        const positions: Position[] = demoPortfolio.positions.map(p => ({
+          positionId: p.positionId,
+          instrumentId: p.instrumentId,
+          instrumentName: `${p.symbol} - ${p.name}`,
+          isBuy: p.isBuy,
+          amount: p.amount,
+          leverage: p.leverage,
+          units: p.units,
+          openRate: p.openRate,
+          openDateTime: p.openDateTime,
+          currentRate: p.currentRate,
+          profit: p.profit,
+          profitPercent: p.profitPercent,
+        }));
+        const portfolio: Portfolio = {
+          totalValue: demoPortfolio.totalValue,
+          equity: demoPortfolio.equity,
+          credit: 0,
+          bonusCredit: 0,
+          profit: demoPortfolio.profit,
+          positions,
+        };
+        this.setState({
+          portfolio,
+          loading: false,
+          lastUpdated: Date.now(),
+          isDemo: true,
+        });
+        return;
+      }
+      
       etoroApi.setDemoMode(this.state.isDemo);
       const data = await etoroApi.getPortfolio();
       
