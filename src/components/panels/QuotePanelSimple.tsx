@@ -282,9 +282,10 @@ export default function QuotePanelSimple(_props: PanelContentProps) {
     setSymbol(sym);
   };
 
-  const handleTrade = (side: 'buy' | 'sell') => {
+  const handleTrade = (_side: 'buy' | 'sell') => {
     if (resolvedSymbol) {
       // Set active symbol so Trade Ticket picks it up
+      // Side is passed but we open the trade ticket which handles direction
       setActiveSymbol(resolvedSymbol.symbol);
       openPanelForSymbol('TRD', resolvedSymbol.symbol, resolvedSymbol.instrumentId);
     }

@@ -11,8 +11,9 @@ import { PanelRegistry } from './components/Workspace/PanelRegistry';
 import { keyManager } from './services/keyManager';
 import { streamingService } from './services/streamingService';
 import { etoroApi } from './services/etoroApi';
-import { healthService } from './services/healthService';
-import { exportService } from './services/exportService';
+// These services initialize on import (side effects)
+import './services/healthService';
+import './services/exportService';
 import { demoDataService } from './services/demoDataService';
 
 // Import all panels

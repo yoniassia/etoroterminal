@@ -1,11 +1,25 @@
 // Application version - update this when releasing new versions
-export const APP_VERSION = '1.7.1';
+export const APP_VERSION = '1.7.2';
 
 // Build info
 export const BUILD_DATE = '2026-01-31';
 
 // Changelog
 export const CHANGELOG = `
+v1.7.2 (2026-01-31) - TypeScript & Type Safety Cleanup
+- FIX: Made Instrument fields optional (minAmount, maxAmount, availableLeverage)
+- FIX: StreamingService.isConnected getter (was incorrectly called as function)
+- FIX: Position interface alignment between etoroApi and etoro-api.types
+- FIX: NewsPanel uses correct API fields (published_at, source)
+- FIX: FilingsPanel uses correct API field (filing_url)
+- FIX: TradeJournalPanel winRate type (string to number)
+- FIX: OrdersStore.getAllOrders() in DataExportPanel
+- FIX: WSClient apiKey default value
+- FIX: crypto.ts BufferSource type assertion
+- CLEANUP: Removed 15+ unused variable declarations
+- CLEANUP: Removed unused imports across multiple files
+- CLEANUP: Added eslint-disable comments for reserved-for-future code
+
 v1.7.1 (2026-01-31) - TypeScript Fixes
 - FIX: Panel types now properly extend PanelContentProps (FilingsPanel, NewsPanel, InstitutionalPanel)
 - FIX: Removed unused imports (ApiHeaders, useEffect, DEFAULT_RISK_PARAMS)

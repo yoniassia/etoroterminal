@@ -258,9 +258,9 @@ export interface Instrument {
   type: InstrumentType;
   exchange?: string;
   isActive: boolean;
-  minAmount: number;
-  maxAmount: number;
-  availableLeverage: number[];
+  minAmount?: number;
+  maxAmount?: number;
+  availableLeverage?: number[];
   tradingHours?: TradingHours;
 }
 

@@ -115,10 +115,7 @@ export default function ChartPanel({
 }: ChartPanelProps = { panelId: '' }) {
   const {
     currentSymbol,
-    linkGroup,
     isPinned,
-    setLinkGroup,
-    togglePin,
     pin,
   } = usePanelLink(initialLinkGroup);
 

@@ -144,9 +144,7 @@ export default function PortfolioPanel({ onSelectPosition }: PortfolioPanelProps
         );
 
         if (state.portfolio) {
-          const updatedPositions = state.portfolio.positions.filter(
-            (p) => p.positionId !== position.positionId
-          );
+          // Trigger portfolio refresh to update positions after close
           portfolioStore.fetchPortfolio().catch(() => {});
         }
 

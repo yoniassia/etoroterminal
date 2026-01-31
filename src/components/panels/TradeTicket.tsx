@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, KeyboardEvent } from 'react';
-import { useTradingMode, TradingMode } from '../../contexts/TradingModeContext';
+import { useTradingMode } from '../../contexts/TradingModeContext';
 import { keyManager } from '../../services/keyManager';
 import { getTradingAdapter } from '../../api/adapters/tradingAdapter';
 import { useWorkspaceContext } from '../../contexts/WorkspaceContext';
@@ -33,7 +33,7 @@ export interface TradeTicketProps extends PanelContentProps {
 const LEVERAGE_OPTIONS: LeverageOption[] = ['1x', '2x', '5x', '10x', '20x'];
 
 export default function TradeTicket({ symbol: propSymbol = '', instrumentId: propInstrumentId, onSubmit, onCancel }: TradeTicketProps = { panelId: '' }) {
-  const { mode, isRealMode, isDemoMode, requiresConfirmation } = useTradingMode();
+  const { isRealMode, isDemoMode, requiresConfirmation } = useTradingMode();
   const { getPendingSymbol } = useWorkspaceContext();
   const { activeSymbol } = useActiveSymbol();
   const hasApiKeys = keyManager.hasKeys();

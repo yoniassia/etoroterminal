@@ -178,7 +178,7 @@ export default function DataExportPanel(_props: PanelContentProps) {
       if (isDemoMode()) {
         orders = getDemoOrders();
       } else {
-        orders = ordersStore.getState().orders;
+        orders = ordersStore.getAllOrders();
       }
 
       const exportData = orders.map((o: any) => ({
@@ -261,7 +261,7 @@ export default function DataExportPanel(_props: PanelContentProps) {
       // Gather all data
       const portfolio = isDemoMode() ? getDemoPortfolio() : portfolioStore.getState().portfolio;
       const watchlist = isDemoMode() ? getDemoWatchlist() : [];
-      const orders = isDemoMode() ? getDemoOrders() : ordersStore.getState().orders;
+      const orders = isDemoMode() ? getDemoOrders() : ordersStore.getAllOrders();
       const alerts = isDemoMode() ? getDemoAlerts() : [];
 
       const allData = {

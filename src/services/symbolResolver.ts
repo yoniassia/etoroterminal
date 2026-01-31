@@ -46,7 +46,8 @@ class SymbolResolver {
     lastFetched: 0,
   };
 
-  private headers: Record<string, string> = {};
+  // Headers storage for future API authentication
+  // private _headers: Record<string, string> = {};
   private staticCacheLoaded = false;
 
   constructor() {
@@ -83,8 +84,9 @@ class SymbolResolver {
     }
   }
 
-  setHeaders(headers: Record<string, string>): void {
-    this.headers = headers;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setHeaders(_headers: Record<string, string>): void {
+    // Reserved for future API authentication
   }
 
   private isCacheValid(): boolean {
@@ -112,7 +114,7 @@ class SymbolResolver {
         instrumentId: (item.instrumentId ?? item.InstrumentID ?? item.instrumentID ?? item.InstrumentId ?? 0) as number,
         symbol: String(item.internalSymbolFull ?? item.InternalSymbolFull ?? item.symbol ?? item.Symbol ?? ''),
         displayName: String(item.instrumentDisplayName ?? item.InstrumentDisplayName ?? item.displayName ?? item.DisplayName ?? item.name ?? item.Name ?? ''),
-        type: (item.instrumentTypeId ?? item.InstrumentTypeId ?? item.type ?? 'stock') as string,
+        type: (item.instrumentTypeId ?? item.InstrumentTypeId ?? item.type ?? 'stock') as InstrumentType,
         exchange: String(item.exchangeId ?? item.ExchangeId ?? item.exchange ?? ''),
         isActive: item.isActive !== false && item.IsActive !== false,
       }));

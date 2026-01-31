@@ -47,8 +47,8 @@ const getVersion = (): string => {
 const checkApiStatus = async (): Promise<ServiceStatus> => {
   const start = Date.now();
   try {
-    // Simple connectivity check
-    const response = await fetch('https://public-api.etoro.com/sapi/app-data/web-client/asset-settings', {
+    // Simple connectivity check (response unused - we only care about success/failure)
+    await fetch('https://public-api.etoro.com/sapi/app-data/web-client/asset-settings', {
       method: 'HEAD',
       mode: 'no-cors',
     });
@@ -70,9 +70,9 @@ const checkApiStatus = async (): Promise<ServiceStatus> => {
 // Check streaming service
 const checkStreamingStatus = (): ServiceStatus => {
   try {
-    const isConnected = streamingService.isConnected();
+    const connected = streamingService.isConnected;
     return {
-      status: isConnected ? 'up' : 'down',
+      status: connected ? 'up' : 'down',
       lastCheck: new Date().toISOString(),
     };
   } catch {

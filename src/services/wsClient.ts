@@ -41,6 +41,7 @@ export class WSClient {
   constructor(config: WSClientConfig) {
     this.config = {
       url: WEBSOCKET_URL,
+      apiKey: '',
       maxReconnectDelay: 30000,
       initialReconnectDelay: 1000,
       ...config,

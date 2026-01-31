@@ -1,5 +1,5 @@
 import { quotesStore } from '../stores/quotesStore';
-import type { QuoteUpdatePayload } from '../api/contracts/etoro-api.types';
+import type { QuoteUpdatePayload, Quote } from '../api/contracts/etoro-api.types';
 
 export interface PerformanceMetrics {
   testName: string;

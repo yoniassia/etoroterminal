@@ -66,16 +66,8 @@ export const NewsPanel: React.FC<NewsPanelProps> = ({ ticker: initialTicker, pan
     }
   };
 
-  const getSentimentBadge = (sentiment: string) => {
-    switch (sentiment?.toLowerCase()) {
-      case 'bullish':
-        return <span className="sentiment-badge bullish">🟢 Bullish</span>;
-      case 'bearish':
-        return <span className="sentiment-badge bearish">🔴 Bearish</span>;
-      default:
-        return <span className="sentiment-badge neutral">⚪ Neutral</span>;
-    }
-  };
+  // Sentiment badge for future API enhancement
+  // const getSentimentBadge = (sentiment: string) => { ... };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -152,12 +144,11 @@ export const NewsPanel: React.FC<NewsPanelProps> = ({ ticker: initialTicker, pan
             )}
             <div className="news-content">
               <div className="news-meta">
-                {getSentimentBadge(article.sentiment)}
                 <span className="news-source">{article.source}</span>
-                <span className="news-date">{formatDate(article.date)}</span>
+                <span className="news-date">{formatDate(article.published_at)}</span>
               </div>
               <h3 className="news-title">{article.title}</h3>
-              <p className="news-author">By {article.author}</p>
+              <p className="news-description">{article.description?.slice(0, 150)}...</p>
             </div>
           </a>
         ))}

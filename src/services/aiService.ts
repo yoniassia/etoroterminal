@@ -9,7 +9,6 @@ import type {
   AIResponse,
   AIStreamChunk,
   StrategyDefinition,
-  ProposedAction,
 } from '../types/strategy.types';
 
 // =============================================================================
@@ -86,7 +85,8 @@ Output structured JSON for strategies using this format:
 // JSON Schema for Structured Output
 // =============================================================================
 
-const STRATEGY_SCHEMA = {
+// Schema for future structured output use
+export const STRATEGY_SCHEMA = {
   type: 'object',
   properties: {
     name: { type: 'string', description: 'Strategy name' },

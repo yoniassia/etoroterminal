@@ -134,19 +134,8 @@ export default function WebhookAlertsPanel(_props: PanelContentProps) {
     setTestResult({ id: webhook.id, success: false, message: 'Testing...' });
     
     try {
-      const testPayload = {
-        event: 'test',
-        timestamp: new Date().toISOString(),
-        source: 'eToro Terminal',
-        message: `Test webhook from ${webhook.name}`,
-        data: {
-          symbol: 'AAPL',
-          price: 196.50,
-          action: 'test_alert',
-        },
-      };
-
-      // In a real implementation, this would send to the webhook URL
+      // TODO: In a real implementation, send test payload to webhook URL
+      // Test payload would be: { event: 'test', timestamp, source, message, data: {...} }
       // For now, we simulate the test
       await new Promise(resolve => setTimeout(resolve, 1000));
       

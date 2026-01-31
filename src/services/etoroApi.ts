@@ -3,14 +3,18 @@ const ETORO_API_BASE_URL = 'https://public-api.etoro.com';
 export interface Position {
   positionId: number;
   instrumentId: number;
+  instrumentName?: string;
   isBuy: boolean;
   amount: number;
   leverage: number;
   units: number;
   openRate: number;
+  currentRate?: number;
   openDateTime: string;
   takeProfitRate?: number;
   stopLossRate?: number;
+  profit?: number;
+  profitPercentage?: number;
 }
 
 export interface PortfolioData {
@@ -203,7 +207,7 @@ export class EToroApiService {
             const user = users[0];
             const firstName = user.firstName || user.first_name;
             const lastName = user.lastName || user.last_name;
-            const fullName = [firstName, lastName].filter(Boolean).join(' ');
+            // fullName available if needed: [firstName, lastName].filter(Boolean).join(' ')
             
             return {
               username: user.username || user.userName || '',

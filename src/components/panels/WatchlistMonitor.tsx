@@ -74,14 +74,13 @@ export default function WatchlistMonitor({
 
   const totalHeight = items.length * ROW_HEIGHT;
 
-  const { startIndex, endIndex, visibleItems } = useMemo(() => {
+  const { startIndex, visibleItems } = useMemo(() => {
     const start = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
     const visibleCount = Math.ceil(viewportHeight / ROW_HEIGHT);
     const end = Math.min(items.length - 1, start + visibleCount + OVERSCAN * 2);
     
     return {
       startIndex: start,
-      endIndex: end,
       visibleItems: items.slice(start, end + 1).map((item, idx) => ({
         ...item,
         virtualIndex: start + idx,

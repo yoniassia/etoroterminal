@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getSECFilings, hasApiKey, setApiKey } from '../../services/financialDatasetsService';
-import type { SECFiling } from '../../types/financialDatasets.types';
+import type { SECFiling, FDFilingsParams } from '../../types/financialDatasets.types';
 import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './FilingsPanel.css';
 
@@ -40,9 +40,9 @@ export const FilingsPanel: React.FC<FilingsPanelProps> = ({ ticker: initialTicke
     setError(null);
     
     try {
-      const params: { limit: number; filing_type?: string } = { limit: 50 };
+      const params: Partial<FDFilingsParams> = { limit: 50 };
       if (filingType !== 'all') {
-        params.filing_type = filingType;
+        params.filing_type = filingType as '10-K' | '10-Q' | '8-K' | '4' | '144';
       }
       const data = await getSECFilings(ticker, params);
       setFilings(data);
@@ -162,7 +162,7 @@ export const FilingsPanel: React.FC<FilingsPanelProps> = ({ ticker: initialTicke
         {filings.map((filing, idx) => (
           <a
             key={idx}
-            href={filing.url}
+            href={filing.filing_url}
             target="_blank"
             rel="noopener noreferrer"
             className="filing-item"

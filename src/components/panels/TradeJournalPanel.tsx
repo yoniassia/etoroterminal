@@ -172,7 +172,7 @@ export default function TradeJournalPanel(_props: PanelContentProps) {
     winners: entries.filter(e => (e.profit || 0) > 0).length,
     losers: entries.filter(e => (e.profit || 0) < 0).length,
     winRate: entries.filter(e => e.status !== 'open').length > 0 
-      ? (entries.filter(e => (e.profit || 0) > 0).length / entries.filter(e => e.status !== 'open').length * 100).toFixed(1)
+      ? parseFloat((entries.filter(e => (e.profit || 0) > 0).length / entries.filter(e => e.status !== 'open').length * 100).toFixed(1))
       : 0,
     totalProfit: entries.reduce((sum, e) => sum + (e.profit || 0), 0),
     avgProfit: entries.filter(e => e.profit).length > 0

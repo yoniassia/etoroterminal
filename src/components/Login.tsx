@@ -11,13 +11,6 @@ interface LoginProps {
 
 type RequestType = 'access' | 'feedback' | 'bug' | 'other';
 
-interface AccessRequest {
-  type: RequestType;
-  name: string;
-  email: string;
-  message: string;
-}
-
 const FEEDBACK_API = '/api/feedback';
 
 export default function Login({ onLogin, onDemoMode, error, loading }: LoginProps) {
