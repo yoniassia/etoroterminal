@@ -4,6 +4,48 @@ All notable changes to the eToro Terminal will be documented in this file.
 
 ---
 
+## [1.8.0] - 2026-01-31
+
+### Added
+- **🤖 Claw Agent Integration** - Full API layer optimized for AI agent consumption
+  - `/api/claw/status` - Service health, version, and capabilities
+  - `/api/claw/quote/:symbol` - Real-time quotes
+  - `/api/claw/insider/:symbol` - Insider trading data
+  - `/api/claw/fundamentals/:symbol` - Financial statements
+  - `/api/claw/filings/:symbol` - SEC filings
+  - `/api/claw/institutional/:symbol` - 13F holdings
+  - `/api/claw/strategy/list` - Strategy management
+  - `/api/claw/command` - Execute terminal commands programmatically
+- **ClawAdapter** (`src/api/clawAdapter.ts`) - Structured response wrapper
+  - Consistent `ClawResponse<T>` format
+  - Request IDs for tracing
+  - Error recovery suggestions
+  - Version tracking
+- **CLAW_INTEGRATION.md** - Complete integration guide for Claw agents
+
+### Technical
+- Standardized response format with `success`, `data`, `meta`, `error` fields
+- Error codes with `recoverable` flag and suggestions
+- Full TypeScript types for agent developers
+
+---
+
+## [1.7.3] - 2026-01-31
+
+### Fixed
+- **Financial Datasets Panels** - All panels now properly mapped
+  - `INS`, `INSIDER` → InsiderActivityPanel
+  - `FD`, `FUNDAMENTALS` → FundamentalsPanel
+  - `INST`, `WHALES`, `13F` → InstitutionalPanel
+  - `FILINGS`, `SEC`, `10K`, `10Q`, `8K` → FilingsPanel
+  - `NEWS`, `HEADLINES` → NewsPanel
+
+### Added
+- **InsiderActivityPanel** - CEO/CFO trades with 90-day sentiment
+- **FundamentalsPanel** - Income/Balance/Cash Flow statements
+
+---
+
 ## [1.3.3] - 2026-01-31
 
 ### Added
