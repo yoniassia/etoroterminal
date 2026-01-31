@@ -107,7 +107,7 @@ function formatChange(change: number, changePercent: number): string {
 }
 
 export default function ChartPanel({
-  panelId,
+  panelId: _panelId,
   initialSymbol,
   initialLinkGroup = 'A',
   wsSubscribe,

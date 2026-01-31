@@ -11,13 +11,14 @@
 import React, { useState, useEffect } from 'react';
 import { getInstitutionalOwnership, hasApiKey, setApiKey } from '../../services/financialDatasetsService';
 import type { InstitutionalHolding } from '../../types/financialDatasets.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './InstitutionalPanel.css';
 
-interface InstitutionalPanelProps {
+interface InstitutionalPanelProps extends PanelContentProps {
   ticker?: string;
 }
 
-export const InstitutionalPanel: React.FC<InstitutionalPanelProps> = ({ ticker: initialTicker }) => {
+export const InstitutionalPanel: React.FC<InstitutionalPanelProps> = ({ ticker: initialTicker, panelId: _panelId }) => {
   const [ticker, setTicker] = useState(initialTicker || 'AAPL');
   const [inputTicker, setInputTicker] = useState(initialTicker || 'AAPL');
   const [holdings, setHoldings] = useState<InstitutionalHolding[]>([]);

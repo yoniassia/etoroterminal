@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { EToroApiService, PortfolioData, UserInfo, Position } from '../services/etoroApi';
 
 interface PortfolioProps {

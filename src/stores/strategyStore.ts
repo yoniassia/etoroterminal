@@ -10,7 +10,6 @@ import type {
   StrategyStatus,
   ActionStatus,
   RiskParameters,
-  DEFAULT_RISK_PARAMS,
 } from '../types/strategy.types';
 
 // =============================================================================

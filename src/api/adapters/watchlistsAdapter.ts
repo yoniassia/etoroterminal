@@ -166,7 +166,11 @@ export class WatchlistsAdapter {
       request
     );
     const rawItem = (response.item ?? response.Item ?? response) as Record<string, unknown>;
-    return normalizeWatchlistItem(rawItem);
+    const item = normalizeWatchlistItem(rawItem);
+    if (!item) {
+      throw new Error('Failed to add item to watchlist: invalid item type');
+    }
+    return item;
   }
 
   async removeFromWatchlist(watchlistId: string, instrumentId: number): Promise<boolean> {

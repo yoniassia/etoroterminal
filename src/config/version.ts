@@ -1,11 +1,20 @@
 // Application version - update this when releasing new versions
-export const APP_VERSION = '1.7.0';
+export const APP_VERSION = '1.7.1';
 
 // Build info
 export const BUILD_DATE = '2026-01-31';
 
 // Changelog
 export const CHANGELOG = `
+v1.7.1 (2026-01-31) - TypeScript Fixes
+- FIX: Panel types now properly extend PanelContentProps (FilingsPanel, NewsPanel, InstitutionalPanel)
+- FIX: Removed unused imports (ApiHeaders, useEffect, DEFAULT_RISK_PARAMS)
+- FIX: Fixed unknown type issues in DiagnosticsDrawer conditionals
+- FIX: Fixed CommandBar using correct ResolvedSymbol type
+- FIX: Fixed watchlistsAdapter null handling for addToWatchlist
+- FIX: Added vite-env.d.ts for proper import.meta.env types
+- FIX: Cleaned up unused variable declarations
+
 v1.7.0 (2026-01-31) - Financial Datasets Integration
 - NEW: NEWS Panel - Real-time company news with sentiment
 - NEW: INST Panel - Institutional ownership (13F whale tracking)

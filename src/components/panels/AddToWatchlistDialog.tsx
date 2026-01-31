@@ -27,7 +27,7 @@ export default function AddToWatchlistDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [adding, setAdding] = useState(false);
+  const [, setAdding] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

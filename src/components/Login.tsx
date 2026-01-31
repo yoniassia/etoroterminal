@@ -52,13 +52,6 @@ export default function Login({ onLogin, onDemoMode, error, loading }: LoginProp
     setSubmitError(null);
 
     try {
-      const request: AccessRequest = {
-        type: requestType,
-        name: name.trim(),
-        email: email.trim(),
-        message: message.trim(),
-      };
-
       // Send to feedback API
       const response = await fetch(FEEDBACK_API, {
         method: 'POST',

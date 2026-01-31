@@ -11,15 +11,16 @@
 import React, { useState, useEffect } from 'react';
 import { getSECFilings, hasApiKey, setApiKey } from '../../services/financialDatasetsService';
 import type { SECFiling } from '../../types/financialDatasets.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './FilingsPanel.css';
 
-interface FilingsPanelProps {
+interface FilingsPanelProps extends PanelContentProps {
   ticker?: string;
 }
 
 type FilingType = '10-K' | '10-Q' | '8-K' | '4' | 'all';
 
-export const FilingsPanel: React.FC<FilingsPanelProps> = ({ ticker: initialTicker }) => {
+export const FilingsPanel: React.FC<FilingsPanelProps> = ({ ticker: initialTicker, panelId: _panelId }) => {
   const [ticker, setTicker] = useState(initialTicker || 'AAPL');
   const [inputTicker, setInputTicker] = useState(initialTicker || 'AAPL');
   const [filings, setFilings] = useState<SECFiling[]>([]);

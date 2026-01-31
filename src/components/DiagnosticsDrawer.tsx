@@ -177,7 +177,7 @@ export default function DiagnosticsDrawer({
                         </pre>
                       </div>
                     )}
-                    {req.body && (
+                    {req.body != null && (
                       <div className="diagnostics-drawer__section">
                         <div className="diagnostics-drawer__section-title">Body</div>
                         <pre className="diagnostics-drawer__pre">
@@ -218,7 +218,7 @@ export default function DiagnosticsDrawer({
                         </pre>
                       </div>
                     )}
-                    {res.body && (
+                    {res.body != null && (
                       <div className="diagnostics-drawer__section">
                         <div className="diagnostics-drawer__section-title">Body</div>
                         <pre className="diagnostics-drawer__pre">
@@ -264,7 +264,7 @@ export default function DiagnosticsDrawer({
                 )}
                 <span className="diagnostics-drawer__expand">{isExpanded ? '▼' : '▶'}</span>
               </div>
-              {isExpanded && data.payload && (
+              {isExpanded && data.payload != null && (
                 <div className="diagnostics-drawer__log-details">
                   <div className="diagnostics-drawer__section">
                     <div className="diagnostics-drawer__section-title">Payload</div>

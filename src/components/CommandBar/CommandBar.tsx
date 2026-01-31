@@ -1,12 +1,12 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { symbolResolver, SymbolSearchResult } from '../../services/symbolResolver';
+import { symbolResolver, ResolvedSymbol } from '../../services/symbolResolver';
 import { Autocomplete, AutocompleteItem } from './Autocomplete';
 import './CommandBar.css';
 
 export interface CommandBarCommand {
   type: 'function' | 'symbol';
   code?: string;
-  symbol?: SymbolSearchResult;
+  symbol?: ResolvedSymbol;
   raw: string;
 }
 

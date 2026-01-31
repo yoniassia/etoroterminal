@@ -12,13 +12,14 @@
 import React, { useState, useEffect } from 'react';
 import { getNews, hasApiKey, setApiKey } from '../../services/financialDatasetsService';
 import type { NewsArticle } from '../../types/financialDatasets.types';
+import type { PanelContentProps } from '../Workspace/PanelRegistry';
 import './NewsPanel.css';
 
-interface NewsPanelProps {
+interface NewsPanelProps extends PanelContentProps {
   ticker?: string;
 }
 
-export const NewsPanel: React.FC<NewsPanelProps> = ({ ticker: initialTicker }) => {
+export const NewsPanel: React.FC<NewsPanelProps> = ({ ticker: initialTicker, panelId: _panelId }) => {
   const [ticker, setTicker] = useState(initialTicker || 'AAPL');
   const [inputTicker, setInputTicker] = useState(initialTicker || 'AAPL');
   const [news, setNews] = useState<NewsArticle[]>([]);

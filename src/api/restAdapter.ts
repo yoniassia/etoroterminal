@@ -2,7 +2,7 @@
 // Provides base HTTP client with interceptors, retry logic, and error handling
 
 import { API_BASE_URL, REQUIRED_HEADERS, CONTENT_TYPE_JSON, API_STATUS } from './contracts/endpoints';
-import type { ApiError, ApiHeaders } from './contracts/etoro-api.types';
+import type { ApiError } from './contracts/etoro-api.types';
 
 // ============================================================================
 // Types
